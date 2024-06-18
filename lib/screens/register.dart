@@ -6,96 +6,108 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 20),
-          const Text(
-            'ENTRE CLASES',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Comic Sans MS',
-            ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Registrate',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Nombre',
-              prefixIcon: const Icon(Icons.person),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.yellow),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Container(
+                  height: 150,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/images/logo-sin.png"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Apellido',
-              prefixIcon: const Icon(Icons.person_outline),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+              const SizedBox(height: 20),
+              const Text(
+                'Registrate',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            obscureText: true,
-            decoration: InputDecoration(
-              labelText: 'Contraseña',
-              prefixIcon: const Icon(Icons.lock),
-              suffixIcon: const Icon(Icons.visibility_off),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+              const SizedBox(height: 20),
+              inputField(label: "Nombre", icon: Icons.person),
+              const SizedBox(height: 20),
+              inputField(label: "Apellido", icon: Icons.person_outline),
+              const SizedBox(height: 20),
+              inputField(label: "Contraseña", icon: Icons.lock),
+              const SizedBox(height: 20),
+              inputField(label: "N° Legajo", icon: Icons.badge),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xFFFFE500)),
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.black),
+                    textStyle: MaterialStateProperty.all<TextStyle>(
+                      const TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  child: const Text('Registrarme'),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Nro de Legajo',
-              prefixIcon: const Icon(Icons.badge),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+              const SizedBox(height: 20),
+              Center(
+                child: TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    '¿Ya tienes una cuenta? Registrate',
+                    style: TextStyle(color: Colors.yellow),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                textStyle: const TextStyle(fontSize: 18),
-              ),
-              child: const Text('Registrarme'),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Center(
-            child: TextButton(
-              onPressed: () {},
-              child: const Text(
-                '¿Ya tienes una cuenta? Registrate',
-                style: TextStyle(color: Colors.yellow),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
-    ));
+    );
+  }
+
+  Widget inputField(
+      {required String label,
+      required IconData icon,
+      TextInputType typeField = TextInputType.text}) {
+    return SizedBox(
+      width: double.infinity,
+      height: 58,
+      child: TextField(
+        keyboardType: typeField,
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xFFC5C5C5), width: 3.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xFFFFE500), width: 3.0),
+          ),
+        ),
+      ),
+    );
   }
 }
 
