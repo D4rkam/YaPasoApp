@@ -18,9 +18,9 @@ class MyApp extends StatelessWidget {
       title: 'Entre clases',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFFAD246)),
-        useMaterial3: true,
-      ),
+          colorSchemeSeed: const Color(0xFFFFE500),
+          useMaterial3: true,
+          brightness: Brightness.light),
       home: const RegisterScreen(),
     );
   }
