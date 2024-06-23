@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:prueba_buffet/screens/register.dart';
+import 'package:prueba_buffet/screens/pedido.dart';
+// import 'package:prueba_buffet/screens/register.dart';
 
 // import 'screens/home.dart';
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
           colorSchemeSeed: const Color(0xFFFFE500),
           useMaterial3: true,
           brightness: Brightness.light),
-      home: const RegisterScreen(),
+      home: const PedidoScreen(),
     );
   }
 }
