@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:prueba_buffet/screens/login.dart';
+import 'package:prueba_buffet/screens/pedido.dart';
+import 'package:prueba_buffet/widgets/toggle_button.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // final colors = Theme.of(context).colorScheme;
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -27,11 +31,18 @@ class RegisterScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'Registrate',
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
+              SizedBox(
+                height: 40,
+                child: CustomToggleButton(
+                  labels: const ['Registrarse', 'Iniciar Sesión'],
+                  initialSelectedIndex: 0,
+                  onToggle: (index) {
+                    return Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginScreen()),
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 20),
@@ -47,7 +58,12 @@ class RegisterScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 60,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PedidoScreen()));
+                  },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
                         const Color(0xFFFFE500)),
@@ -66,16 +82,6 @@ class RegisterScreen extends StatelessWidget {
                     ),
                   ),
                   child: const Text('Registrarme'),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Center(
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    '¿Ya tienes una cuenta? Registrate',
-                    style: TextStyle(color: Colors.yellow),
-                  ),
                 ),
               ),
             ],

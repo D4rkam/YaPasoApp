@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:prueba_buffet/screens/pedido.dart';
-// import 'package:prueba_buffet/screens/register.dart';
-
-// import 'screens/home.dart';
+import 'package:prueba_buffet/config/theme/app_theme.dart';
+import 'package:prueba_buffet/screens/intro.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,13 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Entre clases',
+      title: 'Ya paso',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          colorSchemeSeed: const Color(0xFFFFE500),
-          useMaterial3: true,
-          brightness: Brightness.light),
-      home: const PedidoScreen(),
+      theme: AppTheme(enableDarkMode: false).theme(),
+      home: const IntroScreen(),
     );
   }
 }
