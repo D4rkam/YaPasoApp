@@ -21,7 +21,7 @@ class _PedidoScreenState extends State<PedidoScreen> {
     final double precio = double.parse(_precioController.text);
 
     final response = await http.post(
-      Uri.parse('http://192.168.0.7:8000/pedido'),
+      Uri.parse('http://192.168.16.114:8000/pedido'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -35,12 +35,12 @@ class _PedidoScreenState extends State<PedidoScreen> {
     if (response.statusCode == 200) {
       // Pedido creado exitosamente
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pedido creado exitosamente')),
+        const SnackBar(content: Text('Pedido enviado exitosamente')),
       );
     } else {
       // Error al crear el pedido
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al crear el pedido')),
+        const SnackBar(content: Text('Error al enviar el pedido')),
       );
     }
   }

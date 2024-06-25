@@ -53,19 +53,25 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Center(
-                            child: _buildCategoryChip('Bebidas',
-                                "assets/images/bebidas_categoria.png", 19, 34)),
+                            child: _buildCategoryChip(
+                                'Bebidas',
+                                "assets/images/categorias/bebidas_categoria.png",
+                                19,
+                                34)),
                       ),
                       Expanded(
                         child: Center(
-                            child: _buildCategoryChip('Snacks',
-                                "assets/images/snacks_categoria.png", 24, 30)),
+                            child: _buildCategoryChip(
+                                'Snacks',
+                                "assets/images/categorias/snacks_categoria.png",
+                                24,
+                                30)),
                       ),
                       Expanded(
                         child: Center(
                             child: _buildCategoryChip(
                                 'Golosinas',
-                                "assets/images/golosinas_categoria.png",
+                                "assets/images/categorias/golosinas_categoria.png",
                                 25,
                                 17)),
                       ),
@@ -135,27 +141,27 @@ class HomeScreen extends StatelessWidget {
       children: [
         _buildProductItem(
           'Galletita Don Satur',
-          'assets/images/don_satur.png',
+          'assets/images/productos/don_satur.png',
         ),
         _buildProductItem(
           'Lata de Coca Cola',
-          'assets/images/coca_cola.png',
+          'assets/images/productos/coca_cola.png',
         ),
         _buildProductItem(
           'Maiz Inflado Dulce',
-          'assets/images/maiz_inflado.png',
+          'assets/images/productos/maiz_inflado.png',
         ),
         _buildProductItem(
           'Maiz Inflado Dulce',
-          'assets/images/maiz_inflado.png',
+          'assets/images/productos/maiz_inflado.png',
         ),
         _buildProductItem(
           'Maiz Inflado Dulce',
-          'assets/images/maiz_inflado.png',
+          'assets/images/productos/maiz_inflado.png',
         ),
         _buildProductItem(
           'Maiz Inflado Dulce',
-          'assets/images/maiz_inflado.png',
+          'assets/images/productos/maiz_inflado.png',
         ),
       ],
     );
