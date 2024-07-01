@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prueba_buffet/config/theme/app_theme.dart';
+import 'package:prueba_buffet/screens/home.dart';
 import 'package:prueba_buffet/screens/intro.dart';
 
 void main() {
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Ya paso',
       debugShowCheckedModeBanner: false,
       theme: AppTheme(enableDarkMode: false).theme(),
-      home: const IntroScreen(),
+      home: const HomeScreen(),
     );
   }
 }
