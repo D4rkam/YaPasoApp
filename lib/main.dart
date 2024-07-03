@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Ya paso',
       debugShowCheckedModeBanner: false,
       theme: AppTheme(enableDarkMode: false).theme(),
-      home: const HomeScreen(),
+      home: const IntroScreen(),
     );
   }
 }

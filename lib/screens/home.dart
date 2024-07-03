@@ -105,9 +105,9 @@ class HomeScreen extends StatelessWidget {
           onPressed: () {},
           icon: const Icon(Icons.shopping_cart),
           style: const ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.white),
-              padding: MaterialStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: 20))),
+              backgroundColor: WidgetStatePropertyAll(Colors.white),
+              padding:
+                  WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 20))),
         ),
         const Positioned(
           right: 1,

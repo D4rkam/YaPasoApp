@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prueba_buffet/screens/pedido.dart';
+import 'package:prueba_buffet/screens/home.dart';
 import 'package:prueba_buffet/screens/register.dart';
 import 'package:prueba_buffet/widgets/toggle_button.dart';
 
@@ -58,26 +58,26 @@ class LoginScreen extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const PedidoScreen()));
+                            builder: (context) => const HomeScreen()));
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xFFFFE500)),
+                    backgroundColor:
+                        WidgetStateProperty.all<Color>(const Color(0xFFFFE500)),
                     foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.black),
-                    textStyle: MaterialStateProperty.all<TextStyle>(
+                        WidgetStateProperty.all<Color>(Colors.black),
+                    textStyle: WidgetStateProperty.all<TextStyle>(
                       const TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
-                  child: const Text('Inciar Sesión'),
+                  child: const Text('Iniciar Sesión'),
                 ),
               ),
             ],

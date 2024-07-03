@@ -38,6 +38,8 @@ dependencies:
   http: ^1.2.1
 
 dev_dependencies:
+  flutter_native_splash: ^2.4.0
+  flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
 
@@ -47,6 +49,16 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+
+flutter_launcher_icons:
+  android: true
+  image_path: assets/images/ylogo.png
+
+flutter_native_splash:
+  image: assets/images/ylogo.png
+  color: "#ffffff"
+  image_dark: assets/images/ylogo.png
+  color_dark: "#000000"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

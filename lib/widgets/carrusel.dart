@@ -24,6 +24,12 @@ class _CarruselWidgetState extends State<CarruselWidget> {
       'img': "assets/images/churros.png",
       'isNew': false,
     },
+    {
+      'title': "Churros",
+      'subtitle': "Rellenos de dulce de leche",
+      'img': "assets/images/churros.png",
+      'isNew': false,
+    },
     // Agrega más URLs de imágenes si es necesario
   ];
 
@@ -53,13 +59,15 @@ class _CarruselWidgetState extends State<CarruselWidget> {
             int index = itemList.indexOf(url);
             return Container(
               width: 40.0,
-              height: 8.0,
+              height: 6.0,
               margin:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
               decoration: BoxDecoration(
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(10),
-                color: _currentIndex == index ? Colors.yellow : Colors.grey,
+                color: _currentIndex == index
+                    ? Color(0xFFFFE500)
+                    : Color(0xFFC8C4A2),
               ),
             );
           }).toList(),

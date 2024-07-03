@@ -30,8 +30,9 @@ class _CustomToggleButtonState extends State<CustomToggleButton> {
   Widget build(BuildContext context) {
     return ToggleButtons(
       borderRadius: BorderRadius.circular(10),
-      fillColor: const Color(0xFFFFE500),
-      selectedColor: Colors.black,
+      fillColor: const Color(0xFF2C2F3D),
+      disabledColor: Colors.grey,
+      selectedColor: Colors.white,
       color: Colors.grey,
       isSelected: isSelected,
       onPressed: (int index) {

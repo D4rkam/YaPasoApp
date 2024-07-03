@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:prueba_buffet/screens/home.dart';
 import 'package:prueba_buffet/screens/login.dart';
-import 'package:prueba_buffet/screens/pedido.dart';
 import 'package:prueba_buffet/widgets/toggle_button.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -62,20 +62,20 @@ class RegisterScreen extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const PedidoScreen()));
+                            builder: (context) => const HomeScreen()));
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xFFFFE500)),
+                    backgroundColor:
+                        WidgetStateProperty.all<Color>(const Color(0xFFFFE500)),
                     foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.black),
-                    textStyle: MaterialStateProperty.all<TextStyle>(
+                        WidgetStateProperty.all<Color>(Colors.black),
+                    textStyle: WidgetStateProperty.all<TextStyle>(
                       const TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -115,31 +115,4 @@ class RegisterScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget shoppingCart() {
-  return Stack(
-    children: [
-      IconButton(
-        onPressed: () {},
-        icon: const Icon(Icons.shopping_cart),
-        style: const ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(Colors.white),
-            padding:
-                MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 20))),
-      ),
-      const Positioned(
-        right: 1,
-        top: 1,
-        child: CircleAvatar(
-          backgroundColor: Colors.black,
-          radius: 11,
-          child: Text("1",
-              style: TextStyle(
-                color: Colors.white,
-              )),
-        ),
-      )
-    ],
-  );
 }
