@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:prueba_buffet/screens/register.dart';
+import 'package:get/get.dart';
+import 'package:prueba_buffet/pages/intro/intro_controller.dart';
 
 class IntroScreen extends StatelessWidget {
-  const IntroScreen({super.key});
+  IntroScreen({super.key});
+
+  final IntroController controller = Get.put(IntroController());
 
   @override
   Widget build(BuildContext context) {
@@ -76,10 +79,7 @@ class IntroScreen extends StatelessWidget {
                   height: 60,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const RegisterScreen()));
+                      controller.goToLogin();
                     },
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all<Color>(

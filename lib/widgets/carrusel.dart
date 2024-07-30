@@ -66,8 +66,8 @@ class _CarruselWidgetState extends State<CarruselWidget> {
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(10),
                 color: _currentIndex == index
-                    ? Color(0xFFFFE500)
-                    : Color(0xFFC8C4A2),
+                    ? const Color(0xFFFFE500)
+                    : const Color(0xFFC8C4A2),
               ),
             );
           }).toList(),

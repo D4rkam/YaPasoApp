@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:prueba_buffet/screens/home.dart';
-import 'package:prueba_buffet/screens/register.dart';
+import 'package:get/get.dart';
+import 'package:prueba_buffet/pages/register/register_controller.dart';
 import 'package:prueba_buffet/widgets/toggle_button.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatelessWidget {
+  RegisterScreen({super.key});
+
+  final RegisterController controller = Get.put(RegisterController());
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class LoginScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: Container(
-                  height: 150,
+                  height: MediaQuery.of(context).size.height * 0.175,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage("assets/images/logo-sin.png"),
@@ -35,31 +37,48 @@ class LoginScreen extends StatelessWidget {
                 height: 40,
                 child: CustomToggleButton(
                   labels: const ['Registrarse', 'Iniciar Sesión'],
-                  initialSelectedIndex: 1,
+                  initialSelectedIndex: 0,
                   onToggle: (index) {
-                    return Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const RegisterScreen()),
-                    );
+                    return controller.goToLoginPage();
                   },
                 ),
               ),
               const SizedBox(height: 20),
-              inputField(label: "N° Legajo", icon: Icons.badge),
+              inputField(
+                  label: "Nombre",
+                  icon: Icons.person,
+                  textController: controller.nameController),
               const SizedBox(height: 20),
-              inputField(label: "Contraseña", icon: Icons.lock),
+              inputField(
+                  label: "Apellido",
+                  icon: Icons.person_outline,
+                  textController: controller.lastNameController),
+              const SizedBox(height: 20),
+              inputField(
+                  label: "Nombre de Usuario",
+                  icon: Icons.person_outline,
+                  textController: controller.usernameController),
+              const SizedBox(height: 20),
+              inputField(
+                  label: "Contraseña",
+                  icon: Icons.lock,
+                  textController: controller.passwordController),
+              const SizedBox(height: 20),
+              inputField(
+                  label: "Confirmar Contraseña",
+                  icon: Icons.lock,
+                  textController: controller.confirmPasswordController),
+              const SizedBox(height: 20),
+              inputField(
+                  label: "N° Legajo",
+                  icon: Icons.badge,
+                  textController: controller.fileNumberController),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 height: 60,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomeScreen()));
-                  },
+                  onPressed: () => controller.register(),
                   style: ButtonStyle(
                     backgroundColor:
                         WidgetStateProperty.all<Color>(const Color(0xFFFFE500)),
@@ -77,7 +96,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  child: const Text('Iniciar Sesión'),
+                  child: const Text('Registrarme'),
                 ),
               ),
             ],
@@ -90,12 +109,14 @@ class LoginScreen extends StatelessWidget {
   Widget inputField(
       {required String label,
       required IconData icon,
+      required TextEditingController textController,
       TextInputType typeField = TextInputType.text}) {
     return SizedBox(
       width: double.infinity,
       height: 58,
       child: TextField(
         keyboardType: typeField,
+        controller: textController,
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon),

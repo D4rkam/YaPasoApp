@@ -5,6 +5,8 @@ import 'package:prueba_buffet/widgets/input_search.dart';
 import 'package:prueba_buffet/widgets/navbar.dart';
 import 'package:prueba_buffet/widgets/product_card.dart';
 
+//TODO: Utilizar MediaQuery para realizar un diseño responsive para todos los dispositivos moviles
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -105,9 +107,10 @@ class HomeScreen extends StatelessWidget {
           onPressed: () {},
           icon: const Icon(Icons.shopping_cart),
           style: const ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(Colors.white),
-              padding:
-                  WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 20))),
+            backgroundColor: WidgetStatePropertyAll(Colors.white),
+            padding:
+                WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 20)),
+          ),
         ),
         const Positioned(
           right: 1,

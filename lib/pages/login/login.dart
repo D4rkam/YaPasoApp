@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:prueba_buffet/screens/home.dart';
-import 'package:prueba_buffet/screens/login.dart';
+import 'package:get/get.dart';
+import 'package:prueba_buffet/pages/login/login_controller.dart';
 import 'package:prueba_buffet/widgets/toggle_button.dart';
 
-class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({super.key});
+class LoginScreen extends StatelessWidget {
+  LoginScreen({super.key});
+
+  //Enlace con el controlador
+  final LoginController controller = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +24,7 @@ class RegisterScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: Container(
-                  height: 150,
+                  height: MediaQuery.of(context).size.height * 0.175,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage("assets/images/logo-sin.png"),
@@ -35,35 +38,29 @@ class RegisterScreen extends StatelessWidget {
                 height: 40,
                 child: CustomToggleButton(
                   labels: const ['Registrarse', 'Iniciar Sesión'],
-                  initialSelectedIndex: 0,
+                  initialSelectedIndex: 1,
                   onToggle: (index) {
-                    return Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginScreen()),
-                    );
+                    return controller.goToRegisterPage();
                   },
                 ),
               ),
               const SizedBox(height: 20),
-              inputField(label: "Nombre", icon: Icons.person),
+              inputField(
+                  label: "Username",
+                  icon: Icons.person,
+                  controllerTextField: controller.usernameController),
               const SizedBox(height: 20),
-              inputField(label: "Apellido", icon: Icons.person_outline),
-              const SizedBox(height: 20),
-              inputField(label: "Contraseña", icon: Icons.lock),
-              const SizedBox(height: 20),
-              inputField(label: "N° Legajo", icon: Icons.badge),
+              inputField(
+                  label: "Contraseña",
+                  icon: Icons.lock,
+                  isPassword: true,
+                  controllerTextField: controller.passwordController),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 height: 60,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomeScreen()));
-                  },
+                  onPressed: () => controller.login(),
                   style: ButtonStyle(
                     backgroundColor:
                         WidgetStateProperty.all<Color>(const Color(0xFFFFE500)),
@@ -81,7 +78,7 @@ class RegisterScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  child: const Text('Registrarme'),
+                  child: const Text('Iniciar Sesión'),
                 ),
               ),
             ],
@@ -91,15 +88,20 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  Widget inputField(
-      {required String label,
-      required IconData icon,
-      TextInputType typeField = TextInputType.text}) {
+  Widget inputField({
+    required String label,
+    required IconData icon,
+    TextInputType typeField = TextInputType.text,
+    bool isPassword = false,
+    required TextEditingController controllerTextField,
+  }) {
     return SizedBox(
       width: double.infinity,
       height: 58,
       child: TextField(
         keyboardType: typeField,
+        controller: controllerTextField,
+        obscureText: isPassword,
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon),

@@ -1,23 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/config/theme/app_theme.dart';
-import 'package:prueba_buffet/screens/home.dart';
-import 'package:prueba_buffet/screens/intro.dart';
+import 'package:prueba_buffet/pages/home/home.dart';
+import 'package:prueba_buffet/pages/intro/intro.dart';
+import 'package:prueba_buffet/pages/login/login.dart';
+import 'package:prueba_buffet/pages/register/register.dart';
 
-void main() {
+void main() async {
+  await GetStorage.init();
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Ya paso',
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'Ya paso',
+      initialRoute: "/",
+      getPages: [
+        GetPage(name: "/", page: () => IntroScreen()),
+        GetPage(name: "/login", page: () => LoginScreen()),
+        GetPage(name: "/register", page: () => RegisterScreen()),
+        GetPage(name: "/home", page: () => const HomeScreen()),
+      ],
+      navigatorKey: Get.key,
       theme: AppTheme(enableDarkMode: false).theme(),
-      home: const IntroScreen(),
     );
   }
 }

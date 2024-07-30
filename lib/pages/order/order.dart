@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class PedidoScreen extends StatefulWidget {
-  const PedidoScreen({super.key});
+class OrderScreen extends StatefulWidget {
+  const OrderScreen({super.key});
 
   @override
-  State<PedidoScreen> createState() => _PedidoScreenState();
+  State<OrderScreen> createState() => _OrderScreenState();
 }
 
-class _PedidoScreenState extends State<PedidoScreen> {
+class _OrderScreenState extends State<OrderScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nombreController = TextEditingController();
   final _descripcionController = TextEditingController();
