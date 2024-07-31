@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/models/user.dart';
 import 'package:prueba_buffet/providers/users_provider.dart';
+import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 
 class RegisterController extends GetxController {
   void goToLoginPage() {
@@ -17,7 +18,7 @@ class RegisterController extends GetxController {
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController fileNumberController = TextEditingController();
 
-  void register() async {
+  void register(BuildContext context) async {
     String name = nameController.text.trim();
     String lastName = lastNameController.text.trim();
     String username = usernameController.text.trim();
@@ -27,6 +28,9 @@ class RegisterController extends GetxController {
 
     if (isValidForm(
         name, lastName, username, password, confirmPassword, fileNumber)) {
+      ProgressDialog progressDialog = ProgressDialog(context: context);
+      progressDialog.show(max: 100, msg: "Registrando Usuario");
+
       User user = User(
         name: name,
         lastName: lastName,
@@ -36,10 +40,12 @@ class RegisterController extends GetxController {
       );
 
       Response response = await usersProvider.create(user);
-
-      print("RESPONSE: ${response.body}");
-
-      Get.snackbar("Formulario valido", "Ok paa enviar");
+      progressDialog.close();
+      if (response.statusCode == 201) {
+        goToLoginPage();
+      } else {
+        Get.snackbar("Registro", response.bodyString ?? "");
+      }
     }
   }
 

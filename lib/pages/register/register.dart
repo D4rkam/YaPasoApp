@@ -27,7 +27,7 @@ class RegisterScreen extends StatelessWidget {
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage("assets/images/logo-sin.png"),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitHeight,
                     ),
                   ),
                 ),
@@ -78,7 +78,7 @@ class RegisterScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 60,
                 child: ElevatedButton(
-                  onPressed: () => controller.register(),
+                  onPressed: () => controller.register(context),
                   style: ButtonStyle(
                     backgroundColor:
                         WidgetStateProperty.all<Color>(const Color(0xFFFFE500)),

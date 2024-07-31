@@ -28,12 +28,12 @@ class LoginScreen extends StatelessWidget {
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage("assets/images/logo-sin.png"),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitHeight,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
               SizedBox(
                 height: 40,
                 child: CustomToggleButton(

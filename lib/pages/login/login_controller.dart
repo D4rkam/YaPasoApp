@@ -23,8 +23,18 @@ class LoginController extends GetxController {
     if (isValidForm(username, password)) {
       ResponseApi response = await usersProvider.login(username, password);
 
-      GetStorage().write("user", response.data);
+      if (response.success == true) {
+        GetStorage().write("user",
+            response.data); //Datos del usuario almacenados de manera local
+        goToHomePage();
+      } else {
+        Get.snackbar("Credenciales", "Las credenciales no son validas");
+      }
     }
+  }
+
+  void goToHomePage() {
+    Get.offNamedUntil("/home", (route) => false);
   }
 
   bool isValidForm(String username, String password) {

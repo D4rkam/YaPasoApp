@@ -1,24 +1,24 @@
 import 'dart:convert';
 
-ResponseApi responseApiFromJson(String str) =>
-    ResponseApi.fromJson(json.decode(str));
+ResponseApi responseApiFromJson(String str, bool? success) =>
+    ResponseApi.fromJson(json.decode(str), success);
 
 String responseApiToJson(ResponseApi data) => json.encode(data.toJson());
 
 class ResponseApi {
-  String? accessToken;
-  String? tokenType;
   dynamic data;
+  bool? success;
 
-  ResponseApi({this.data, this.accessToken, this.tokenType});
+  ResponseApi({this.data, this.success});
 
-  factory ResponseApi.fromJson(Map<String, dynamic> json) => ResponseApi(
-        accessToken: json["token"]["access_token"],
-        tokenType: json["token"]["token_type"],
-        data: json["data"],
+  factory ResponseApi.fromJson(Map<String, dynamic> json, bool? success) =>
+      ResponseApi(
+        data: json["user"],
+        success: success,
       );
 
   Map<String, dynamic> toJson() => {
-        "User": data,
+        "user": data,
+        "success": success,
       };
 }

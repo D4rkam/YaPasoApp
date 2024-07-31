@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:prueba_buffet/pages/home/home_controller.dart';
 import 'package:prueba_buffet/widgets/carrusel.dart';
-import 'package:prueba_buffet/widgets/category_card.dart';
+import 'package:prueba_buffet/widgets/category_list.dart';
 import 'package:prueba_buffet/widgets/input_search.dart';
 import 'package:prueba_buffet/widgets/navbar.dart';
 import 'package:prueba_buffet/widgets/product_card.dart';
@@ -8,7 +10,8 @@ import 'package:prueba_buffet/widgets/product_card.dart';
 //TODO: Utilizar MediaQuery para realizar un diseño responsive para todos los dispositivos moviles
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
+  final HomeController controller = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +34,18 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          actions: const [
+          actions: [
             Padding(
-              padding: EdgeInsets.only(top: 20),
-              child: CircleAvatar(
-                backgroundImage: AssetImage("assets/images/steve_person.png"),
-                minRadius: 40,
+              padding: const EdgeInsets.only(top: 20),
+              child: GestureDetector(
+                onTap: () => controller.signOut(),
+                child: const CircleAvatar(
+                  backgroundImage: AssetImage("assets/images/steve_person.png"),
+                  minRadius: 40,
+                ),
               ),
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
           ],
         ),
       ),
@@ -63,31 +69,43 @@ class HomeScreen extends StatelessWidget {
               child: Text('Categorías',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
             ),
-            SizedBox(
-              height: 100,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: const [
-                  CategoryCard('Galletitas',
-                      'assets/images/categorias/snacks_categoria.png'),
-                  CategoryCard('Golosinas',
-                      'assets/images/categorias/snacks_categoria.png'),
-                  CategoryCard('Bebidas',
-                      'assets/images/categorias/snacks_categoria.png'),
-                  CategoryCard('Snacks',
-                      'assets/images/categorias/snacks_categoria.png'),
-                ],
+            Padding(
+              padding: const EdgeInsets.only(left: 20.0),
+              child: SizedBox(
+                height: 100,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: 5,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (_, index) {
+                    return const Column(children: [
+                      CategoryList(
+                        title: 'Galletitas',
+                        imageUrl:
+                            'assets/images/categorias/snacks_categoria.png',
+                      ),
+                    ]);
+                  },
+                ),
               ),
             ),
             const Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text('Todos los Productos',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              child: Text(
+                'Todos los Productos',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
             ),
-            const ProductCard('Galletita Opera', 750,
-                'assets/images/productos/don_satur.png'),
-            const ProductCard('Alfajor Guaymallén', 650,
-                'assets/images/productos/coca_cola.png'),
+            const ProductCard(
+              'Galletita Opera',
+              750,
+              'assets/images/productos/don_satur.png',
+            ),
+            const ProductCard(
+              'Alfajor Guaymallén',
+              650,
+              'assets/images/productos/coca_cola.png',
+            ),
           ],
         ),
       ),

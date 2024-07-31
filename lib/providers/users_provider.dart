@@ -33,7 +33,10 @@ class UsersProvider extends GetConnect {
       Get.snackbar("Error", "No se pudo ejecutar la peticion");
       return ResponseApi();
     }
-    ResponseApi responseApi = ResponseApi.fromJson(response.body);
+    ResponseApi responseApi = ResponseApi.fromJson(
+      response.body,
+      response.statusCode == 200,
+    );
     return responseApi;
   }
 }

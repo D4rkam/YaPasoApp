@@ -38,6 +38,7 @@ dependencies:
   http: ^1.2.2
   get: ^4.6.6
   get_storage: ^2.1.1
+  sn_progress_dialog: ^1.1.4
 
 dev_dependencies:
   flutter_native_splash: ^2.4.0
@@ -60,7 +61,7 @@ flutter_native_splash:
   image: assets/images/ylogo.png
   color: "#ffffff"
   image_dark: assets/images/ylogo.png
-  color_dark: "#000000"
+  color_dark: "#ffffff"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
