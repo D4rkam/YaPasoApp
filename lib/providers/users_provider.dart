@@ -1,15 +1,15 @@
 import 'package:get/get.dart';
-import 'package:prueba_buffet/enviroment/enviroment.dart';
 import 'package:prueba_buffet/models/response_api.dart';
 import 'package:prueba_buffet/models/user.dart';
+import 'package:prueba_buffet/utils/constants/api_constants.dart';
 
 class UsersProvider extends GetConnect {
-  String urlCreate = "${Enviroment.API_URL}api/auth";
-  String urlLogin = "${Enviroment.API_URL}api/auth/login";
+  String urlCreate = ApiUrl.REGISTER;
+  String urlLogin = ApiUrl.LOGIN;
 
   Future<Response> create(User user) async {
     Response response = await post(
-      "$urlCreate/",
+      urlCreate,
       user.toJson(),
       headers: {"Content-Type": "application/json"},
     );
@@ -17,11 +17,11 @@ class UsersProvider extends GetConnect {
   }
 
   Future<ResponseApi> login(String username, String password) async {
+    print("${ApiUrl.LOGIN}");
     Response response = await post(
       urlLogin,
       headers: {
         "Content-Type": "application/json",
-        // "accept": "application/json"
       },
       {
         "username": username,

@@ -62,11 +62,13 @@ class RegisterScreen extends StatelessWidget {
               inputField(
                   label: "Contraseña",
                   icon: Icons.lock,
+                  isPassword: true,
                   textController: controller.passwordController),
               const SizedBox(height: 20),
               inputField(
                   label: "Confirmar Contraseña",
                   icon: Icons.lock,
+                  isPassword: true,
                   textController: controller.confirmPasswordController),
               const SizedBox(height: 20),
               inputField(
@@ -86,7 +88,7 @@ class RegisterScreen extends StatelessWidget {
                         WidgetStateProperty.all<Color>(Colors.black),
                     textStyle: WidgetStateProperty.all<TextStyle>(
                       const TextStyle(
-                        fontSize: 30,
+                        fontSize: 20,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -109,6 +111,7 @@ class RegisterScreen extends StatelessWidget {
   Widget inputField(
       {required String label,
       required IconData icon,
+      bool isPassword = false,
       required TextEditingController textController,
       TextInputType typeField = TextInputType.text}) {
     return SizedBox(
@@ -117,6 +120,7 @@ class RegisterScreen extends StatelessWidget {
       child: TextField(
         keyboardType: typeField,
         controller: textController,
+        obscureText: isPassword,
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon),

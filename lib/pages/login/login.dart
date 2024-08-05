@@ -68,7 +68,7 @@ class LoginScreen extends StatelessWidget {
                         WidgetStateProperty.all<Color>(Colors.black),
                     textStyle: WidgetStateProperty.all<TextStyle>(
                       const TextStyle(
-                        fontSize: 30,
+                        fontSize: 20,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
