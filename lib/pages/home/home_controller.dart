@@ -5,9 +5,9 @@ import 'package:prueba_buffet/models/user.dart';
 class HomeController extends GetxController {
   User userSession = User.fromJson(GetStorage().read("user") ?? {});
 
-  HomeController() {
-    print("USUARIO SESION: ${userSession.toJson()}");
-  }
+  // HomeController() {
+  //   print("USUARIO SESION: ${userSession.toJson()}");
+  // }
 
   void signOut() {
     GetStorage().remove("user");

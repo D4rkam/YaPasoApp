@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-class CategoryList extends StatelessWidget {
+class CategoryItem extends StatelessWidget {
   final String title;
   final String imageUrl;
   final Color? backgroundColor;
   final void Function()? onTap;
 
-  const CategoryList(
+  const CategoryItem(
       {super.key,
       required this.title,
       required this.imageUrl,
       this.onTap,
-      this.backgroundColor = Colors.amber});
+      this.backgroundColor = const Color.fromARGB(255, 231, 230, 230)});
 
   @override
   Widget build(BuildContext context) {
@@ -29,22 +29,23 @@ class CategoryList extends StatelessWidget {
                 color: backgroundColor,
                 borderRadius: BorderRadius.circular(100),
               ),
-              child: const Center(
+              child: Center(
                 child: Image(
-                  image: AssetImage(
-                      "assets/images/categorias/bebidas_categoria.png"),
+                  image: AssetImage(imageUrl),
                   fit: BoxFit.cover,
                   height: double.infinity,
                 ),
               ),
             ),
             const SizedBox(height: 4),
-            const SizedBox(
+            SizedBox(
               width: 75,
-              child: Text(
-                "Gaseosas categoria",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              child: Center(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             )
           ],
