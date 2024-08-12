@@ -32,8 +32,8 @@ class CategoryItem extends StatelessWidget {
               child: Center(
                 child: Image(
                   image: AssetImage(imageUrl),
-                  fit: BoxFit.cover,
-                  height: double.infinity,
+                  fit: BoxFit.fitHeight,
+                  height: 40,
                 ),
               ),
             ),
@@ -54,16 +54,3 @@ class CategoryItem extends StatelessWidget {
     );
   }
 }
-
-
-// Card(
-//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Image.asset(imageUrl, height: 50),
-//           const SizedBox(height: 10),
-//           Text(title),
-//         ],
-//       ),
-//     );

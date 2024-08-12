@@ -89,7 +89,7 @@ class AppBar extends StatelessWidget {
       floating: false,
       pinned: true,
       automaticallyImplyLeading: false,
-      expandedHeight: 120,
+      expandedHeight: 100,
       stretch: true,
       backgroundColor: const Color(0xFFFFE500),
       flexibleSpace: LayoutBuilder(
@@ -106,82 +106,62 @@ class AppBar extends StatelessWidget {
           expandedTitleScale: 1,
           // centerTitle: false,
           title: (top < 100 + statusBarHeight)
-              ? const Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  // crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text('Saldo',
-                        style: TextStyle(color: Colors.black, fontSize: 20)),
-                    SizedBox(width: 8),
-                    Text('\$3000',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 25)),
-                  ],
-                )
-              : const Row(
-                  // mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Column(
-                      // mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Saldo',
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 20)),
-                        Text('\$3000',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 25)),
-                      ],
-                    ),
-                    SizedBox(width: 20),
-                    Row(
-                      children: [
-                        Text(
-                          "Mis movimientos",
+              ? GestureDetector(
+                  onTap: () {
+                    print("Click saldo");
+                  },
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    // crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text('Disponible:',
+                          style: TextStyle(color: Colors.black, fontSize: 20)),
+                      SizedBox(width: 8),
+                      Text('\$3000',
                           style: TextStyle(
-                              color: Colors.black38,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 15),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          color: Colors.black38,
-                          size: 18,
-                        )
-                      ],
-                    )
-                  ],
-                ),
-          background: Padding(
-            padding: const EdgeInsets.only(top: 20, right: 18),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                GestureDetector(
-                  onTap: () => controller.signOut(),
-                  child: const CircleAvatar(
-                    backgroundImage:
-                        AssetImage("assets/images/steve_person.png"),
-                    minRadius: 35,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 25)),
+                    ],
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () {
+                    print("Click saldo");
+                  },
+                  child: const Row(
+                    // mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Column(
+                        // mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text('Disponible',
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 20)),
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: Colors.black87,
+                              )
+                            ],
+                          ),
+                          Text('\$3000',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 25)),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
         );
       }),
     );
   }
 }
-
-// Widget carrusel() {
-//   return
-//
-// }
 
 Widget shoppingCart() {
   return Stack(
@@ -236,7 +216,7 @@ class ListCategory extends StatelessWidget {
           ),
           CategoryItem(
             title: 'Galletitas',
-            imageUrl: ProjectImages.golosinasIcon,
+            imageUrl: ProjectImages.galletitasIcon,
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
@@ -246,23 +226,37 @@ class ListCategory extends StatelessWidget {
             ),
           ),
           CategoryItem(
-            title: 'Gaseosas',
+            title: 'Bebidas',
             imageUrl: ProjectImages.bebidaIcon,
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    const CategoryScreen(categoryTitle: "Gaseosas"),
+                    const CategoryScreen(categoryTitle: "Bebidas"),
               ),
             ),
           ),
-          const CategoryItem(
-            title: 'Galletitas',
-            imageUrl: 'assets/images/categorias/snacks_categoria.png',
+          CategoryItem(
+            title: 'Golosinas',
+            imageUrl: ProjectImages.golosinasIcon,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    const CategoryScreen(categoryTitle: "Golosinas"),
+              ),
+            ),
           ),
-          const CategoryItem(
-            title: 'Galletitas',
-            imageUrl: 'assets/images/categorias/snacks_categoria.png',
+          CategoryItem(
+            title: 'Sandwiches',
+            imageUrl: ProjectImages.sandwichIcon,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    const CategoryScreen(categoryTitle: "Sandwiches"),
+              ),
+            ),
           ),
         ]);
       },
@@ -271,7 +265,6 @@ class ListCategory extends StatelessWidget {
 }
 
 class NoOverscrollBehavior extends ScrollBehavior {
-  @override
   Widget buildViewportChrome(
       BuildContext context, Widget child, AxisDirection axisDirection) {
     // Disable the glow effect on Android
@@ -284,7 +277,6 @@ class NoOverscrollBehavior extends ScrollBehavior {
         child: child,
       );
     }
-    // Disable the bouncing effect on iOS
     return child;
   }
 }

@@ -84,6 +84,8 @@ flutter:
     - assets/images/categorias/bebidas_categoria.png
     - assets/images/categorias/snacks_categoria.png
     - assets/images/categorias/golosinas_categoria.png
+    - assets/images/categorias/galletitas_categoria.png
+    - assets/images/categorias/sandwich_categoria.png
     - assets/images/logo-sin.png
     - assets/images/intro/img_intro_screen.png
   #   - images/a_dot_ham.jpeg
