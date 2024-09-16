@@ -143,7 +143,7 @@ class ListOfProducts extends StatelessWidget {
               subtitle: const Text('Detalles'),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
-                // Acción al presionar el item de la lista
+                Navigator.pushNamed(context, '/product');
               },
             ),
           );

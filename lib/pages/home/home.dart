@@ -89,7 +89,7 @@ class AppBar extends StatelessWidget {
       floating: false,
       pinned: true,
       automaticallyImplyLeading: false,
-      expandedHeight: 100,
+      expandedHeight: 101,
       stretch: true,
       backgroundColor: const Color(0xFFFFE500),
       flexibleSpace: LayoutBuilder(

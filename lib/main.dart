@@ -6,6 +6,7 @@ import 'package:prueba_buffet/models/user.dart';
 import 'package:prueba_buffet/pages/home/home.dart';
 import 'package:prueba_buffet/pages/intro/intro.dart';
 import 'package:prueba_buffet/pages/login/login.dart';
+import 'package:prueba_buffet/pages/product/product.dart';
 import 'package:prueba_buffet/pages/register/register.dart';
 
 User userSession = User.fromJson(GetStorage().read("user") ?? {});
@@ -36,9 +37,13 @@ class _MyAppState extends State<MyApp> {
       initialRoute: userSession.id != null ? "/home" : "/",
       getPages: [
         GetPage(name: "/", page: () => IntroScreen()),
-        GetPage(name: "/login", page: () => LoginScreen()),
+        GetPage(
+            name: "/login",
+            page: () => LoginScreen(),
+            transitionDuration: Duration.zero),
         GetPage(name: "/register", page: () => RegisterScreen()),
         GetPage(name: "/home", page: () => HomeScreen()),
+        GetPage(name: "/product", page: () => ProductScreen())
       ],
       navigatorKey: Get.key,
       theme: AppTheme(enableDarkMode: false).theme(),

@@ -13,4 +13,10 @@ class HomeController extends GetxController {
     GetStorage().remove("user");
     Get.offNamedUntil("/", (route) => false);
   }
+
+  void goToProduct() {
+    Get.toNamed(
+      "/product",
+    );
+  }
 }

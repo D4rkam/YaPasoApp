@@ -44,7 +44,7 @@ class ProductGrid extends StatelessWidget {
       ),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.88,
+        childAspectRatio: 1.1,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
@@ -66,70 +66,75 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 100,
-      width: double.infinity,
-      child: Card(
-        color: Colors.white,
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: ClipRRect(
-                      child: Image(
-                        image: AssetImage(
-                            imageUrl), // Reemplaza con la URL de tu imagen
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, '/product');
+      },
+      child: SizedBox(
+        height: 100,
+        width: double.infinity,
+        child: Card(
+          color: Colors.white,
+          elevation: 5,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Stack(
+            // crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: ClipRRect(
+                    child: Image(
+                      image: AssetImage(
+                          imageUrl), // Reemplaza con la URL de tu imagen
+                      height: 100,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    icon: const Icon(Icons.favorite_border),
-                    onPressed: () {},
-                    color: Colors.yellow,
-                  ),
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: const Icon(Icons.favorite_border),
+                  onPressed: () {},
+                  color: Colors.yellow,
                 ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    '\$$price',
-                    style: const TextStyle(fontSize: 16, color: Colors.green),
-                  ),
-                ],
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: IconButton(
-                icon: const Icon(Icons.add_shopping_cart),
-                onPressed: () {
-                  // Acción al agregar al carrito
-                },
+              Positioned(
+                bottom: 45,
+                left: 12,
+                child: Text(
+                  name,
+                  style: const TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.w500),
+                ),
               ),
-            ),
-          ],
+              Positioned(
+                bottom: 18,
+                left: 12,
+                child: Text(
+                  '\$$price',
+                  style: const TextStyle(
+                      fontSize: 19,
+                      color: Colors.green,
+                      fontWeight: FontWeight.w500),
+                ),
+              )
+              // Align(
+              //   alignment: Alignment.bottomRight,
+              //   child: IconButton(
+              //     icon: const Icon(Icons.add_shopping_cart),
+              //     onPressed: () {
+              //       // Acción al agregar al carrito
+              //     },
+              //   ),
+              // ),
+            ],
+          ),
         ),
       ),
     );
