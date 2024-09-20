@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/pages/category/category.dart';
 import 'package:prueba_buffet/pages/home/home_controller.dart';
+import 'package:prueba_buffet/pages/shopping_cart/shopping_cart.dart';
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
 import 'package:prueba_buffet/widgets/carrusel.dart';
 import 'package:prueba_buffet/widgets/category_item.dart';
@@ -108,7 +109,12 @@ class AppBar extends StatelessWidget {
           title: (top < 100 + statusBarHeight)
               ? GestureDetector(
                   onTap: () {
-                    print("Click saldo");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ShoppingCartScreen(),
+                      ),
+                    );
                   },
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.start,

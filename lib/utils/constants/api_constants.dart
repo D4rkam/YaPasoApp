@@ -19,4 +19,6 @@ class ApiUrl {
   // ----- Products
   static const String PRODUCT_GET = "$_hostServer/api/product/"; // GET
   static const String PRODUCTS_GET = "$_hostServer/api/product/all"; // GET
+
+  static const String PAY = "$_hostServer/api/pay/"; // POST
 }

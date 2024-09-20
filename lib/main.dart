@@ -6,8 +6,13 @@ import 'package:prueba_buffet/models/user.dart';
 import 'package:prueba_buffet/pages/home/home.dart';
 import 'package:prueba_buffet/pages/intro/intro.dart';
 import 'package:prueba_buffet/pages/login/login.dart';
+import 'package:prueba_buffet/pages/pay/pay.dart';
+import 'package:prueba_buffet/pages/pay_state/failure.dart';
+import 'package:prueba_buffet/pages/pay_state/pending.dart';
+import 'package:prueba_buffet/pages/pay_state/success.dart';
 import 'package:prueba_buffet/pages/product/product.dart';
 import 'package:prueba_buffet/pages/register/register.dart';
+import 'package:prueba_buffet/pages/shopping_cart/shopping_cart.dart';
 
 User userSession = User.fromJson(GetStorage().read("user") ?? {});
 
@@ -43,7 +48,12 @@ class _MyAppState extends State<MyApp> {
             transitionDuration: Duration.zero),
         GetPage(name: "/register", page: () => RegisterScreen()),
         GetPage(name: "/home", page: () => HomeScreen()),
-        GetPage(name: "/product", page: () => ProductScreen())
+        GetPage(name: "/product", page: () => ProductScreen()),
+        GetPage(name: "/shopping_cart", page: () => ShoppingCartScreen()),
+        GetPage(name: "/pay", page: () => const PayScreen()),
+        GetPage(name: "/success", page: () => const SuccessScreen()),
+        GetPage(name: "/failure", page: () => const FailureScreen()),
+        GetPage(name: "/pending", page: () => const PendingScreen())
       ],
       navigatorKey: Get.key,
       theme: AppTheme(enableDarkMode: false).theme(),
