@@ -27,7 +27,9 @@ class HomeScreen extends StatelessWidget {
           AppBar(statusBarHeight: statusBarHeight, controller: controller),
           SliverToBoxAdapter(
             child: Container(
-              color: const Color(0xFFFFE500),
+              decoration: const BoxDecoration(
+                color: const Color(0xFFFFE500),
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30.5), bottomRight: Radius.circular(30.5))),
               child: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                 child: InputSearchWidget(),
@@ -138,12 +140,12 @@ class AppBar extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Text('Disponible',
+                              Text('Saldo Disponible',
                                   style: TextStyle(
-                                      color: Colors.black, fontSize: 20)),
+                                      color: Color(0xFF5e5400), fontSize: 20)),
                               Icon(
                                 Icons.arrow_forward_ios_rounded,
-                                color: Colors.black87,
+                                color: Color(0xFF5e5400),
                               )
                             ],
                           ),
