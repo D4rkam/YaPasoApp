@@ -20,20 +20,36 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
+
     return Scaffold(
       body: CustomScrollView(
         scrollBehavior: NoOverscrollBehavior(),
         slivers: [
           AppBar(statusBarHeight: statusBarHeight, controller: controller),
           SliverToBoxAdapter(
-            child: Container(
-              decoration: const BoxDecoration(
-                color: const Color(0xFFFFE500),
-                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30.5), bottomRight: Radius.circular(30.5))),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                child: InputSearchWidget(),
-              ),
+            child: Stack(
+              clipBehavior: Clip.none, // Para permitir que el widget sobresalga
+              children: [
+                // Contenedor amarillo, más arriba
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFE500),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30.5),
+                      bottomRight: Radius.circular(30.5),
+                    ),
+                  ),
+                  padding: const EdgeInsetsDirectional.only(bottom: 50),
+                  height: 40, // Puedes ajustar esta altura según sea necesario
+                ),
+                // InputSearchWidget sobresaliendo
+                Positioned(
+                  top: 15, // Ajusta esta posición para sobresalir del contenedor amarillo
+                  left: 18,
+                  right: 18,
+                  child: const InputSearchWidget(),
+                ),
+              ],
             ),
           ),
           const SliverToBoxAdapter(
@@ -74,6 +90,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
 
 class AppBar extends StatelessWidget {
   const AppBar({

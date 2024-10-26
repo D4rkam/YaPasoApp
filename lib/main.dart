@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/config/theme/app_theme.dart';
 import 'package:prueba_buffet/models/user.dart';
 import 'package:prueba_buffet/pages/home/home.dart';
+import 'package:prueba_buffet/pages/cart/cart.dart';
 import 'package:prueba_buffet/pages/intro/intro.dart';
 import 'package:prueba_buffet/pages/login/login.dart';
 import 'package:prueba_buffet/pages/product/product.dart';
@@ -34,7 +35,7 @@ class _MyAppState extends State<MyApp> {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Ya paso',
-      initialRoute: userSession.id != null ? "/home" : "/home",
+      initialRoute: userSession.id != null ? "/cart" : "/cart",
       getPages: [
         GetPage(name: "/", page: () => IntroScreen()),
         GetPage(
@@ -43,6 +44,7 @@ class _MyAppState extends State<MyApp> {
             transitionDuration: Duration.zero),
         GetPage(name: "/register", page: () => RegisterScreen()),
         GetPage(name: "/home", page: () => HomeScreen()),
+        GetPage(name: "/cart", page: () => CartScreen()),
         GetPage(name: "/product", page: () => ProductScreen())
       ],
       navigatorKey: Get.key,
