@@ -1,54 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:prueba_buffet/pages/home/home_controller.dart';
 
 class ProductGrid extends StatelessWidget {
-  final List<Map<String, String>> products = [
-    {
-      'name': 'Galletita Opera',
-      'price': '750',
-      'image': "assets/images/productos/don_satur.png"
-    },
-    {
-      'name': 'Alfajor Guaymallen',
-      'price': '650',
-      'image': "assets/images/productos/don_satur.png"
-    },
-    {
-      'name': 'Alfajor Guaymallen',
-      'price': '650',
-      'image': "assets/images/productos/don_satur.png"
-    },
-    {
-      'name': 'Alfajor Guaymallen',
-      'price': '650',
-      'image': "assets/images/productos/don_satur.png"
-    },
-    {
-      'name': 'Alfajor Guaymallen',
-      'price': '650',
-      'image': "assets/images/productos/don_satur.png"
-    },
-  ];
-
-  ProductGrid({super.key});
+  const ProductGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SliverGrid(
-      delegate: SliverChildBuilderDelegate(
-        (ctx, i) => ProductCard(
-          name: products[i]['name']!,
-          price: products[i]['price']!,
-          imageUrl: products[i]['image']!,
-        ),
-        childCount: products.length,
-      ),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 1.1,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-      ),
-    );
+    final HomeController controller = Get.find<HomeController>();
+    final products = controller.products;
+
+    return Obx(() => SliverGrid(
+          delegate: SliverChildBuilderDelegate(
+            (ctx, i) => ProductCard(
+              name: products[i].name,
+              price: products[i].price.toString(),
+              imageUrl: products[i].imageUrl,
+              id: products[i].id,
+            ),
+            childCount: products.length,
+          ),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1.1,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+        ));
   }
 }
 
@@ -56,19 +34,21 @@ class ProductCard extends StatelessWidget {
   final String name;
   final String price;
   final String imageUrl;
+  final int id;
 
   const ProductCard({
     super.key,
     required this.name,
     required this.price,
     required this.imageUrl,
+    required this.id,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/product');
+        Navigator.pushNamed(context, '/product', arguments: id);
       },
       child: SizedBox(
         height: 100,
@@ -88,7 +68,8 @@ class ProductCard extends StatelessWidget {
                   alignment: Alignment.topCenter,
                   child: ClipRRect(
                     child: Image(
-                      image: AssetImage(
+                      image: NetworkImage(
+                          scale: 1,
                           imageUrl), // Reemplaza con la URL de tu imagen
                       height: 100,
                       fit: BoxFit.cover,

@@ -37,6 +37,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      enableLog: true,
       debugShowCheckedModeBanner: false,
       title: 'Ya paso',
       initialRoute: userSession.id != null ? "/home" : "/",

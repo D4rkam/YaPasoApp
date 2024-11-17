@@ -12,6 +12,7 @@ class User {
   String password;
   String fileNum;
   List? orders;
+  double? balance;
   Map<String, dynamic>? token;
 
   User(
@@ -22,6 +23,7 @@ class User {
       required this.password,
       required this.fileNum,
       this.orders,
+      this.balance,
       this.token});
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -32,6 +34,7 @@ class User {
       password: json["password"] ?? "",
       fileNum: json["file_num"] ?? "",
       orders: json["orders"] ?? [],
+      balance: json["balance"] ?? 0,
       token: json["token"] ?? {});
 
   Map<String, dynamic> toJson() => {
@@ -42,6 +45,7 @@ class User {
         "password": password,
         "file_num": fileNum,
         "orders": orders,
+        "balance": balance,
         "token": token
       };
 }

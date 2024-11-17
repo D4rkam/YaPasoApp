@@ -15,26 +15,25 @@ import 'package:prueba_buffet/widgets/product_grid.dart';
 //TODO: Utilizar MediaQuery para realizar un diseño responsive para todos los dispositivos moviles
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
-  final HomeController controller = Get.put(HomeController());
+  HomeScreen({
+    super.key,
+  });
+
+  final HomeController homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
+    if (homeController.products.isEmpty) {
+      homeController.getProducts();
+    }
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: CustomScrollView(
         scrollBehavior: NoOverscrollBehavior(),
         slivers: [
-          AppBar(statusBarHeight: statusBarHeight, controller: controller),
-          SliverToBoxAdapter(
-            child: Container(
-              color: const Color(0xFFFFE500),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                child: InputSearchWidget(),
-              ),
-            ),
-          ),
+          AppBar(statusBarHeight: statusBarHeight, controller: homeController),
+          const ContainerInputSearch(),
           const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.only(top: 10),
@@ -66,10 +65,29 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          ProductGrid()
+          const ProductGrid()
         ],
       ),
       bottomNavigationBar: const NavBarWidget(),
+    );
+  }
+}
+
+class ContainerInputSearch extends StatelessWidget {
+  const ContainerInputSearch({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Container(
+        color: const Color(0xFFFFE500),
+        child: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+          child: InputSearchWidget(),
+        ),
+      ),
     );
   }
 }
@@ -116,15 +134,15 @@ class AppBar extends StatelessWidget {
                       ),
                     );
                   },
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text('Disponible:',
+                      const Text('Disponible:',
                           style: TextStyle(color: Colors.black, fontSize: 20)),
-                      SizedBox(width: 8),
-                      Text('\$3000',
-                          style: TextStyle(
+                      const SizedBox(width: 8),
+                      Text('\$${controller.getBalance()}',
+                          style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
                               fontSize: 25)),
@@ -133,16 +151,16 @@ class AppBar extends StatelessWidget {
                 )
               : GestureDetector(
                   onTap: () {
-                    print("Click saldo");
+                    controller.signOut();
                   },
-                  child: const Row(
+                  child: Row(
                     // mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Column(
                         // mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
+                          const Row(
                             children: [
                               Text('Disponible',
                                   style: TextStyle(
@@ -153,8 +171,8 @@ class AppBar extends StatelessWidget {
                               )
                             ],
                           ),
-                          Text('\$3000',
-                              style: TextStyle(
+                          Text('\$${controller.getBalance()}',
+                              style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 25)),

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:prueba_buffet/pages/product/product_controller.dart';
 
 class ProductScreen extends StatelessWidget {
+  final ProductController controller = Get.put(ProductController());
+
   ProductScreen({super.key});
 
   final List<Map<String, String>> sugerencias = [
@@ -23,6 +27,9 @@ class ProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final int productId = ModalRoute.of(context)?.settings.arguments as int;
+    controller.getProduct(productId);
+    print(controller.product);
     return Scaffold(
       // Barra de navegación
       extendBody: true,
@@ -57,8 +64,9 @@ class ProductScreen extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 16),
             width: double.infinity,
             height: MediaQuery.of(context).size.height * 0.3,
-            child: Image.asset(
-              'assets/images/productos/coca_cola.png', // Reemplaza con la ruta de tu imagen
+            child: Image.network(
+              controller.product?.imageUrl ??
+                  "", // Reemplaza con la ruta de tu imagen
               height: 200,
               width: double.infinity,
               fit: BoxFit.fitHeight,
@@ -81,15 +89,15 @@ class ProductScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Nombre y reseñas
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Café',
-                          style: TextStyle(
+                          "${controller.product?.name}",
+                          style: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Icon(
@@ -128,15 +136,15 @@ class ProductScreen extends StatelessWidget {
                     ),
 
                     const SizedBox(height: 8),
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
-                            'Vasito de café con leche sabor suave y cremoso.',
+                            '${controller.product?.description}',
                             softWrap: true,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF4D4D4D)),
@@ -151,9 +159,9 @@ class ProductScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          '\$600',
-                          style: TextStyle(
+                        Text(
+                          '\$${controller.product?.price}',
+                          style: const TextStyle(
                             color: Color(0xFFFFE500),
                             fontSize: 30,
                             fontWeight: FontWeight.w500,
