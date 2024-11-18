@@ -9,7 +9,8 @@ import 'package:prueba_buffet/providers/products_provider.dart';
 class HomeController extends GetxController {
   ProductsProvider productsProvider = ProductsProvider();
   User userSession = User.fromJson(GetStorage().read("user") ?? {});
-  var products = <Product>[].obs;
+  var productsFromApi = <Product>[].obs;
+  var categoryProducts = <String>[].obs;
 
   void signOut() {
     GetStorage().remove("user");
@@ -22,20 +23,40 @@ class HomeController extends GetxController {
     );
   }
 
-  double getBalance() {
+  void goToShoppingCart() {
+    Get.toNamed(
+      "/shopping_cart",
+    );
+  }
+
+  void goToPay() {
+    Get.toNamed(
+      "/pay",
+    );
+  }
+
+  int getBalance() {
     return userSession.balance!;
+  }
+
+  void getCategoryOfProducts() {
+    final List<String> categorys = [
+      "Snacks",
+      "Galletitas",
+      "Bebidas",
+      "Golosinas",
+    ];
+    categoryProducts.assignAll(categorys);
   }
 
   void getProducts() async {
     var response = await productsProvider.getProducts();
 
-    products.addAllIf(
-      response.statusCode == 200,
-      productFromJson(response.body),
-    );
-    // if (response.statusCode == 200) {
-    //   products.assignAll(productFromJson(response.body));
-    // }
-    log(products.toString());
+    if (response.statusCode == 200) {
+      log("products: ${productsFromApi}");
+      productsFromApi.assignAll(productFromJson(response.body));
+
+      productsFromApi.refresh();
+    }
   }
 }

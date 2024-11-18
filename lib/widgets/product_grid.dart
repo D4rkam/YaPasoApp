@@ -8,25 +8,36 @@ class ProductGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final HomeController controller = Get.find<HomeController>();
-    final products = controller.products;
+    final products = controller.productsFromApi;
 
-    return Obx(() => SliverGrid(
-          delegate: SliverChildBuilderDelegate(
-            (ctx, i) => ProductCard(
-              name: products[i].name,
-              price: products[i].price.toString(),
-              imageUrl: products[i].imageUrl,
-              id: products[i].id,
+    return Obx(() => (products.isEmpty)
+        ? SliverToBoxAdapter(
+            child: Center(
+              child: Container(
+                color: Colors.grey,
+                height: 500,
+                width: 200,
+                child: const Center(child: Text("El servidor no responde")),
+              ),
             ),
-            childCount: products.length,
-          ),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 1.1,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-          ),
-        ));
+          )
+        : Obx(() => SliverGrid(
+              delegate: SliverChildBuilderDelegate(
+                (ctx, i) => ProductCard(
+                  name: products[i].name,
+                  price: products[i].price.toString(),
+                  imageUrl: products[i].imageUrl,
+                  id: products[i].id,
+                ),
+                childCount: products.length,
+              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1.1,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+            )));
   }
 }
 
@@ -55,7 +66,7 @@ class ProductCard extends StatelessWidget {
         width: double.infinity,
         child: Card(
           color: Colors.white,
-          elevation: 5,
+          elevation: 1,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),

@@ -13,7 +13,7 @@ String productToJson(List<Product> data) =>
 class Product {
   String name;
   String description;
-  double price;
+  int price;
   String imageUrl;
   int quantity;
   int id;

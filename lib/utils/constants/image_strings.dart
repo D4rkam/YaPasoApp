@@ -20,5 +20,5 @@ class ProjectImages {
   static const String galletitasIcon =
       "assets/images/categorias/galletitas_categoria.png";
   static const String sandwichIcon =
-      "assets/images/categorias/sandwich_categoria.png";
+      "assets/images/categorias/galletitas_categoria.png";
 }

@@ -24,7 +24,6 @@ class _PayState extends State<PayScreen> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final url = snapshot.data;
-          print(url);
           if (url != null) {
             return app(url);
           } else {

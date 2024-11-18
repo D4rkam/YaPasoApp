@@ -1,10 +1,11 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/pages/category/category.dart';
 import 'package:prueba_buffet/pages/home/home_controller.dart';
-import 'package:prueba_buffet/pages/shopping_cart/shopping_cart.dart';
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
 import 'package:prueba_buffet/widgets/carrusel.dart';
 import 'package:prueba_buffet/widgets/category_item.dart';
@@ -23,20 +24,22 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (homeController.products.isEmpty) {
+    if (homeController.productsFromApi.isEmpty) {
       homeController.getProducts();
     }
-    final double statusBarHeight = MediaQuery.of(context).padding.top;
+    if (homeController.categoryProducts.isEmpty) {
+      homeController.getCategoryOfProducts();
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
         scrollBehavior: NoOverscrollBehavior(),
         slivers: [
-          AppBar(statusBarHeight: statusBarHeight, controller: homeController),
+          CustomAppBar(homeController: homeController),
           const ContainerInputSearch(),
           const SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.only(top: 10),
+              padding: EdgeInsets.only(top: 40),
               child: CarruselWidget(),
             ),
           ),
@@ -44,31 +47,130 @@ class HomeScreen extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
               child: Text('Categorías',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w400)),
             ),
           ),
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.only(left: 20.0),
+              padding: const EdgeInsets.only(left: 20.0),
               child: SizedBox(
                 height: 100,
-                child: ListCategory(),
+                child: ListCategory(
+                  categorys: homeController.categoryProducts,
+                ),
               ),
             ),
           ),
           const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              child: Text(
-                'Todos los Productos',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Todos los Productos',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
+                  ),
+                  Text(
+                    "Ver más",
+                    style: TextStyle(fontSize: 17, color: Color(0xFFB3B3B3)),
+                  )
+                ],
               ),
             ),
           ),
           const ProductGrid()
         ],
       ),
-      bottomNavigationBar: const NavBarWidget(),
+      bottomNavigationBar: NavBarWidget(homeController: homeController),
+    );
+  }
+}
+
+class CustomAppBar extends StatelessWidget {
+  const CustomAppBar({
+    super.key,
+    required this.homeController,
+  });
+
+  final HomeController homeController;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Stack(children: [
+        Container(
+          height: 150,
+          color: const Color(0xFFFFE500),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10, left: 29, right: 29),
+              child: Row(
+                // mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      log("Saldo");
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Row(
+                          children: [
+                            Text('Saldo Disponible',
+                                style: TextStyle(
+                                    color: Color(0xFF5E5400), fontSize: 22)),
+                            Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              color: Color(0xFF5E5400),
+                            )
+                          ],
+                        ),
+                        Text('\$${homeController.getBalance()}',
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 30)),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      homeController.goToShoppingCart();
+                    },
+                    child: Container(
+                      width: 70,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "2",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 24),
+                          ),
+                          Icon(
+                            Icons.shopping_cart,
+                            size: 26,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        )
+      ]),
     );
   }
 }
@@ -81,209 +183,201 @@ class ContainerInputSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
-      child: Container(
-        color: const Color(0xFFFFE500),
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-          child: InputSearchWidget(),
-        ),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: double.infinity,
+            height: 30,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+              color: Color(0xFFFFE500),
+            ),
+          ),
+          Positioned(
+            bottom: -20,
+            left: 29,
+            right: 29,
+            child: Material(
+              // elevation: 2,
+              shadowColor: const Color(0xFFE6E6E6),
+              borderRadius: BorderRadius.circular(20),
+              child: const InputSearchWidget(),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class AppBar extends StatelessWidget {
-  const AppBar({
-    super.key,
-    required this.statusBarHeight,
-    required this.controller,
-  });
+// class CustomAppBar extends StatelessWidget {
+//   const CustomAppBar({
+//     super.key,
+//     required this.statusBarHeight,
+//     required this.controller,
+//   });
 
-  final double statusBarHeight;
-  final HomeController controller;
+//   final double statusBarHeight;
+//   final HomeController controller;
 
-  @override
-  Widget build(BuildContext context) {
-    return SliverAppBar(
-      floating: false,
-      pinned: true,
-      automaticallyImplyLeading: false,
-      expandedHeight: 101,
-      stretch: true,
-      backgroundColor: const Color(0xFFFFE500),
-      flexibleSpace: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-        var top = constraints.biggest.height;
-        return FlexibleSpaceBar(
-          titlePadding: EdgeInsets.only(
-              left: 16,
-              right: 16,
-              top: top < 85 + statusBarHeight
-                  ? statusBarHeight
-                  : 38 + statusBarHeight,
-              bottom: top < 80 + statusBarHeight ? 10 : 0),
-          expandedTitleScale: 1,
-          // centerTitle: false,
-          title: (top < 100 + statusBarHeight)
-              ? GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ShoppingCartScreen(),
-                      ),
-                    );
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    // crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text('Disponible:',
-                          style: TextStyle(color: Colors.black, fontSize: 20)),
-                      const SizedBox(width: 8),
-                      Text('\$${controller.getBalance()}',
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 25)),
-                    ],
-                  ),
-                )
-              : GestureDetector(
-                  onTap: () {
-                    controller.signOut();
-                  },
-                  child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Column(
-                        // mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Row(
-                            children: [
-                              Text('Disponible',
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 20)),
-                              Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                color: Colors.black87,
-                              )
-                            ],
-                          ),
-                          Text('\$${controller.getBalance()}',
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 25)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-        );
-      }),
-    );
-  }
-}
-
-Widget shoppingCart() {
-  return Stack(
-    children: [
-      IconButton(
-        onPressed: () {},
-        icon: const Icon(Icons.shopping_cart),
-        style: const ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(Colors.white),
-          padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 20)),
-        ),
-      ),
-      const Positioned(
-        right: 1,
-        top: 1,
-        child: CircleAvatar(
-          backgroundColor: Colors.black,
-          radius: 11,
-          child: Text("1",
-              style: TextStyle(
-                color: Colors.white,
-              )),
-        ),
-      )
-    ],
-  );
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return SliverAppBar(
+//       floating: false,
+//       pinned: true,
+//       automaticallyImplyLeading: false,
+//       expandedHeight: 110 + statusBarHeight,
+//       elevation: 0,
+//       stretch: true,
+//       backgroundColor: const Color(0xFFFFE500),
+//       flexibleSpace: ClipRRect(
+//         borderRadius: BorderRadius.circular(30),
+//         child: FlexibleSpaceBar(
+//           expandedTitleScale: 1,
+//           title: (true)
+//               ? SafeArea(
+//                   child: Padding(
+//                     padding:
+//                         const EdgeInsets.only(top: 10, left: 29, right: 29),
+//                     child: Row(
+//                       // mainAxisAlignment: MainAxisAlignment.center,
+//                       crossAxisAlignment: CrossAxisAlignment.center,
+//                       children: [
+//                         GestureDetector(
+//                           onTap: () {
+//                             log("Saldo");
+//                           },
+//                           child: const Column(
+//                             crossAxisAlignment: CrossAxisAlignment.start,
+//                             mainAxisAlignment: MainAxisAlignment.center,
+//                             children: [
+//                               Row(
+//                                 children: [
+//                                   Text('Saldo Disponible',
+//                                       style: TextStyle(
+//                                           color: Color(0xFF5E5400),
+//                                           fontSize: 22)),
+//                                   Icon(
+//                                     Icons.arrow_forward_ios_rounded,
+//                                     color: Color(0xFF5E5400),
+//                                   )
+//                                 ],
+//                               ),
+//                               Text('\$3550',
+//                                   style: TextStyle(
+//                                       color: Colors.black,
+//                                       fontWeight: FontWeight.w500,
+//                                       fontSize: 30)),
+//                             ],
+//                           ),
+//                         ),
+//                         const Spacer(),
+//                         GestureDetector(
+//                           onTap: () => controller.goToShoppingCart(),
+//                           child: Container(
+//                             width: 70,
+//                             height: 48,
+//                             decoration: BoxDecoration(
+//                               borderRadius: BorderRadius.circular(10),
+//                               color: Colors.white,
+//                             ),
+//                             child: const Row(
+//                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                               crossAxisAlignment: CrossAxisAlignment.center,
+//                               children: [
+//                                 Text(
+//                                   "2",
+//                                   style: TextStyle(
+//                                       fontWeight: FontWeight.w600,
+//                                       fontSize: 24),
+//                                 ),
+//                                 Icon(
+//                                   Icons.shopping_cart,
+//                                   size: 26,
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                         )
+//                       ],
+//                     ),
+//                   ),
+//                 )
+//               : GestureDetector(
+//                   onTap: () {
+//                     controller.signOut();
+//                   },
+//                   child: Row(
+//                     // mainAxisAlignment: MainAxisAlignment.start,
+//                     children: [
+//                       Column(
+//                         // mainAxisAlignment: MainAxisAlignment.center,
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           const Row(
+//                             children: [
+//                               Text('Disponible',
+//                                   style: TextStyle(
+//                                       color: Colors.black, fontSize: 20)),
+//                               Icon(
+//                                 Icons.arrow_forward_ios_rounded,
+//                                 color: Colors.black87,
+//                               )
+//                             ],
+//                           ),
+//                           Text('\$${controller.getBalance()}',
+//                               style: const TextStyle(
+//                                   color: Colors.black,
+//                                   fontWeight: FontWeight.w600,
+//                                   fontSize: 25)),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class ListCategory extends StatelessWidget {
-  const ListCategory({
+  ListCategory({
     super.key,
+    required this.categorys,
   });
+  final List categorys;
+  final List categorysIcon = [
+    ProjectImages.snacksIcon,
+    ProjectImages.galletitasIcon,
+    ProjectImages.bebidaIcon,
+    ProjectImages.golosinasIcon
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: 1,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (_, index) {
-        return Row(children: [
-          CategoryItem(
-            title: 'Snacks',
-            imageUrl: ProjectImages.snacksIcon,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    const CategoryScreen(categoryTitle: "Snacks"),
+    return Obx(
+      () => ListView.builder(
+        shrinkWrap: true,
+        itemCount: categorys.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (_, index) {
+          return Row(children: [
+            CategoryItem(
+              title: categorys[index],
+              imageUrl: categorysIcon[index],
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      CategoryScreen(categoryTitle: categorys[index]),
+                ),
               ),
             ),
-          ),
-          CategoryItem(
-            title: 'Galletitas',
-            imageUrl: ProjectImages.galletitasIcon,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    const CategoryScreen(categoryTitle: "Galletitas"),
-              ),
-            ),
-          ),
-          CategoryItem(
-            title: 'Bebidas',
-            imageUrl: ProjectImages.bebidaIcon,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    const CategoryScreen(categoryTitle: "Bebidas"),
-              ),
-            ),
-          ),
-          CategoryItem(
-            title: 'Golosinas',
-            imageUrl: ProjectImages.golosinasIcon,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    const CategoryScreen(categoryTitle: "Golosinas"),
-              ),
-            ),
-          ),
-          CategoryItem(
-            title: 'Sandwiches',
-            imageUrl: ProjectImages.sandwichIcon,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    const CategoryScreen(categoryTitle: "Sandwiches"),
-              ),
-            ),
-          ),
-        ]);
-      },
+          ]);
+        },
+      ),
     );
   }
 }

@@ -12,7 +12,7 @@ class User {
   String password;
   String fileNum;
   List? orders;
-  double? balance;
+  int? balance;
   Map<String, dynamic>? token;
 
   User(

@@ -19,35 +19,38 @@ class CategoryItem extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.only(right: 18.0),
-        child: Column(
+        child: Stack(
           children: [
             Container(
-              width: 65,
-              height: 65,
-              padding: const EdgeInsets.all(5),
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
                 color: backgroundColor,
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(50),
               ),
               child: Center(
                 child: Image(
                   image: AssetImage(imageUrl),
-                  fit: BoxFit.fitHeight,
-                  height: 40,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-            const SizedBox(height: 4),
-            SizedBox(
-              width: 75,
-              child: Center(
-                child: Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(50),
               ),
-            )
+              child: Center(
+                  child: Text(
+                title,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800),
+              )),
+            ),
           ],
         ),
       ),
