@@ -3,29 +3,58 @@ import 'package:flutter/material.dart';
 class CartProductGrid extends StatelessWidget {
   final List<Map<String, String>> products = [
     {
-      'name': 'Galletita Opera',
-      'price': '750',
-      'image': "assets/images/productos/don_satur.png"
+      'name': 'Medialuna',
+      'price': '500',
+      'description': 'descripción',
+      'image': "assets/images/carrito/medialuna.png"
     },
     {
-      'name': 'Alfajor Guaymallen',
+      'name': 'Lata de Pepsi',
       'price': '650',
-      'image': "assets/images/productos/don_satur.png"
+      'description': 'descripción',
+      'image': "assets/images/carrito/pepsi.png"
     },
     {
-      'name': 'Alfajor Guaymallen',
-      'price': '650',
-      'image': "assets/images/productos/don_satur.png"
+      'name': 'Cafe Expreso',
+      'price': '600',
+      'description': 'descripción',
+      'image': "assets/images/carrito/cafe_expreso.png"
     },
     {
-      'name': 'Alfajor Guaymallen',
-      'price': '650',
-      'image': "assets/images/productos/don_satur.png"
+      'name': 'Medialuna',
+      'price': '500',
+      'description': 'descripción',
+      'image': "assets/images/carrito/medialuna.png"
     },
     {
-      'name': 'Alfajor Guaymallen',
+      'name': 'Lata de Pepsi',
       'price': '650',
-      'image': "assets/images/productos/don_satur.png"
+      'description': 'descripción',
+      'image': "assets/images/carrito/pepsi.png"
+    },
+    {
+      'name': 'Cafe Expreso',
+      'price': '600',
+      'description': 'descripción',
+      'image': "assets/images/carrito/cafe_expreso.png"
+    },
+    {
+      'name': 'Medialuna',
+      'price': '500',
+      'description': 'descripción',
+      'image': "assets/images/carrito/medialuna.png"
+    },
+    {
+      'name': 'Lata de Pepsi',
+      'price': '650',
+      'description': 'descripción',
+      'image': "assets/images/carrito/pepsi.png"
+    },
+    {
+      'name': 'Cafe Expreso',
+      'price': '600',
+      'description': 'descripción',
+      'image': "assets/images/carrito/cafe_expreso.png"
     },
   ];
 
@@ -35,9 +64,10 @@ class CartProductGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-        (ctx, i) => ProductCard(
+            (ctx, i) => ProductCard(
           name: products[i]['name']!,
           price: products[i]['price']!,
+          description: products[i]['description']!,
           imageUrl: products[i]['image']!,
         ),
         childCount: products.length,
@@ -50,22 +80,26 @@ class ProductCard extends StatelessWidget {
   final String name;
   final String price;
   final String imageUrl;
+  final String description;
 
   const ProductCard({
     super.key,
     required this.name,
     required this.price,
     required this.imageUrl,
+    required this.description,
   });
 
   @override
+
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, '/product');
       },
+
       child: SizedBox(
-        height: 100,
+        height: 140,
         width: double.infinity,
         child: Card(
           color: Colors.white,
@@ -77,13 +111,13 @@ class ProductCard extends StatelessWidget {
             // crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(top: 4),
+                padding: const EdgeInsets.only(top: 15, left: 40),
                 child: Align(
-                  alignment: Alignment.topCenter,
+                  alignment: Alignment.topLeft,
                   child: ClipRRect(
                     child: Image(
                       image: AssetImage(
-                          imageUrl), // Reemplaza con la URL de tu imagen
+                          imageUrl),
                       height: 100,
                       fit: BoxFit.cover,
                     ),
@@ -99,8 +133,8 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
               Positioned(
-                bottom: 45,
-                left: 12,
+                bottom: 60,
+                left: 210,
                 child: Text(
                   name,
                   style: const TextStyle(
@@ -108,8 +142,16 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
               Positioned(
-                bottom: 18,
-                left: 12,
+                  top: 70,
+                  left: 210,
+                  child: Text(
+                    description,
+                    style: const TextStyle(
+                        fontSize: 10, fontWeight: FontWeight.w500),
+                  )),
+              Positioned(
+                top: 90,
+                left: 210,
                 child: Text(
                   '\$$price',
                   style: const TextStyle(
@@ -117,7 +159,7 @@ class ProductCard extends StatelessWidget {
                       color: Colors.green,
                       fontWeight: FontWeight.w500),
                 ),
-              )
+              ),
               // Align(
               //   alignment: Alignment.bottomRight,
               //   child: IconButton(
