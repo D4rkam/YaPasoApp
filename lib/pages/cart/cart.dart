@@ -40,13 +40,55 @@ class CartScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: CustomScrollView(
-        scrollBehavior: NoOverscrollBehavior(),
-        slivers: [
-          CartProductGrid()
+      body: Column(
+        children: <Widget>[
+          Container(
+            // height: MediaQuery.of(context).size.height * 0.6,
+            height: 600,
+            child: CustomScrollView(
+              scrollBehavior: NoOverscrollBehavior(),
+              slivers: [
+                CartProductGrid()
+              ],
+            ),
+          ),
+          Container(
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      child: Text('Total a pagar ',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium!
+                              .copyWith(color: Colors.black)
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(16.0),
+                      // width: MediaQuery.of(context).size.width * 0.7,
+                      child: Text('\$ 1200',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium!
+                              .copyWith(color: Colors.black)
+                      ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  tooltip: 'Favorite',
+                  icon: const Icon(Icons.favorite),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ),
         ],
       ),
-      // bottomNavigationBar: const NavBarWidget(),
     );
   }
 }

@@ -16,7 +16,7 @@ class CartController extends GetxController {
 
   void goToProduct() {
     Get.toNamed(
-      "/product",
+      "/cart",
     );
   }
 }
