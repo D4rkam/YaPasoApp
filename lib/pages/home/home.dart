@@ -15,12 +15,53 @@ import 'package:prueba_buffet/widgets/product_grid.dart';
 
 //TODO: Utilizar MediaQuery para realizar un diseño responsive para todos los dispositivos moviles
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   HomeScreen({
     super.key,
   });
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   final HomeController homeController = Get.put(HomeController());
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  late AnimationController animationController;
+  late Animation<Offset> slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+
+    slideAnimation = Tween<Offset>(
+      begin: const Offset(-1, 0),
+      end: Offset.zero,
+    ).animate(
+        CurvedAnimation(parent: animationController, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+  // Método para abrir o cerrar el Drawer
+  void toggleDrawer() {
+    if (animationController.isDismissed) {
+      animationController.forward(); // Abrir el Drawer
+    } else {
+      animationController.reverse(); // Cerrar el Drawer
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +72,9 @@ class HomeScreen extends StatelessWidget {
       homeController.getCategoryOfProducts();
     }
     return Scaffold(
+      drawer: SideMenu(
+          animationController: animationController,
+          slideAnimation: slideAnimation),
       backgroundColor: Colors.white,
       body: CustomScrollView(
         scrollBehavior: NoOverscrollBehavior(),
@@ -82,8 +126,74 @@ class HomeScreen extends StatelessWidget {
           const ProductGrid()
         ],
       ),
-      bottomNavigationBar: NavBarWidget(homeController: homeController),
+      bottomNavigationBar: NavBarWidget(scaffoldKey: _scaffoldKey),
     );
+  }
+}
+
+class SideMenu extends StatefulWidget {
+  const SideMenu({
+    super.key,
+    required this.animationController,
+    required this.slideAnimation,
+  });
+
+  final AnimationController animationController;
+  final Animation<Offset> slideAnimation;
+
+  @override
+  State<SideMenu> createState() => _SideMenuState();
+}
+
+class _SideMenuState extends State<SideMenu> {
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+        animation: widget.animationController,
+        builder: (context, child) {
+          return Transform.translate(
+              offset: widget.slideAnimation.value,
+              child: Drawer(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    const DrawerHeader(
+                      decoration: BoxDecoration(
+                        color: Colors.yellow,
+                      ),
+                      child: Text(
+                        'Menú Lateral',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 24,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.account_balance_wallet),
+                      title: const Text('Saldo Disponible'),
+                      onTap: () {
+                        // Acción al hacer clic en "Saldo Disponible"
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.settings),
+                      title: const Text('Configuración'),
+                      onTap: () {
+                        // Acción al hacer clic en "Configuración"
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.help),
+                      title: const Text('Ayuda'),
+                      onTap: () {
+                        // Acción al hacer clic en "Ayuda"
+                      },
+                    ),
+                  ],
+                ),
+              ));
+        });
   }
 }
 

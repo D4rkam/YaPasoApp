@@ -130,7 +130,7 @@ class ScreenWithItems extends StatelessWidget {
                   ),
                 ],
               ),
-              _buyButton(context: context), // Botón de compra
+              BuyButton(controller: controller) // Botón de compra
             ],
           ),
         ),
@@ -351,38 +351,29 @@ class Counter extends StatelessWidget {
   }
 }
 
-Widget _buyButton({required BuildContext context}) {
-  return SizedBox(
-    width: MediaQuery.of(context).size.width * 0.7,
-    height: 60,
-    child: ElevatedButton(
-      onPressed: () => {},
-      style: ButtonStyle(
-        backgroundColor:
-            WidgetStateProperty.all<Color>(const Color(0xFFFFE500)),
-        foregroundColor: WidgetStateProperty.all<Color>(Colors.black),
-        textStyle: WidgetStateProperty.all<TextStyle>(
-          const TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+class BuyButton extends StatelessWidget {
+  const BuyButton({super.key, required this.controller});
+  final ShoppingCartController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.7,
+      height: 70,
+      child: ElevatedButton(
+        style: const ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll<Color>(Color(0xFFFFE500)),
+            foregroundColor: WidgetStatePropertyAll<Color>(Colors.black),
+            shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20))))),
+        onPressed: () {
+          controller.pay();
+        },
+        child: const Text(
+          "Comprar",
+          style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
         ),
       ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            'Comprar',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    ),
-  );
+    );
+  }
 }

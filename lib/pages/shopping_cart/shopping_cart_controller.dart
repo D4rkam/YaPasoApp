@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:prueba_buffet/providers/pay_provider.dart';
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Product {
   final int id;
@@ -102,34 +103,36 @@ class ShoppingCartController extends GetxController {
     },
   ];
 
-  // Future<void> transformarYAbrirLinkMercadoPago(String linkMercadoPago) async {
-  //   // Extraer el ID de la preferencia
-  //   final regex = RegExp(r'pref_id=([^&]+)');
-  //   final match = regex.firstMatch(linkMercadoPago);
+  Future<void> transformarYAbrirLinkMercadoPago(String linkMercadoPago) async {
+    // Extraer el ID de la preferencia
+    final regex = RegExp(r'pref_id=([^&]+)');
+    final match = regex.firstMatch(linkMercadoPago);
 
-  //   if (match != null) {
-  //     final preferenceId = match.group(1);
-  //     final nuevoLink =
-  //         'mercadopago://sandbox/payment?preference_id=$preferenceId';
+    if (match != null) {
+      final preferenceId = match.group(1);
 
-  //     final uriLink = Uri.parse(nuevoLink);
-  //     print(uriLink);
-  //     await launchUrl(uriLink);
-  //     if (await canLaunchUrl(Uri.parse(nuevoLink))) {
-  //     } else {
-  //       print('No se pudo abrir el link: $nuevoLink');
-  //     }
-  //   } else {
-  //     print('No se encontró el ID de preferencia en el link');
-  //   }
-  // }
+      final nuevoLink =
+          "https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=$preferenceId";
+
+      final uriLink = Uri.parse(nuevoLink);
+      if (await canLaunchUrl(uriLink)) {
+        await launchUrl(uriLink);
+      } else {
+        print('No se pudo abrir el link: $nuevoLink');
+      }
+    } else {
+      print('No se encontró el ID de preferencia en el link');
+    }
+  }
 
   void pay() async {
     Response response = await payProvider.pay(items);
-    String? url = response.body["sandbox_init_point"];
-    if (url != null) {
-      // transformarYAbrirLinkMercadoPago(url);
-      Get.toNamed("/pay", arguments: Future.value(url));
+    if (response.statusCode == 200) {
+      String? url = response.body["sandbox_init_point"];
+      if (url != null) {
+        transformarYAbrirLinkMercadoPago(url);
+        // Get.toNamed("/pay", arguments: Future.value(url));
+      }
     }
   }
 }

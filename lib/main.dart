@@ -12,6 +12,7 @@ import 'package:prueba_buffet/pages/pay_state/pending.dart';
 import 'package:prueba_buffet/pages/pay_state/success.dart';
 import 'package:prueba_buffet/pages/product/product.dart';
 import 'package:prueba_buffet/pages/register/register.dart';
+import 'package:prueba_buffet/pages/security/security_finger.dart';
 import 'package:prueba_buffet/pages/shopping_cart/shopping_cart.dart';
 
 User userSession = User.fromJson(GetStorage().read("user") ?? {});
@@ -40,9 +41,10 @@ class _MyAppState extends State<MyApp> {
       enableLog: true,
       debugShowCheckedModeBanner: false,
       title: 'Ya paso',
-      initialRoute: userSession.id != null ? "/home" : "/",
+      initialRoute: userSession.id != null ? "/security" : "/",
       getPages: [
         GetPage(name: "/", page: () => IntroScreen()),
+        GetPage(name: "/security", page: () => const SecurityFinger()),
         GetPage(
             name: "/login",
             page: () => LoginScreen(),
@@ -52,9 +54,9 @@ class _MyAppState extends State<MyApp> {
         GetPage(name: "/product", page: () => ProductScreen()),
         GetPage(name: "/shopping_cart", page: () => ShoppingCartScreen()),
         GetPage(name: "/pay", page: () => const PayScreen()),
-        GetPage(name: "/success", page: () => const SuccessScreen()),
-        GetPage(name: "/failure", page: () => const FailureScreen()),
-        GetPage(name: "/pending", page: () => const PendingScreen())
+        GetPage(name: "/success_pay", page: () => const SuccessScreen()),
+        GetPage(name: "/failure_pay", page: () => const FailureScreen()),
+        GetPage(name: "/pending_pay", page: () => const PendingScreen())
       ],
       navigatorKey: Get.key,
       theme: AppTheme(enableDarkMode: false).theme(),
