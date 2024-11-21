@@ -38,9 +38,10 @@ dependencies:
   get: ^4.6.6
   get_storage: ^2.1.1
   sn_progress_dialog: ^1.1.4
-  flutter_inappwebview: ^6.0.0
   url_launcher: ^6.0.20
   local_auth: ^2.3.0
+  intl: ^0.19.0
+  flutter_localization: ^0.2.2
 
 dev_dependencies:
   flutter_native_splash: ^2.4.0
@@ -90,6 +91,9 @@ flutter:
     - assets/images/logo-sin.png
     - assets/images/cart_empty.png
     - assets/images/intro/img_intro_screen.png
+    - assets/images/pago_efect.png
+    - assets/images/pago_transf.png
+    - assets/images/y_yapaso.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

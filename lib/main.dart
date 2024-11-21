@@ -14,6 +14,7 @@ import 'package:prueba_buffet/pages/product/product.dart';
 import 'package:prueba_buffet/pages/register/register.dart';
 import 'package:prueba_buffet/pages/security/security_finger.dart';
 import 'package:prueba_buffet/pages/shopping_cart/shopping_cart.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 User userSession = User.fromJson(GetStorage().read("user") ?? {});
 
@@ -38,6 +39,12 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('es', 'ES')],
       enableLog: true,
       debugShowCheckedModeBanner: false,
       title: 'Ya paso',

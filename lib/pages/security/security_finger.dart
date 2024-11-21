@@ -18,7 +18,7 @@ class _SecurityFingerState extends State<SecurityFinger> {
     });
     try {
       final isAuthenticated = await auth.authenticate(
-        localizedReason: 'Please authenticate to proceed',
+        localizedReason: 'Escanee su huella digital',
         options: const AuthenticationOptions(
           biometricOnly: false,
         ),
@@ -44,9 +44,6 @@ class _SecurityFingerState extends State<SecurityFinger> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Fingerprint Authentication'),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -56,7 +53,7 @@ class _SecurityFingerState extends State<SecurityFinger> {
             else
               ElevatedButton(
                 onPressed: _authenticate,
-                child: const Text('Authenticate with Fingerprint'),
+                child: const Text('Desbloquear'),
               ),
           ],
         ),

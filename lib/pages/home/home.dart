@@ -9,9 +9,10 @@ import 'package:prueba_buffet/pages/home/home_controller.dart';
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
 import 'package:prueba_buffet/widgets/carrusel.dart';
 import 'package:prueba_buffet/widgets/category_item.dart';
-import 'package:prueba_buffet/widgets/input_search.dart';
+import 'package:prueba_buffet/widgets/input.dart';
 import 'package:prueba_buffet/widgets/navbar.dart';
 import 'package:prueba_buffet/widgets/product_grid.dart';
+import 'package:prueba_buffet/widgets/shopping_cart_button.dart';
 
 //TODO: Utilizar MediaQuery para realizar un diseño responsive para todos los dispositivos moviles
 
@@ -247,34 +248,7 @@ class CustomAppBar extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      homeController.goToShoppingCart();
-                    },
-                    child: Container(
-                      width: 70,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.white,
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "2",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 24),
-                          ),
-                          Icon(
-                            Icons.shopping_cart,
-                            size: 26,
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
+                  ShoppingCartButton(homeController: homeController)
                 ],
               ),
             ),
@@ -298,7 +272,7 @@ class ContainerInputSearch extends StatelessWidget {
         children: [
           Container(
             width: double.infinity,
-            height: 30,
+            height: 40,
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
               color: Color(0xFFFFE500),
@@ -312,7 +286,11 @@ class ContainerInputSearch extends StatelessWidget {
               // elevation: 2,
               shadowColor: const Color(0xFFE6E6E6),
               borderRadius: BorderRadius.circular(20),
-              child: const InputSearchWidget(),
+              child: InputWidget(
+                hintText: "Buscar producto",
+                icon: Icons.search,
+                withIcon: true,
+              ),
             ),
           ),
         ],
@@ -320,137 +298,6 @@ class ContainerInputSearch extends StatelessWidget {
     );
   }
 }
-
-// class CustomAppBar extends StatelessWidget {
-//   const CustomAppBar({
-//     super.key,
-//     required this.statusBarHeight,
-//     required this.controller,
-//   });
-
-//   final double statusBarHeight;
-//   final HomeController controller;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return SliverAppBar(
-//       floating: false,
-//       pinned: true,
-//       automaticallyImplyLeading: false,
-//       expandedHeight: 110 + statusBarHeight,
-//       elevation: 0,
-//       stretch: true,
-//       backgroundColor: const Color(0xFFFFE500),
-//       flexibleSpace: ClipRRect(
-//         borderRadius: BorderRadius.circular(30),
-//         child: FlexibleSpaceBar(
-//           expandedTitleScale: 1,
-//           title: (true)
-//               ? SafeArea(
-//                   child: Padding(
-//                     padding:
-//                         const EdgeInsets.only(top: 10, left: 29, right: 29),
-//                     child: Row(
-//                       // mainAxisAlignment: MainAxisAlignment.center,
-//                       crossAxisAlignment: CrossAxisAlignment.center,
-//                       children: [
-//                         GestureDetector(
-//                           onTap: () {
-//                             log("Saldo");
-//                           },
-//                           child: const Column(
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             mainAxisAlignment: MainAxisAlignment.center,
-//                             children: [
-//                               Row(
-//                                 children: [
-//                                   Text('Saldo Disponible',
-//                                       style: TextStyle(
-//                                           color: Color(0xFF5E5400),
-//                                           fontSize: 22)),
-//                                   Icon(
-//                                     Icons.arrow_forward_ios_rounded,
-//                                     color: Color(0xFF5E5400),
-//                                   )
-//                                 ],
-//                               ),
-//                               Text('\$3550',
-//                                   style: TextStyle(
-//                                       color: Colors.black,
-//                                       fontWeight: FontWeight.w500,
-//                                       fontSize: 30)),
-//                             ],
-//                           ),
-//                         ),
-//                         const Spacer(),
-//                         GestureDetector(
-//                           onTap: () => controller.goToShoppingCart(),
-//                           child: Container(
-//                             width: 70,
-//                             height: 48,
-//                             decoration: BoxDecoration(
-//                               borderRadius: BorderRadius.circular(10),
-//                               color: Colors.white,
-//                             ),
-//                             child: const Row(
-//                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                               crossAxisAlignment: CrossAxisAlignment.center,
-//                               children: [
-//                                 Text(
-//                                   "2",
-//                                   style: TextStyle(
-//                                       fontWeight: FontWeight.w600,
-//                                       fontSize: 24),
-//                                 ),
-//                                 Icon(
-//                                   Icons.shopping_cart,
-//                                   size: 26,
-//                                 ),
-//                               ],
-//                             ),
-//                           ),
-//                         )
-//                       ],
-//                     ),
-//                   ),
-//                 )
-//               : GestureDetector(
-//                   onTap: () {
-//                     controller.signOut();
-//                   },
-//                   child: Row(
-//                     // mainAxisAlignment: MainAxisAlignment.start,
-//                     children: [
-//                       Column(
-//                         // mainAxisAlignment: MainAxisAlignment.center,
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           const Row(
-//                             children: [
-//                               Text('Disponible',
-//                                   style: TextStyle(
-//                                       color: Colors.black, fontSize: 20)),
-//                               Icon(
-//                                 Icons.arrow_forward_ios_rounded,
-//                                 color: Colors.black87,
-//                               )
-//                             ],
-//                           ),
-//                           Text('\$${controller.getBalance()}',
-//                               style: const TextStyle(
-//                                   color: Colors.black,
-//                                   fontWeight: FontWeight.w600,
-//                                   fontSize: 25)),
-//                         ],
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class ListCategory extends StatelessWidget {
   ListCategory({

@@ -184,7 +184,7 @@ class ListOfProducts extends StatelessWidget {
 class ProductCardCart extends StatelessWidget {
   ProductCardCart({super.key, required this.product});
 
-  final Product product;
+  final ProductForCart product;
   final ShoppingCartController controller = Get.put(ShoppingCartController());
 
   @override
@@ -214,8 +214,8 @@ class ProductCardCart extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.amber,
                 borderRadius: BorderRadius.circular(8),
-                image: const DecorationImage(
-                  image: AssetImage(ProjectImages.bebidaIcon),
+                image: DecorationImage(
+                  image: NetworkImage(product.imagePath),
                   fit: BoxFit.fitWidth,
                 ),
               ),
@@ -275,7 +275,7 @@ class Counter extends StatelessWidget {
     required this.product,
   });
 
-  final Product product;
+  final ProductForCart product;
   final ShoppingCartController controller;
 
   @override
@@ -289,38 +289,43 @@ class Counter extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            InkWell(
-              overlayColor:
-                  WidgetStateProperty.all(Colors.black.withOpacity(0.2)),
-              onTap: (product.quantity.value > 1)
-                  ? () {
-                      controller.updateQuantity(
-                          product.id, product.quantity.value - 1);
-                    }
-                  : null,
-              child: Obx(
-                () => Ink(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: (product.quantity.value > 1)
-                          ? const Color(0xFFF9EA68)
-                          : const Color(0xFFD7D7D7)),
-                  child: Icon(Icons.remove,
-                      color: (product.quantity.value > 1)
-                          ? const Color(0xFFD3BF09)
-                          : const Color(0xFF6F6F6F)),
+            Obx(
+              () => InkWell(
+                overlayColor:
+                    WidgetStateProperty.all(Colors.black.withOpacity(0.2)),
+                onTap: (product.quantity.value > 1)
+                    ? () {
+                        controller.updateQuantity(
+                            product.id, product.quantity.value - 1);
+                      }
+                    : null,
+                child: Obx(
+                  () => Ink(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: (product.quantity.value > 1)
+                            ? const Color(0xFFF9EA68)
+                            : const Color(0xFFD7D7D7)),
+                    child: Icon(Icons.remove,
+                        color: (product.quantity.value > 1)
+                            ? const Color(0xFFD3BF09)
+                            : const Color(0xFF6F6F6F)),
+                  ),
                 ),
               ),
             ),
             Obx(
-              () => Text(
-                '${product.quantity}',
-                style: const TextStyle(
-                  color: Color(0xFFD3BF09),
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+              () => FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  '${product.quantity}',
+                  style: const TextStyle(
+                    color: Color(0xFFD3BF09),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ), // Mostrar la cantidad seleccionada
@@ -367,7 +372,7 @@ class BuyButton extends StatelessWidget {
             shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20))))),
         onPressed: () {
-          controller.pay();
+          controller.goPayScreen();
         },
         child: const Text(
           "Comprar",

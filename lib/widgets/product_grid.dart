@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/pages/home/home_controller.dart';
+import 'package:prueba_buffet/pages/shopping_cart/shopping_cart_controller.dart';
 
 class ProductGrid extends StatelessWidget {
   const ProductGrid({super.key});
@@ -24,10 +27,12 @@ class ProductGrid extends StatelessWidget {
         : Obx(() => SliverGrid(
               delegate: SliverChildBuilderDelegate(
                 (ctx, i) => ProductCard(
-                  name: products[i].name,
-                  price: products[i].price.toString(),
-                  imageUrl: products[i].imageUrl,
-                  id: products[i].id,
+                  product: ProductForCart(
+                      id: products[i].id,
+                      name: products[i].name,
+                      price: products[i].price,
+                      imagePath: products[i].imageUrl,
+                      quantity: 1.obs),
                 ),
                 childCount: products.length,
               ),
@@ -42,24 +47,20 @@ class ProductGrid extends StatelessWidget {
 }
 
 class ProductCard extends StatelessWidget {
-  final String name;
-  final String price;
-  final String imageUrl;
-  final int id;
+  final ProductForCart product;
+  final ShoppingCartController controller = Get.find<ShoppingCartController>();
 
-  const ProductCard({
+  ProductCard({
     super.key,
-    required this.name,
-    required this.price,
-    required this.imageUrl,
-    required this.id,
+    required this.product,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.deferToChild,
       onTap: () {
-        Navigator.pushNamed(context, '/product', arguments: id);
+        Navigator.pushNamed(context, '/product', arguments: product.id);
       },
       child: SizedBox(
         height: 100,
@@ -81,7 +82,8 @@ class ProductCard extends StatelessWidget {
                     child: Image(
                       image: NetworkImage(
                           scale: 1,
-                          imageUrl), // Reemplaza con la URL de tu imagen
+                          product
+                              .imagePath), // Reemplaza con la URL de tu imagen
                       height: 100,
                       fit: BoxFit.cover,
                     ),
@@ -100,7 +102,7 @@ class ProductCard extends StatelessWidget {
                 bottom: 45,
                 left: 12,
                 child: Text(
-                  name,
+                  product.name,
                   style: const TextStyle(
                       fontSize: 17, fontWeight: FontWeight.w500),
                 ),
@@ -109,22 +111,48 @@ class ProductCard extends StatelessWidget {
                 bottom: 18,
                 left: 12,
                 child: Text(
-                  '\$$price',
+                  '\$${product.price}',
                   style: const TextStyle(
                       fontSize: 19,
                       color: Colors.green,
                       fontWeight: FontWeight.w500),
                 ),
-              )
-              // Align(
-              //   alignment: Alignment.bottomRight,
-              //   child: IconButton(
-              //     icon: const Icon(Icons.add_shopping_cart),
-              //     onPressed: () {
-              //       // Acción al agregar al carrito
-              //     },
-              //   ),
-              // ),
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Obx(
+                  () => IconButton(
+                      icon: Icon(
+                        controller.isInCart(product.id)
+                            ? Icons.check
+                            : Icons.add_shopping_cart,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        if (controller.isInCart(product.id)) {
+                          controller.removeItemFromCart(product.id);
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text("Producto eliminado"),
+                            duration: Duration(milliseconds: 400),
+                          ));
+                        } else {
+                          controller.addItemToCart(product);
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text("Producto agregado"),
+                            duration: Duration(milliseconds: 400),
+                          ));
+                        }
+                      },
+                      style: IconButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        backgroundColor: const Color(0xFFFFE500),
+                      )),
+                ),
+              ),
             ],
           ),
         ),

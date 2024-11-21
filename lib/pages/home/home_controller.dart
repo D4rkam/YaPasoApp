@@ -53,9 +53,7 @@ class HomeController extends GetxController {
     var response = await productsProvider.getProducts();
 
     if (response.statusCode == 200) {
-      log("products: ${productsFromApi}");
       productsFromApi.assignAll(productFromJson(response.body));
-
       productsFromApi.refresh();
     }
   }

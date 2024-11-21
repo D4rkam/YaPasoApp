@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
-import 'package:prueba_buffet/widgets/input_search.dart';
+import 'package:prueba_buffet/widgets/input.dart';
 import 'package:prueba_buffet/widgets/list_of_products.dart';
 
 class CategoryScreen extends StatelessWidget {
@@ -26,9 +26,13 @@ class CategoryScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-            child: InputSearchWidget(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+            child: InputWidget(
+              hintText: "Buscar producto",
+              icon: Icons.search,
+              withIcon: true,
+            ),
           ),
           ListOfProducts(products: products),
         ],
