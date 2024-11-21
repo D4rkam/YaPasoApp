@@ -7,6 +7,7 @@ import 'package:prueba_buffet/pages/cart/cart_controller.dart';
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
 import 'package:prueba_buffet/widgets/category_item.dart';
 import 'package:prueba_buffet/widgets/cart_product_grid.dart';
+import 'package:prueba_buffet/widgets/custom_elevated_buttom_widget.dart';
 
 //TODO: Utilizar MediaQuery para realizar un diseño responsive para todos los dispositivos moviles
 
@@ -79,11 +80,13 @@ class CartScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                IconButton(
-                  tooltip: 'Favorite',
-                  icon: const Icon(Icons.favorite),
-                  onPressed: () {},
-                ),
+                CustomElevatedButton(text: "Comprar", onPressed: () {},)
+                //IconButton(
+                  //iconSize: 72,
+                  //tooltip: 'Favorite',
+                  //icon: const Icon(Icons.favorite),
+                  //onPressed: () {},
+                //),
               ],
             ),
           ),

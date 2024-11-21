@@ -20,42 +20,6 @@ class CartProductGrid extends StatelessWidget {
       'description': 'descripción',
       'image': "assets/images/carrito/cafe_expreso.png"
     },
-    {
-      'name': 'Medialuna',
-      'price': '500',
-      'description': 'descripción',
-      'image': "assets/images/carrito/medialuna.png"
-    },
-    {
-      'name': 'Lata de Pepsi',
-      'price': '650',
-      'description': 'descripción',
-      'image': "assets/images/carrito/pepsi.png"
-    },
-    {
-      'name': 'Cafe Expreso',
-      'price': '600',
-      'description': 'descripción',
-      'image': "assets/images/carrito/cafe_expreso.png"
-    },
-    {
-      'name': 'Medialuna',
-      'price': '500',
-      'description': 'descripción',
-      'image': "assets/images/carrito/medialuna.png"
-    },
-    {
-      'name': 'Lata de Pepsi',
-      'price': '650',
-      'description': 'descripción',
-      'image': "assets/images/carrito/pepsi.png"
-    },
-    {
-      'name': 'Cafe Expreso',
-      'price': '600',
-      'description': 'descripción',
-      'image': "assets/images/carrito/cafe_expreso.png"
-    },
   ];
 
   CartProductGrid({super.key});
