@@ -222,7 +222,7 @@ class CustomAppBar extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      log("Saldo");
+                      homeController.goToMyBalance();
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

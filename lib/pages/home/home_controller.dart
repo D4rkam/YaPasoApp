@@ -17,6 +17,12 @@ class HomeController extends GetxController {
     Get.offNamedUntil("/", (route) => false);
   }
 
+  void goToMyBalance() {
+    Get.toNamed(
+      "/my_balance",
+    );
+  }
+
   void goToProduct() {
     Get.toNamed(
       "/product",
