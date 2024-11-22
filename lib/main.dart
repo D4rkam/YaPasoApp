@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Ya paso',
-      initialRoute: userSession.id != null ? "/cart" : "/cart",
+      initialRoute: userSession.id != null ? "/product" : "/product",
       getPages: [
         GetPage(name: "/", page: () => IntroScreen()),
         GetPage(

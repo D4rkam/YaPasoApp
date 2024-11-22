@@ -38,7 +38,8 @@ class ProductScreen extends StatelessWidget {
         ),
         title: const Text('Producto',
             style: TextStyle(
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
+              fontSize: 25,
             )),
         actions: [
           IconButton(
@@ -54,11 +55,11 @@ class ProductScreen extends StatelessWidget {
         children: [
           // Imagen del producto
           Container(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.only(bottom: 20),
             width: double.infinity,
             height: MediaQuery.of(context).size.height * 0.3,
             child: Image.asset(
-              'assets/images/productos/coca_cola.png', // Reemplaza con la ruta de tu imagen
+              'assets/images/productos/cafexpress.png', // Reemplaza con la ruta de tu imagen
               height: 200,
               width: double.infinity,
               fit: BoxFit.fitHeight,
@@ -87,7 +88,7 @@ class ProductScreen extends StatelessWidget {
                         Text(
                           'Café',
                           style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
+                              fontSize: 35, fontWeight: FontWeight.bold),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -120,32 +121,33 @@ class ProductScreen extends StatelessWidget {
                             Text(
                               '(5.0)',
                               style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 15),
+                                  fontWeight: FontWeight.w600, fontSize: 15, color: Color(0xFF4D4D4D)),
                             ),
                           ],
                         )
                       ],
                     ),
-
-                    const SizedBox(height: 8),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Vasito de café con leche sabor suave y cremoso.',
-                            softWrap: true,
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF4D4D4D)),
-                          ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'Ver Reseñas',
+                        style: TextStyle(
+                          color: Color(0xFFB0B0B0), // Gris
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline, // Subrayado
                         ),
-                      ],
+                      ),
                     ),
-
-                    const SizedBox(height: 30),
+                    const Text(
+                      'vasito de café con leche sabor suave y cremoso',
+                        style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF4D4D4D),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
 
                     // Contador
                     Row(
@@ -155,7 +157,7 @@ class ProductScreen extends StatelessWidget {
                           '\$600',
                           style: TextStyle(
                             color: Color(0xFFFFE500),
-                            fontSize: 30,
+                            fontSize: 35,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -327,6 +329,7 @@ class ProductScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(width: 8,),
             Text(
               'Añadir al carrito',
               style: TextStyle(fontWeight: FontWeight.w500),
