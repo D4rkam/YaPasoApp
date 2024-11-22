@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:prueba_buffet/widgets/InDecreBottom.dart';
 
 class CartProductGrid extends StatelessWidget {
   final List<Map<String, String>> products = [
     {
       'name': 'Medialuna',
       'price': '500',
-      'description': 'descripción',
+      'description': 'Descripción',
       'image': "assets/images/carrito/medialuna.png"
     },
     {
       'name': 'Lata de Pepsi',
       'price': '650',
-      'description': 'descripción',
+      'description': 'Descripción',
       'image': "assets/images/carrito/pepsi.png"
     },
     {
       'name': 'Cafe Expreso',
       'price': '600',
-      'description': 'descripción',
+      'description': 'Descripción',
       'image': "assets/images/carrito/cafe_expreso.png"
     },
   ];
@@ -25,14 +26,18 @@ class CartProductGrid extends StatelessWidget {
   CartProductGrid({super.key});
 
   @override
+
   Widget build(BuildContext context) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-            (ctx, i) => ProductCard(
-          name: products[i]['name']!,
-          price: products[i]['price']!,
-          description: products[i]['description']!,
-          imageUrl: products[i]['image']!,
+            (ctx, i) => Container(
+              margin: const EdgeInsets.only(bottom: 20.0),
+              child: ProductCard(
+                name: products[i]['name']!,
+                price: products[i]['price']!,
+                description: products[i]['description']!,
+                imageUrl: products[i]['image']!,
+              ),
         ),
         childCount: products.length,
       ),
@@ -75,7 +80,7 @@ class ProductCard extends StatelessWidget {
             // crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(top: 15, left: 40),
+                padding: const EdgeInsets.only(top: 15, left: 20),
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: ClipRRect(
@@ -89,38 +94,42 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
               Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  icon: const Icon(Icons.favorite_border),
-                  onPressed: () {},
-                  color: Colors.yellow,
+                alignment: Alignment.bottomRight,
+                child: IncrementDecrementButton(
+                  initialValue: 1,
+                  min: 0,
+                  max: 10,
+                  onChanged: (value) {
+                    print('Cantidad actual: $value');
+                  },
                 ),
               ),
+
               Positioned(
-                bottom: 60,
-                left: 210,
+                bottom: 75,
+                left: 180,
                 child: Text(
                   name,
                   style: const TextStyle(
-                      fontSize: 17, fontWeight: FontWeight.w500),
+                      fontSize: 25, fontWeight: FontWeight.w500),
                 ),
               ),
               Positioned(
-                  top: 70,
-                  left: 210,
+                  top: 55,
+                  left: 180,
                   child: Text(
                     description,
                     style: const TextStyle(
-                        fontSize: 10, fontWeight: FontWeight.w500),
+                        fontSize: 15, fontWeight: FontWeight.w500, color: Color(0xFF4d4d4d),),
                   )),
               Positioned(
-                top: 90,
-                left: 210,
+                top: 80,
+                left: 180,
                 child: Text(
                   '\$$price',
                   style: const TextStyle(
-                      fontSize: 19,
-                      color: Colors.green,
+                      fontSize: 23,
+                      color: Color(0xFF98c21f),
                       fontWeight: FontWeight.w500),
                 ),
               ),

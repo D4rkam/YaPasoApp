@@ -35,11 +35,12 @@ class CustomElevatedButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         overlayColor: Colors.black,
-        backgroundColor: backgroundColor ?? Colors.amber,
+        backgroundColor: const Color(0xFFFFE500),
         padding: padding ??
-            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                      // width: MediaQuery.of
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 10.0),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius ?? 8.0),
+          borderRadius: BorderRadius.circular(borderRadius ?? 20.0),
         ),
       ),
       child: Row(
@@ -55,8 +56,8 @@ class CustomElevatedButton extends StatelessWidget {
             style: textStyle ??
                 TextStyle(
                   color: textColor ?? Colors.black,
-                  fontSize: fontSize ?? 18.0,
-                  fontWeight: textFontWeight ?? FontWeight.w700,
+                  fontSize: fontSize ?? 40.0,
+                  fontWeight: textFontWeight ?? FontWeight.w400,
                 ),
           ),
           if (trailingIcon != null) ...[

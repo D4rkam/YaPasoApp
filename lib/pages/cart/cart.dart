@@ -9,8 +9,6 @@ import 'package:prueba_buffet/widgets/category_item.dart';
 import 'package:prueba_buffet/widgets/cart_product_grid.dart';
 import 'package:prueba_buffet/widgets/custom_elevated_buttom_widget.dart';
 
-//TODO: Utilizar MediaQuery para realizar un diseño responsive para todos los dispositivos moviles
-
 class CartScreen extends StatelessWidget {
   CartScreen({super.key});
   final CartController controller = Get.put(CartController());
@@ -28,24 +26,34 @@ class CartScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        title: const Text('Producto',
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-            )),
+        title: const Text(
+          'Carrito',
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.shopping_cart_rounded),
+            icon: const Icon(Icons.search), // Icono de lupa
             onPressed: () {
-              // Acción al presionar el ícono del carrito
+              // Acción al presionar el ícono de lupa
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.filter_list), // Icono de filtro
+            onPressed: () {
+              // Acción al presionar el ícono de filtro
             },
           ),
         ],
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
             // height: MediaQuery.of(context).size.height * 0.6,
-            height: 600,
+            height: 490,
             child: CustomScrollView(
               scrollBehavior: NoOverscrollBehavior(),
               slivers: [
@@ -54,6 +62,14 @@ class CartScreen extends StatelessWidget {
             ),
           ),
           Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: Colors.grey, // Color negro
+                  width: 1.0,         // Ancho de 1 píxel
+                ),
+              ),
+            ),
             child: Column(
               children: <Widget>[
                 Row(
@@ -61,26 +77,49 @@ class CartScreen extends StatelessWidget {
                   children: <Widget>[
                     Container(
                       width: MediaQuery.of(context).size.width * 0.7,
-                      child: Text('Total a pagar ',
+                      child: Text('Total a pagar',
                           style: Theme.of(context)
                               .textTheme
                               .headlineMedium!
-                              .copyWith(color: Colors.black)
+                              .copyWith(
+                                fontSize: 25,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF4d4d4d),
+                          ),
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(16.0),
                       // width: MediaQuery.of(context).size.width * 0.7,
-                      child: Text('\$ 1200',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium!
-                              .copyWith(color: Colors.black)
+                      child: Text('\$ 1750',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineMedium!
+                            .copyWith(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500,
+                          color:  Colors.black,
+                        ),
                       ),
                     ),
                   ],
                 ),
-                CustomElevatedButton(text: "Comprar", onPressed: () {},)
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: SizedBox(
+                    width: 340.0,
+                    child: CustomElevatedButton(
+                      text: "Comprar",
+                      onPressed: () {
+                      },
+                      backgroundColor: const Color(0xFFFFE500),
+                      textColor: Colors.black,
+                      fontSize: 35.0,
+                      borderRadius: 20.0,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
                 //IconButton(
                   //iconSize: 72,
                   //tooltip: 'Favorite',
