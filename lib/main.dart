@@ -5,6 +5,7 @@ import 'package:prueba_buffet/config/theme/app_theme.dart';
 import 'package:prueba_buffet/models/user.dart';
 import 'package:prueba_buffet/pages/home/home.dart';
 import 'package:prueba_buffet/pages/cart/cart.dart';
+import 'package:prueba_buffet/pages/selectPayment/selpayment.dart';
 import 'package:prueba_buffet/pages/intro/intro.dart';
 import 'package:prueba_buffet/pages/login/login.dart';
 import 'package:prueba_buffet/pages/product/product.dart';
@@ -35,7 +36,7 @@ class _MyAppState extends State<MyApp> {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Ya paso',
-      initialRoute: userSession.id != null ? "/product" : "/product",
+      initialRoute: userSession.id != null ? "/selpayment" : "/selpayment",
       getPages: [
         GetPage(name: "/", page: () => IntroScreen()),
         GetPage(
@@ -45,7 +46,8 @@ class _MyAppState extends State<MyApp> {
         GetPage(name: "/register", page: () => RegisterScreen()),
         GetPage(name: "/home", page: () => HomeScreen()),
         GetPage(name: "/cart", page: () => CartScreen()),
-        GetPage(name: "/product", page: () => ProductScreen())
+        GetPage(name: "/product", page: () => ProductScreen()),
+        GetPage(name: "/selpayment", page: () => SelpaymentScreen()),
       ],
       navigatorKey: Get.key,
       theme: AppTheme(enableDarkMode: false).theme(),

@@ -92,6 +92,8 @@ flutter:
     - assets/images/categorias/sandwich_categoria.png
     - assets/images/logo-sin.png
     - assets/images/intro/img_intro_screen.png
+    - assets/images/pago/celu.png
+    - assets/images/pago/dinero.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
