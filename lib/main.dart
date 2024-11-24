@@ -11,6 +11,8 @@ import 'package:prueba_buffet/pages/intro/intro.dart';
 import 'package:prueba_buffet/pages/login/login.dart';
 import 'package:prueba_buffet/pages/product/product.dart';
 import 'package:prueba_buffet/pages/register/register.dart';
+import 'package:prueba_buffet/pages/myorder/order.dart';
+
 
 User userSession = User.fromJson(GetStorage().read("user") ?? {});
 
@@ -37,7 +39,7 @@ class _MyAppState extends State<MyApp> {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Ya paso',
-      initialRoute: userSession.id != null ? "/payment" : "/payment",
+      initialRoute: userSession.id != null ? "/order" : "/order",
       getPages: [
         GetPage(name: "/", page: () => IntroScreen()),
         GetPage(
@@ -50,6 +52,7 @@ class _MyAppState extends State<MyApp> {
         GetPage(name: "/product", page: () => ProductScreen()),
         GetPage(name: "/selpayment", page: () => SelpaymentScreen()),
         GetPage(name: "/payment", page: () => paymentScreen()),
+        GetPage(name: "/order", page: () => orderScreen()),
       ],
       navigatorKey: Get.key,
       theme: AppTheme(enableDarkMode: false).theme(),
