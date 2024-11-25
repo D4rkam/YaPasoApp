@@ -5,10 +5,11 @@ import 'package:prueba_buffet/providers/products_provider.dart';
 class ProductController extends GetxController {
   ProductsProvider productsProvider = ProductsProvider();
 
-  Product? product;
+  final Rx<Product?> product = Rx<Product?>(null);
 
   void getProduct(int id) async {
-    var response = await productsProvider.getProductById(id);
-    product = Product.fromJson(response.body);
+    Response response = await productsProvider.getProductById(id);
+    product.value = Product.fromJson(response.body);
+    product.refresh();
   }
 }

@@ -46,7 +46,10 @@ class _CustomToggleButtonState extends State<CustomToggleButton> {
       children: widget.labels
           .map((label) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(label),
+                child: Text(
+                  label,
+                  style: TextStyle(fontSize: 18),
+                ),
               ))
           .toList(),
     );

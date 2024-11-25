@@ -5,17 +5,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 class PayController extends GetxController {
   PayProvider payProvider = PayProvider();
-  void goToSuccessPage() {
-    Get.offNamedUntil("/success", (route) => false);
-  }
-
-  void goToFailurePage() {
-    Get.offNamedUntil("/failure", (route) => false);
-  }
-
-  void goToPendingPage() {
-    Get.offNamedUntil("/pending", (route) => false);
-  }
 
   Future<void> transformarYAbrirLinkMercadoPago(String linkMercadoPago) async {
     // Extraer el ID de la preferencia
@@ -42,10 +31,9 @@ class PayController extends GetxController {
   void pay(List<ProductForCart> items) async {
     Response response = await payProvider.pay(items);
     if (response.statusCode == 200) {
-      String? url = response.body["sandbox_init_point"];
+      String? url = response.body["init_point"];
       if (url != null) {
         transformarYAbrirLinkMercadoPago(url);
-        // Get.toNamed("/pay", arguments: Future.value(url));
       }
     }
   }

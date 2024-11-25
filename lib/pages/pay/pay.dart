@@ -30,7 +30,7 @@ class _PayScreenState extends State<PayScreen> {
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            primaryColor: Colors.yellow,
+            primaryColor: Color(0xFFFFE500),
             buttonTheme: const ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
             ),
@@ -47,9 +47,7 @@ class _PayScreenState extends State<PayScreen> {
         initialTime: TimeOfDay.now(),
         builder: (context, child) {
           return Theme(
-            data: ThemeData.light().copyWith(
-              primaryColor: Colors.yellow,
-            ),
+            data: ThemeData.light().copyWith(primaryColor: Color(0xFFFFE500)),
             child: child!,
           );
         },
@@ -59,6 +57,7 @@ class _PayScreenState extends State<PayScreen> {
         // Combinar fecha y hora seleccionadas
         setState(() {
           selectedDateTime = DateTime(
+            pickedDate.year,
             pickedDate.month,
             pickedDate.day,
             pickedTime.hour,

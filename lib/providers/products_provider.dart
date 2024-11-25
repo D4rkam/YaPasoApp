@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/models/user.dart';
@@ -19,6 +21,17 @@ class ProductsProvider extends GetConnect {
 
   Future<Response> getProductById(int id) async {
     String url = "${ApiUrl.PRODUCT_GET}$id";
+    Response response = await get(
+      url,
+      headers: {
+        "Authorization": "Bearer ${userSession.token?["access_token"]}"
+      },
+    );
+    return response;
+  }
+
+  Future<Response> getProductsByCategory(String category) async {
+    String url = "${ApiUrl.PRODUCTS_GET}category/$category";
     Response response = await get(
       url,
       headers: {

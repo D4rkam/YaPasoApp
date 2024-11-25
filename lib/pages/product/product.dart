@@ -29,7 +29,6 @@ class ProductScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final int productId = ModalRoute.of(context)?.settings.arguments as int;
     controller.getProduct(productId);
-    print(controller.product);
     return Scaffold(
       // Barra de navegación
       extendBody: true,
@@ -56,162 +55,169 @@ class ProductScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Imagen del producto
-          Container(
-            padding: const EdgeInsets.only(bottom: 16),
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height * 0.3,
-            child: Image.network(
-              controller.product?.imageUrl ??
-                  "", // Reemplaza con la ruta de tu imagen
-              height: 200,
+      body: Obx(() {
+        if (controller.product.value == null) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        final product = controller.product.value!;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Imagen del producto
+            Container(
+              padding: const EdgeInsets.only(bottom: 16),
               width: double.infinity,
-              fit: BoxFit.fitHeight,
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
+              height: MediaQuery.of(context).size.height * 0.3,
+              child: Image.network(
+                product.imageUrl, // Reemplaza con la ruta de tu imagen
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.fitHeight,
               ),
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Nombre y reseñas
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "${controller.product?.name}",
-                          style: const TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Icon(
-                              Icons.star,
-                              color: Color(0xFFFAD246),
-                              size: 20,
-                            ),
-                            Icon(
-                              Icons.star,
-                              color: Color(0xFFFAD246),
-                              size: 20,
-                            ),
-                            Icon(
-                              Icons.star,
-                              color: Color(0xFFFAD246),
-                              size: 20,
-                            ),
-                            Icon(
-                              Icons.star,
-                              color: Color(0xFFFAD246),
-                              size: 20,
-                            ),
-                            Icon(
-                              Icons.star,
-                              color: Color(0xFFFAD246),
-                              size: 20,
-                            ),
-                            Text(
-                              '(5.0)',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 15),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '${controller.product?.description}',
-                            softWrap: true,
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Nombre y reseñas
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            product.name,
                             style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF4D4D4D)),
+                                fontSize: 24, fontWeight: FontWeight.bold),
                           ),
-                        ),
-                      ],
-                    ),
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Icon(
+                                Icons.star,
+                                color: Color(0xFFFAD246),
+                                size: 20,
+                              ),
+                              Icon(
+                                Icons.star,
+                                color: Color(0xFFFAD246),
+                                size: 20,
+                              ),
+                              Icon(
+                                Icons.star,
+                                color: Color(0xFFFAD246),
+                                size: 20,
+                              ),
+                              Icon(
+                                Icons.star,
+                                color: Color(0xFFFAD246),
+                                size: 20,
+                              ),
+                              Icon(
+                                Icons.star,
+                                color: Color(0xFFFAD246),
+                                size: 20,
+                              ),
+                              Text(
+                                '(5.0)',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 15),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
 
-                    const SizedBox(height: 30),
-
-                    // Contador
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '\$${controller.product?.price}',
-                          style: const TextStyle(
-                            color: Color(0xFFFFE500),
-                            fontSize: 30,
-                            fontWeight: FontWeight.w500,
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              product.description,
+                              softWrap: true,
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF4D4D4D)),
+                            ),
                           ),
-                        ),
-                        _buildCounter(1),
-                      ],
-                    ),
+                        ],
+                      ),
 
-                    const Spacer(),
+                      const SizedBox(height: 30),
 
-                    // Sugerencias "Para acompañar"
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Para acompañar',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          height: 150,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: sugerencias
-                                .length, // Reemplaza 'sugerencias' con tu lista de datos
-                            itemBuilder: (context, index) {
-                              final sugerencia = sugerencias[index];
-                              return ProductSuggestionCard(
-                                productName: sugerencia["nombre"]!,
-                                productPrice: sugerencia["precio"]!,
-                                imagePath: sugerencia["imagen"]!,
-                              );
-                            },
+                      // Contador
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '\$${product.price}',
+                            style: const TextStyle(
+                              color: Color(0xFFFFE500),
+                              fontSize: 30,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    SafeArea(
-                        child:
-                            Center(child: _addToShoppingCart(context: context)))
-                  ],
+                          _buildCounter(1),
+                        ],
+                      ),
+
+                      const Spacer(),
+
+                      // Sugerencias "Para acompañar"
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Para acompañar',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            height: 150,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: sugerencias
+                                  .length, // Reemplaza 'sugerencias' con tu lista de datos
+                              itemBuilder: (context, index) {
+                                final sugerencia = sugerencias[index];
+                                return ProductSuggestionCard(
+                                  productName: sugerencia["nombre"]!,
+                                  productPrice: sugerencia["precio"]!,
+                                  imagePath: sugerencia["imagen"]!,
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      SafeArea(
+                          child: Center(
+                              child: _addToShoppingCart(context: context)))
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(

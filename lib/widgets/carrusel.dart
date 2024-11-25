@@ -24,12 +24,7 @@ class _CarruselWidgetState extends State<CarruselWidget> {
       'img': "assets/images/churros.png",
       'isNew': false,
     },
-    {
-      'title': "Churros",
-      'subtitle': "Rellenos de dulce de leche",
-      'img': "assets/images/churros.png",
-      'isNew': false,
-    },
+
     // Agrega más URLs de imágenes si es necesario
   ];
 

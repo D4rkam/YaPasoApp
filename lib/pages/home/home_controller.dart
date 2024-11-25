@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/models/product.dart';
@@ -9,12 +7,18 @@ import 'package:prueba_buffet/providers/products_provider.dart';
 class HomeController extends GetxController {
   ProductsProvider productsProvider = ProductsProvider();
   User userSession = User.fromJson(GetStorage().read("user") ?? {});
+
   var productsFromApi = <Product>[].obs;
-  var categoryProducts = <String>[].obs;
+  List<String> listaCategorias = [
+    "Snacks",
+    "Galletitas",
+    "Bebidas",
+    "Golosinas"
+  ];
 
   void signOut() {
     GetStorage().remove("user");
-    Get.offNamedUntil("/", (route) => false);
+    Get.offNamedUntil("/login", (route) => false);
   }
 
   void goToMyBalance() {
@@ -35,6 +39,12 @@ class HomeController extends GetxController {
     );
   }
 
+  void goToMisPedidos() {
+    Get.toNamed(
+      "/orders",
+    );
+  }
+
   void goToPay() {
     Get.toNamed(
       "/pay",
@@ -43,16 +53,6 @@ class HomeController extends GetxController {
 
   int getBalance() {
     return userSession.balance!;
-  }
-
-  void getCategoryOfProducts() {
-    final List<String> categorys = [
-      "Snacks",
-      "Galletitas",
-      "Bebidas",
-      "Golosinas",
-    ];
-    categoryProducts.assignAll(categorys);
   }
 
   void getProducts() async {

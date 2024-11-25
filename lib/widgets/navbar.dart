@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class NavBarWidget extends StatefulWidget {
   const NavBarWidget({
     super.key,
-    required this.scaffoldKey,
   });
-
-  final GlobalKey<ScaffoldState> scaffoldKey;
 
   @override
   State<NavBarWidget> createState() => _NavBarWidgetState();
@@ -17,7 +14,7 @@ class _NavBarWidgetState extends State<NavBarWidget> {
 
   void _onItemTapped(int index) {
     if (index == 0) {
-      widget.scaffoldKey.currentState?.openDrawer();
+      Scaffold.of(context).openDrawer();
     } else {
       setState(() {
         _selectedIndex = index;

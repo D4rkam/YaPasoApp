@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:prueba_buffet/pages/home/home_controller.dart';
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
 import 'package:prueba_buffet/widgets/carrusel.dart';
 import 'package:prueba_buffet/widgets/category_item.dart';
+import 'package:prueba_buffet/widgets/container_input.dart';
 import 'package:prueba_buffet/widgets/input.dart';
 import 'package:prueba_buffet/widgets/navbar.dart';
 import 'package:prueba_buffet/widgets/product_grid.dart';
@@ -16,66 +16,20 @@ import 'package:prueba_buffet/widgets/shopping_cart_button.dart';
 
 //TODO: Utilizar MediaQuery para realizar un diseño responsive para todos los dispositivos moviles
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   HomeScreen({
     super.key,
   });
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
   final HomeController homeController = Get.put(HomeController());
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  late AnimationController animationController;
-  late Animation<Offset> slideAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-
-    slideAnimation = Tween<Offset>(
-      begin: const Offset(-1, 0),
-      end: Offset.zero,
-    ).animate(
-        CurvedAnimation(parent: animationController, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    animationController.dispose();
-    super.dispose();
-  }
-
-  // Método para abrir o cerrar el Drawer
-  void toggleDrawer() {
-    if (animationController.isDismissed) {
-      animationController.forward(); // Abrir el Drawer
-    } else {
-      animationController.reverse(); // Cerrar el Drawer
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     if (homeController.productsFromApi.isEmpty) {
       homeController.getProducts();
     }
-    if (homeController.categoryProducts.isEmpty) {
-      homeController.getCategoryOfProducts();
-    }
     return Scaffold(
-      drawer: SideMenu(
-          animationController: animationController,
-          slideAnimation: slideAnimation),
+      drawer: CustomSideMenu(homeController: homeController),
       backgroundColor: Colors.white,
       body: CustomScrollView(
         scrollBehavior: NoOverscrollBehavior(),
@@ -101,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen>
               child: SizedBox(
                 height: 100,
                 child: ListCategory(
-                  categorys: homeController.categoryProducts,
+                  categorys: homeController.listaCategorias,
                 ),
               ),
             ),
@@ -127,74 +81,111 @@ class _HomeScreenState extends State<HomeScreen>
           const ProductGrid()
         ],
       ),
-      bottomNavigationBar: NavBarWidget(scaffoldKey: _scaffoldKey),
+      bottomNavigationBar: const NavBarWidget(),
     );
   }
 }
 
-class SideMenu extends StatefulWidget {
-  const SideMenu({
+class CustomSideMenu extends StatelessWidget {
+  const CustomSideMenu({
     super.key,
-    required this.animationController,
-    required this.slideAnimation,
+    required this.homeController,
   });
 
-  final AnimationController animationController;
-  final Animation<Offset> slideAnimation;
+  final HomeController homeController;
 
-  @override
-  State<SideMenu> createState() => _SideMenuState();
-}
-
-class _SideMenuState extends State<SideMenu> {
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-        animation: widget.animationController,
-        builder: (context, child) {
-          return Transform.translate(
-              offset: widget.slideAnimation.value,
-              child: Drawer(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: <Widget>[
-                    const DrawerHeader(
-                      decoration: BoxDecoration(
-                        color: Colors.yellow,
-                      ),
-                      child: Text(
-                        'Menú Lateral',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 24,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.account_balance_wallet),
-                      title: const Text('Saldo Disponible'),
-                      onTap: () {
-                        // Acción al hacer clic en "Saldo Disponible"
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.settings),
-                      title: const Text('Configuración'),
-                      onTap: () {
-                        // Acción al hacer clic en "Configuración"
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.help),
-                      title: const Text('Ayuda'),
-                      onTap: () {
-                        // Acción al hacer clic en "Ayuda"
-                      },
-                    ),
-                  ],
+    return Drawer(
+      width: 230,
+      backgroundColor: Colors.white,
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const DrawerHeader(
+            margin: EdgeInsets.only(bottom: 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 30,
+                  backgroundImage: AssetImage(
+                      'assets/images/steve_person.png'), // Cambia esto por la ruta de tu imagen
                 ),
-              ));
-        });
+                SizedBox(height: 10),
+                Text("Darkam",
+                    style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(
+                  "Thomas Linares",
+                  style: TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+          ListTile(
+            selected: true,
+            selectedTileColor: const Color(0xFFFFE500),
+            leading: const Icon(
+              Icons.home,
+              color: Colors.black,
+              size: 30,
+            ),
+            title: const Text(
+              'Inicio',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.assignment_rounded,
+              color: Color(0xFFFFE500),
+              size: 30,
+            ),
+            title: const Text(
+              'Mis Pedidos',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onTap: () {
+              homeController.goToMisPedidos();
+              Scaffold.of(context).closeDrawer();
+            },
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.account_balance_wallet_rounded,
+              color: Color(0xFFFFE500),
+              size: 30,
+            ),
+            title: const Text(
+              'Mi Saldo',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onTap: () {
+              homeController.goToMyBalance();
+              Scaffold.of(context).closeDrawer();
+            },
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.logout,
+              color: Color(0xFFFFE500),
+              size: 30,
+            ),
+            title: const Text(
+              'Cerrar sesión',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onTap: () {
+              homeController.signOut();
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -259,46 +250,6 @@ class CustomAppBar extends StatelessWidget {
   }
 }
 
-class ContainerInputSearch extends StatelessWidget {
-  const ContainerInputSearch({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            width: double.infinity,
-            height: 40,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-              color: Color(0xFFFFE500),
-            ),
-          ),
-          Positioned(
-            bottom: -20,
-            left: 29,
-            right: 29,
-            child: Material(
-              // elevation: 2,
-              shadowColor: const Color(0xFFE6E6E6),
-              borderRadius: BorderRadius.circular(20),
-              child: InputWidget(
-                hintText: "Buscar producto",
-                icon: Icons.search,
-                withIcon: true,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class ListCategory extends StatelessWidget {
   ListCategory({
     super.key,
@@ -314,27 +265,25 @@ class ListCategory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => ListView.builder(
-        shrinkWrap: true,
-        itemCount: categorys.length,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (_, index) {
-          return Row(children: [
-            CategoryItem(
-              title: categorys[index],
-              imageUrl: categorysIcon[index],
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      CategoryScreen(categoryTitle: categorys[index]),
-                ),
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: categorys.length,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (_, index) {
+        return Row(children: [
+          CategoryItem(
+            title: categorys[index],
+            imageUrl: categorysIcon[index],
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    CategoryScreen(categoryTitle: categorys[index]),
               ),
             ),
-          ]);
-        },
-      ),
+          ),
+        ]);
+      },
     );
   }
 }

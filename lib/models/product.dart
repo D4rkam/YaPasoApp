@@ -16,6 +16,7 @@ class Product {
   int price;
   String imageUrl;
   int quantity;
+  String category;
   int id;
   int sellerId;
 
@@ -25,6 +26,7 @@ class Product {
     required this.price,
     required this.imageUrl,
     required this.quantity,
+    required this.category,
     required this.id,
     required this.sellerId,
   });
@@ -35,6 +37,7 @@ class Product {
         price: json["price"],
         imageUrl: json["image_url"],
         quantity: json["quantity"],
+        category: json["category"],
         id: json["id"],
         sellerId: json["seller_id"],
       );

@@ -23,11 +23,13 @@ class _SecurityFingerState extends State<SecurityFinger> {
           biometricOnly: false,
         ),
       );
+
       if (isAuthenticated) {
-        securityFingerController.goToHomeScreen();
+        print("estoy autenticado");
+        securityFingerController.checkToken();
       }
     } catch (e) {
-      // Handle authentication errors
+      // Manejo de errores de autenticación
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Authentication failed: $e')),
       );

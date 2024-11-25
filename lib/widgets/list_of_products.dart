@@ -1,37 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:prueba_buffet/models/product.dart';
+import 'package:prueba_buffet/pages/category/category_controller.dart';
+import 'package:prueba_buffet/widgets/product_cart_category.dart';
 
 class ListOfProducts extends StatelessWidget {
   const ListOfProducts({
     super.key,
-    required this.products,
+    required this.controller,
   });
 
-  final List<Map<String, String>> products;
+  final CategoryController controller;
+
+  List<Product> get products => controller.products;
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: ListTile(
-              leading: Image.asset(
-                products[index]['imageUrl']!,
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-              ),
-              title: Text(products[index]['title']!),
-              subtitle: const Text('Detalles'),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                Navigator.pushNamed(context, '/product');
-              },
-            ),
-          );
-        },
+    return Obx(
+      () => SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (BuildContext context, int index) {
+            return ProductCardCategory(
+              product: products[index],
+              controller: controller,
+            );
+          },
+          childCount: products.length, // Número de elementos en la lista
+        ),
       ),
     );
   }

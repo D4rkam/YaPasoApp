@@ -31,16 +31,19 @@ class MyBalance extends StatelessWidget {
             const TarjetaYaPaso(),
             Padding(
               padding: const EdgeInsets.only(top: 55),
-              child: CustomToggleButton(
-                  labels: const ["Mi Actividad", "Historial"],
-                  initialSelectedIndex: 0,
-                  onToggle: (index) {
-                    return null;
-                  }),
+              child: SizedBox(
+                height: 40,
+                child: CustomToggleButton(
+                    labels: const ["Mi Actividad", "Historial"],
+                    initialSelectedIndex: 0,
+                    onToggle: (index) {
+                      return null;
+                    }),
+              ),
             ),
             Expanded(
                 child: Padding(
-              padding: const EdgeInsets.only(top: 30),
+              padding: const EdgeInsets.only(top: 30, left: 30, right: 30),
               child: TransactionsPage(),
             ))
           ],
@@ -255,27 +258,51 @@ class TransactionsPage extends StatelessWidget {
       itemCount: transactions.length,
       itemBuilder: (context, index) {
         final transaction = transactions[index];
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.yellow.shade700,
-            child: Icon(
-              transaction['isIncome']
-                  ? Icons.arrow_upward
-                  : Icons.arrow_downward,
-              color: transaction['isIncome'] ? Colors.green : Colors.red,
-            ),
-          ),
-          title: Text(
-            transaction['name'],
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(transaction['description']),
-          trailing: Text(
-            "\$${transaction['amount']}",
-            style: TextStyle(
-              color: transaction['isIncome'] ? Colors.green : Colors.red,
-              fontWeight: FontWeight.bold,
-            ),
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "${transaction["name"]}",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    "${transaction["description"]}",
+                    style: const TextStyle(
+                      color: Color(0xFF6A6A6A),
+                      fontSize: 17,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "\$${transaction["amount"]}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Icon(
+                    transaction["isIncome"]
+                        ? Icons.north_east
+                        : Icons.south_west,
+                    color: transaction["isIncome"] ? Colors.green : Colors.red,
+                  )
+                ],
+              ),
+            ],
           ),
         );
       },

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/pages/shopping_cart/shopping_cart_controller.dart';
-import 'package:prueba_buffet/utils/constants/image_strings.dart';
 
 class ShoppingCartScreen extends StatelessWidget {
   ShoppingCartScreen({super.key});
@@ -92,10 +91,6 @@ class ScreenWithItems extends StatelessWidget {
                 ),
                 onDismissed: (direction) {
                   controller.removeItemFromCart(product.id);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Producto eliminado"),
-                    duration: Duration(milliseconds: 500),
-                  ));
                 },
                 child: ProductCardCart(
                   product: product,
