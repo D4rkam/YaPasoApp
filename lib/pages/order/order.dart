@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:prueba_buffet/pages/order/order_controller.dart';
 
 class Order extends StatelessWidget {
-  const Order({super.key});
+  Order({super.key});
 
+  final OrderController orderController = Get.put(OrderController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,11 +70,9 @@ class Order extends StatelessWidget {
                 ],
               )),
             ),
-            const CustomExpandablePanel(),
-            const CustomExpandablePanel(),
-            const CustomExpandablePanel(),
-            const CustomExpandablePanel(),
-            const CustomExpandablePanel(),
+            (orderController.formattedDateTime.isNotEmpty)
+                ? CustomExpandablePanel(orderController: orderController)
+                : Container()
           ],
         ),
       ),
@@ -176,7 +177,7 @@ class TicketCard extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('30 / 04 / 2024',
+              Text('26 / 11 / 2024',
                   style: TextStyle(
                       fontSize: 16,
                       color: Color(0xFF2E313F),
@@ -213,7 +214,9 @@ class TicketCard extends StatelessWidget {
 }
 
 class CustomExpandablePanel extends StatefulWidget {
-  const CustomExpandablePanel({super.key});
+  const CustomExpandablePanel({super.key, required this.orderController});
+
+  final OrderController orderController;
 
   @override
   _CustomExpandablePanelState createState() => _CustomExpandablePanelState();
@@ -258,9 +261,12 @@ class _CustomExpandablePanelState extends State<CustomExpandablePanel>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    '29 Abril 2024',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Obx(
+                    () => Text(
+                      widget.orderController.formattedDateTime.value,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   Container(
                     padding:

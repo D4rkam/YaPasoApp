@@ -11,7 +11,7 @@ import 'package:prueba_buffet/pages/order/order.dart';
 import 'package:prueba_buffet/pages/pay/pay.dart';
 import 'package:prueba_buffet/pages/pay_state/failure.dart';
 import 'package:prueba_buffet/pages/pay_state/pending.dart';
-import 'package:prueba_buffet/pages/pay_state/success.dart';
+import 'package:prueba_buffet/pages/pay_state/success/success.dart';
 import 'package:prueba_buffet/pages/product/product.dart';
 import 'package:prueba_buffet/pages/register/register.dart';
 import 'package:prueba_buffet/pages/security/security_finger.dart';
@@ -57,8 +57,8 @@ class _MyAppState extends State<MyApp> {
         GetPage(name: "/product", page: () => ProductScreen()),
         GetPage(name: "/shopping_cart", page: () => ShoppingCartScreen()),
         GetPage(name: "/pay", page: () => const PayScreen()),
-        GetPage(name: "/orders", page: () => const Order()),
-        GetPage(name: "/success_pay", page: () => const SuccessScreen()),
+        GetPage(name: "/orders", page: () => Order()),
+        GetPage(name: "/success_pay", page: () => SuccessScreen()),
         GetPage(name: "/failure_pay", page: () => const FailureScreen()),
         GetPage(name: "/pending_pay", page: () => const PendingScreen())
       ],

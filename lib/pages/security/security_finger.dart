@@ -25,7 +25,6 @@ class _SecurityFingerState extends State<SecurityFinger> {
       );
 
       if (isAuthenticated) {
-        print("estoy autenticado");
         securityFingerController.checkToken();
       }
     } catch (e) {

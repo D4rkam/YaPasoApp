@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/pages/pay/pay_controller.dart';
 import 'package:prueba_buffet/pages/shopping_cart/shopping_cart_controller.dart';
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
@@ -183,6 +184,8 @@ class _PayScreenState extends State<PayScreen> {
               child: ElevatedButton(
                 onPressed: () {
                   if (selectedMethod != null && selectedDateTime != null) {
+                    GetStorage()
+                        .write("order_datetime", selectedDateTime.toString());
                     if (selectedMethod == "transferencia") {
                       payController.pay(shoppingCartController.cartItems);
                     }

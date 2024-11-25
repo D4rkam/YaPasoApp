@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:prueba_buffet/pages/pay_state/success/success_controller.dart';
 
-class SuccessScreen extends StatelessWidget {
-  const SuccessScreen({super.key});
+class SuccessScreen extends StatefulWidget {
+  @override
+  SuccessScreen({super.key});
+
+  @override
+  State<SuccessScreen> createState() => _SuccessScreenState();
+}
+
+class _SuccessScreenState extends State<SuccessScreen> {
+  final SuccessController successController = Get.put(SuccessController());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    successController.createOrder();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +58,9 @@ class SuccessScreen extends StatelessWidget {
                   height: 80,
                   width: 350,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      successController.goToOrderScreen();
+                    },
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -62,7 +80,7 @@ class SuccessScreen extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.offNamedUntil("/home", (route) => false);
+                    successController.goToHomeScreen();
                   },
                   child: const Text(
                     "Volver a Inicio",

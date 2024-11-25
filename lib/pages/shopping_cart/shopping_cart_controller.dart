@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class ProductForCart {
   final int id;
@@ -14,6 +17,28 @@ class ProductForCart {
     required this.price,
     required this.quantity,
   });
+
+  // Método para convertir a JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'quantity': quantity.value,
+      "price": price,
+      "imagePath": imagePath
+    };
+  }
+
+  // Método para crear una instancia desde JSON
+  factory ProductForCart.fromJson(Map<String, dynamic> json) {
+    return ProductForCart(
+      id: json['id'],
+      name: json['name'],
+      quantity: RxInt(json['quantity']),
+      imagePath: json["imagePath"],
+      price: json["price"],
+    );
+  }
 }
 
 class ShoppingCartController extends GetxController {
@@ -30,7 +55,15 @@ class ShoppingCartController extends GetxController {
     cartItems.refresh();
   }
 
+  void saveCartItems(List<ProductForCart> items) {
+    List<Map<String, dynamic>> jsonItems =
+        items.map((item) => item.toJson()).toList();
+    GetStorage()
+        .write("cart_items", jsonEncode(jsonItems)); // Guardar como JSON
+  }
+
   void goPayScreen() {
+    saveCartItems(cartItems);
     Get.toNamed("/pay");
   }
 

@@ -51,7 +51,9 @@ class SecurityFingerController extends GetxController {
     uriLinkStream.listen((Uri? uri) {
       if (uri != null) {
         _processDeepLink(uri);
+        goToHomeScreen();
       }
+      goToHomeScreen();
     }, onError: (err) {
       print("Error al procesar Deep Links: $err");
     });
