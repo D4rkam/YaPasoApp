@@ -26,6 +26,7 @@ class AppTheme {
         );
   ThemeData theme() {
     return ThemeData(
+      fontFamily: "RobotoFlex",
       useMaterial3: true,
       colorSchemeSeed: _colorThemes[selectedColor],
       brightness:
