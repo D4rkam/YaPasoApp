@@ -6,6 +6,7 @@ import 'package:prueba_buffet/app/routes/app_pages.dart';
 import 'package:prueba_buffet/app/routes/routes.dart';
 import 'package:prueba_buffet/app/ui/theme/app_theme.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 User userSession = User.fromJson(GetStorage().read("user") ?? {});
 
@@ -29,6 +30,16 @@ class MyApp extends StatelessWidget {
       initialBinding: InitialBinding(),
       navigatorKey: Get.key,
       theme: AppTheme(enableDarkMode: false).theme(),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate
+      ],
+      supportedLocales: const [
+        Locale("es", ""),
+        Locale("en", ""),
+      ],
+      locale: const Locale("es", ""),
     );
   }
 }
