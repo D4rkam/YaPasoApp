@@ -28,10 +28,11 @@ class _PayScreenState extends State<PayScreen> {
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(DateTime.now().year, 12, 31),
+      locale: const Locale("es", ""),
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            primaryColor: Color(0xFFFFE500),
+            colorScheme: const ColorScheme.light(primary: Color(0xFFFFE500)),
             buttonTheme: const ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
             ),
@@ -41,20 +42,26 @@ class _PayScreenState extends State<PayScreen> {
       },
     );
 
-    if (pickedDate != null) {
+    if (pickedDate != null && context.mounted) {
       // Seleccionar la hora
       final TimeOfDay? pickedTime = await showTimePicker(
         context: context,
+        initialEntryMode: TimePickerEntryMode.dial,
         initialTime: TimeOfDay.now(),
         builder: (context, child) {
           return Theme(
-            data: ThemeData.light().copyWith(primaryColor: Color(0xFFFFE500)),
+            data: ThemeData.light().copyWith(
+              colorScheme: const ColorScheme.light(primary: Color(0xFFFFE500)),
+              buttonTheme: const ButtonThemeData(
+                textTheme: ButtonTextTheme.primary,
+              ),
+            ),
             child: child!,
           );
         },
       );
 
-      if (pickedTime != null) {
+      if (pickedTime != null && context.mounted) {
         // Combinar fecha y hora seleccionadas
         setState(() {
           selectedDateTime = DateTime(
