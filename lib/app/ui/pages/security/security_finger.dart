@@ -58,27 +58,24 @@ class _SecurityFingerState extends State<SecurityFinger> {
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF3F3F3F)),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 86),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "para usar",
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Color(0xFF808080),
-                    ),
+            RichText(
+              text: const TextSpan(children: [
+                TextSpan(
+                  text: "para usar",
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: Color(0xFF808080),
                   ),
-                  Text("Ya Paso",
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontFamily: "Lobster",
-                        color: Color(0xFF808080),
-                      ))
-                ],
-              ),
+                ),
+                TextSpan(
+                  text: " Ya Paso",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontFamily: "Lobster",
+                    color: Color(0xFF808080),
+                  ),
+                ),
+              ]),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 150),
