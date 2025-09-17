@@ -7,8 +7,8 @@ class ApiUrl {
   static const String ROOT = "$_hostServer/";
 
   // ----- Authentication
-  static const String REGISTER = "$_hostServer/api/auth/"; // POST
-  static const String LOGIN = "$_hostServer/api/auth/login"; // POST
+  static const String REGISTER = "$_hostServer/api/auth/user"; // POST
+  static const String LOGIN = "$_hostServer/api/auth/user/login"; // POST
 
   // ----- User
   static const String USER = "$_hostServer/api/users/"; // GET
@@ -18,5 +18,9 @@ class ApiUrl {
 
   // ----- Products
   static const String PRODUCT_GET = "$_hostServer/api/product/"; // GET
-  static const String PRODUCTS_GET = "$_hostServer/api/product/all"; // GET
+  static const String PRODUCTS_GET = "$_hostServer/api/product/"; // GET
+  static const String PRODUCTS_CATEGORY_GET =
+      "$_hostServer/api/product/"; // GET
+
+  static const String PAY = "$_hostServer/api/pay/"; // POST
 }

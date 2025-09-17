@@ -20,5 +20,8 @@ class ProjectImages {
   static const String galletitasIcon =
       "assets/images/categorias/galletitas_categoria.png";
   static const String sandwichIcon =
-      "assets/images/categorias/sandwich_categoria.png";
+      "assets/images/categorias/galletitas_categoria.png";
+  static const String pagoEfectivoIcon = "assets/images/pago_efect.png";
+  static const String pagoTransferenciaIcon = "assets/images/pago_transf.png";
+  static const String yaPasoIcon = "assets/images/y_yapaso.png";
 }

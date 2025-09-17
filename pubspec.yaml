@@ -2,7 +2,6 @@ name: prueba_buffet
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -30,7 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  carousel_slider: ^4.2.1
+  carousel_slider: ^5.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -39,6 +38,11 @@ dependencies:
   get: ^4.6.6
   get_storage: ^2.1.1
   sn_progress_dialog: ^1.1.4
+  url_launcher: ^6.0.20
+  local_auth: ^2.3.0
+  intl: ^0.19.0
+  flutter_localization: ^0.2.2
+  uni_links:
 
 dev_dependencies:
   flutter_native_splash: ^2.4.0
@@ -51,7 +55,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 flutter_launcher_icons:
   android: true
@@ -78,16 +82,22 @@ flutter:
     - assets/images/empanadas_ad.png
     - assets/images/churros.png
     - assets/images/steve_person.png
-    - assets/images/productos/don_satur.png
-    - assets/images/productos/coca_cola.png
-    - assets/images/productos/maiz_inflado.png
     - assets/images/categorias/bebidas_categoria.png
     - assets/images/categorias/snacks_categoria.png
     - assets/images/categorias/golosinas_categoria.png
     - assets/images/categorias/galletitas_categoria.png
-    - assets/images/categorias/sandwich_categoria.png
     - assets/images/logo-sin.png
+    - assets/images/cart_empty.png
     - assets/images/intro/img_intro_screen.png
+    - assets/images/pago_efect.png
+    - assets/images/pago_transf.png
+    - assets/images/y_yapaso.png
+    - assets/images/bloqueo.png
+    - assets/images/icono_carga.png
+    - assets/images/icono_trans.png
+    - assets/images/not_load.png
+    - assets/images/order_confirm.png
+    - assets/images/codigo_barra.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -101,10 +111,13 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Lobster
+      fonts:
+        - asset: assets/fonts/Lobster-Regular.ttf
+    - family: RobotoFlex
+      fonts:
+        - asset: assets/fonts/RobotoFlex-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
