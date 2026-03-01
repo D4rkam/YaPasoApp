@@ -5,13 +5,16 @@ import 'package:prueba_buffet/app/bindings/initial_binding.dart';
 import 'package:prueba_buffet/app/routes/app_pages.dart';
 import 'package:prueba_buffet/app/routes/routes.dart';
 import 'package:prueba_buffet/app/ui/theme/app_theme.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-User userSession = User.fromJson(GetStorage().read("user") ?? {});
+late User userSession;
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
+  userSession = User.fromJson(GetStorage().read("user") ?? {});
   runApp(const MyApp());
 }
 
@@ -20,26 +23,34 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      enableLog: true,
-      defaultTransition: Transition.fade,
-      debugShowCheckedModeBanner: false,
-      title: 'Ya paso',
-      initialRoute: userSession.id != null ? Routes.SECURITY : Routes.INITIAL,
-      getPages: AppPages.pages,
-      initialBinding: InitialBinding(),
-      navigatorKey: Get.key,
-      theme: AppTheme(enableDarkMode: false).theme(),
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate
-      ],
-      supportedLocales: const [
-        Locale("es", ""),
-        Locale("en", ""),
-      ],
-      locale: const Locale("es", ""),
+    return ScreenUtilInit(
+      designSize: const Size(375, 812), // Tamaño base de diseño (ej. iPhone X)
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return GetMaterialApp(
+          enableLog: true,
+          defaultTransition: Transition.fade,
+          debugShowCheckedModeBanner: false,
+          title: 'Ya paso',
+          initialRoute:
+              userSession.id != null ? Routes.SECURITY : Routes.INITIAL,
+          getPages: AppPages.pages,
+          initialBinding: InitialBinding(),
+          navigatorKey: Get.key,
+          theme: AppTheme(enableDarkMode: false).theme(),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate
+          ],
+          supportedLocales: const [
+            Locale("es", ""),
+            Locale("en", ""),
+          ],
+          locale: const Locale("es", ""),
+        );
+      },
     );
   }
 }
