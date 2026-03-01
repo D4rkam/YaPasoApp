@@ -9,6 +9,7 @@ class HomeController extends GetxController {
   ProductsProvider productsProvider = ProductsProvider();
   User userSession = User.fromJson(GetStorage().read("user") ?? {});
   var balanceUser = 0.obs;
+  var tabIndex = 1.obs;
 
   var productsFromApi = <Product>[].obs;
   List<String> listaCategorias = [
