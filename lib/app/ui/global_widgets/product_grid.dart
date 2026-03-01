@@ -43,7 +43,7 @@ class ProductGrid extends StatelessWidget {
                   id: products[i].id,
                   name: products[i].name,
                   price: products[i].price,
-                  imagePath: products[i].imageUrl,
+                  imagePath: products[i].imageUrl ?? "",
                   quantity: 1.obs),
             ),
             childCount: products.length,
@@ -101,6 +101,13 @@ class ProductCard extends StatelessWidget {
                                 .imagePath), // Reemplaza con la URL de tu imagen
                         height: 100,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/images/not_load.png', // Tu imagen de respaldo
+                            height: 100,
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                     ),
                   ),
