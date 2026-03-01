@@ -28,12 +28,18 @@ android {
     ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17 
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17' 
+    }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
     }
 
     sourceSets {
@@ -65,3 +71,13 @@ flutter {
 }
 
 dependencies {}
+
+subprojects {
+    afterEvaluate { project ->
+        if (project.hasProperty("android")) {
+            if (project.android.namespace == null) {
+                project.android.namespace = project.group
+            }
+        }
+    }
+}

@@ -2,7 +2,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/app/data/models/response_api.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
-import 'package:uni_links/uni_links.dart';
+import 'package:app_links/app_links.dart'; // Asegurate de tener esto en pubspec.yaml
+import 'dart:async';
 
 class SecurityFingerController extends GetxController {
   UsersProvider usersProvider = UsersProvider();
@@ -10,24 +11,26 @@ class SecurityFingerController extends GetxController {
   bool _isNavigating = false;
   final GetStorage _storage = GetStorage();
 
+  // Instancia de AppLinks y suscripción para limpieza
+  final _appLinks = AppLinks();
+  StreamSubscription<Uri>? _linkSubscription;
+
+  @override
+  void onClose() {
+    // Es importante cancelar la escucha cuando el controlador se destruye
+    _linkSubscription?.cancel();
+    super.onClose();
+  }
+
   // Navegación
   void goToHomeScreen() {
     Get.offAllNamed('/home');
   }
 
-  void goToSuccessPage() {
-    Get.offNamedUntil("/success_pay", (route) => false);
-  }
+  void goToSuccessPage() => Get.offNamedUntil("/success_pay", (route) => false);
+  void goToFailurePage() => Get.offNamedUntil("/failure_pay", (route) => false);
+  void goToPendingPage() => Get.offNamedUntil("/pending_pay", (route) => false);
 
-  void goToFailurePage() {
-    Get.offNamedUntil("/failure_pay", (route) => false);
-  }
-
-  void goToPendingPage() {
-    Get.offNamedUntil("/pending_pay", (route) => false);
-  }
-
-  // Verifica el token y actualiza el estado de autenticación
   Future<void> checkToken() async {
     ResponseApi response = await usersProvider.checkToken();
     if (response.success) {
@@ -38,52 +41,63 @@ class SecurityFingerController extends GetxController {
     }
   }
 
-  // Manejo de enlaces profundos
+  // Manejo de enlaces profundos con AppLinks
   Future<void> initDeepLinkListener() async {
-    final initialUri = await getInitialUri();
-    if (initialUri != null) {
-      _processDeepLink(initialUri);
-    }
-
-    uriLinkStream.listen((Uri? uri) {
-      if (uri != null) {
-        _processDeepLink(uri);
+    // 1. Manejar el link inicial (si la app se abrió desde un link)
+    try {
+      final initialUri = await _appLinks.getInitialLink();
+      if (initialUri != null) {
+        _processDeepLink(initialUri);
+      } else {
+        // Si no hay link inicial, vamos al home después de un breve delay
+        // para asegurar que el checkToken terminó
         goToHomeScreen();
       }
+    } catch (e) {
+      print("Error obteniendo el link inicial: $e");
       goToHomeScreen();
+    }
+
+    // 2. Escuchar links mientras la app está en segundo plano o abierta
+    _linkSubscription = _appLinks.uriLinkStream.listen((Uri? uri) {
+      if (uri != null) {
+        print("Nuevo Deep Link recibido: $uri");
+        _processDeepLink(uri);
+      }
     }, onError: (err) {
-      print("Error al procesar Deep Links: $err");
+      print("Error en el stream de Deep Links: $err");
     });
-    goToHomeScreen();
   }
 
   void _processDeepLink(Uri uri) {
-    print("dentro de la funcion");
     if (_isNavigating) return;
-
     _isNavigating = true;
-    late String status;
 
-    if (uri.pathSegments.contains("success")) {
+    print("Procesando path: ${uri.path}");
+    String? status;
+
+    // Usamos path o queryParameters según cómo lo envíe Mercado Pago
+    if (uri.path.contains("success") || uri.toString().contains("success")) {
       status = "approved";
-      paymentStatus.value = status;
-    } else if (uri.pathSegments.contains("failure")) {
+    } else if (uri.path.contains("failure") ||
+        uri.toString().contains("failure")) {
       status = "failure";
-      paymentStatus.value = status;
-    } else if (uri.pathSegments.contains("pending")) {
+    } else if (uri.path.contains("pending") ||
+        uri.toString().contains("pending")) {
       status = "pending";
+    }
+
+    if (status != null) {
       paymentStatus.value = status;
+      if (status == 'approved')
+        goToSuccessPage();
+      else if (status == 'failure')
+        goToFailurePage();
+      else if (status == 'pending') goToPendingPage();
     } else {
       goToHomeScreen();
     }
 
-    if (status == 'approved') {
-      goToSuccessPage();
-    } else if (status == 'failure') {
-      goToFailurePage();
-    } else if (status == 'pending') {
-      goToPendingPage();
-    }
     _isNavigating = false;
   }
 }
