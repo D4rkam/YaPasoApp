@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/counter_product.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
-class ShoppingCartScreen extends StatelessWidget {
+class ShoppingCartScreen extends StatelessWidget with ResponsiveMixin {
   ShoppingCartScreen({super.key});
   final ShoppingCartController controller = Get.put(ShoppingCartController());
   @override
@@ -14,30 +15,30 @@ class ShoppingCartScreen extends StatelessWidget {
           backgroundColor: Colors.white,
           titleSpacing: 0,
           leading: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back_ios_new_rounded,
-              size: 30,
+              size: setSp(30),
             ),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
-          title: const Text(
+          title: Text(
             'Carrito',
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: setSp(25), fontWeight: FontWeight.bold),
           ),
           actions: [
             IconButton(
               onPressed: () {},
               icon: const Icon(Icons.search_rounded),
-              iconSize: 32,
+              iconSize: setSp(32),
             ),
             IconButton(
               onPressed: () {},
               icon: const Icon(Icons.filter_alt_rounded),
-              iconSize: 32,
+              iconSize: setSp(32),
             ),
-            const SizedBox(width: 20)
+            SizedBox(width: setWidth(20))
           ],
         ),
         body: Obx(() => (controller.cartItems.isEmpty)
@@ -47,16 +48,17 @@ class ShoppingCartScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset("assets/images/cart_empty.png"),
-                      const Text("¡Tu carrito esta vacio!",
+                      Text("¡Tu carrito esta vacio!",
                           style: TextStyle(
-                              fontSize: 30, fontWeight: FontWeight.bold)),
+                              fontSize: setSp(30),
+                              fontWeight: FontWeight.bold)),
                     ]),
               )
             : ScreenWithItems(controller: controller)));
   }
 }
 
-class ScreenWithItems extends StatelessWidget {
+class ScreenWithItems extends StatelessWidget with ResponsiveMixin {
   const ScreenWithItems({
     super.key,
     required this.controller,
@@ -83,11 +85,11 @@ class ScreenWithItems extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     color: const Color(0xFFFDB9B9),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: const Icon(
+                  padding: EdgeInsets.symmetric(horizontal: setWidth(20)),
+                  child: Icon(
                     Icons.delete,
                     color: Colors.redAccent,
-                    size: 35,
+                    size: setSp(35),
                   ),
                 ),
                 onDismissed: (direction) {
@@ -103,8 +105,9 @@ class ScreenWithItems extends StatelessWidget {
 
         // Contenedor con el total y el botón de compra (fijo)
         Container(
-          height: 200, // Tamaño fijo
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+          height: setHeight(200), // Tamaño fijo
+          padding: EdgeInsets.symmetric(
+              horizontal: setWidth(20), vertical: setHeight(28)),
           color: Colors.white,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -112,17 +115,17 @@ class ScreenWithItems extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     "Total a Pagar",
                     style: TextStyle(
-                        color: Color(0xFF4D4D4D),
-                        fontSize: 25,
+                        color: const Color(0xFF4D4D4D),
+                        fontSize: setSp(25),
                         fontWeight: FontWeight.bold),
                   ),
                   Obx(
                     () => Text("\$${controller.totalPrice}",
-                        style: const TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            fontSize: setSp(25), fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
@@ -135,7 +138,7 @@ class ScreenWithItems extends StatelessWidget {
   }
 }
 
-class ListOfProducts extends StatelessWidget {
+class ListOfProducts extends StatelessWidget with ResponsiveMixin {
   const ListOfProducts({
     super.key,
     required this.controller,
@@ -157,7 +160,7 @@ class ListOfProducts extends StatelessWidget {
               background: Container(
                 color: Colors.redAccent,
                 alignment: Alignment.centerRight,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: setWidth(20)),
                 child: const Icon(
                   Icons.delete,
                   color: Colors.white,

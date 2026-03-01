@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/toggle_button.dart';
 
-class MyBalance extends StatelessWidget {
+class MyBalance extends StatelessWidget with ResponsiveMixin {
   const MyBalance({super.key});
 
   @override
@@ -12,17 +13,17 @@ class MyBalance extends StatelessWidget {
         backgroundColor: Colors.white,
         titleSpacing: 0,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_ios_new_rounded,
-            size: 30,
+            size: setSp(30),
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
+        title: Text(
           'Mi Saldo',
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: setSp(25), fontWeight: FontWeight.bold),
         ),
       ),
       body: Center(
@@ -30,9 +31,9 @@ class MyBalance extends StatelessWidget {
           children: [
             const TarjetaYaPaso(),
             Padding(
-              padding: const EdgeInsets.only(top: 55),
+              padding: EdgeInsets.only(top: setHeight(55)),
               child: SizedBox(
-                height: 40,
+                height: setHeight(40),
                 child: CustomToggleButton(
                     labels: const ["Mi Actividad", "Historial"],
                     initialSelectedIndex: 0,
@@ -43,7 +44,8 @@ class MyBalance extends StatelessWidget {
             ),
             Expanded(
                 child: Padding(
-              padding: const EdgeInsets.only(top: 30, left: 30, right: 30),
+              padding: EdgeInsets.only(
+                  top: setHeight(30), left: setWidth(30), right: setWidth(30)),
               child: TransactionsPage(),
             ))
           ],
@@ -53,7 +55,7 @@ class MyBalance extends StatelessWidget {
   }
 }
 
-class TarjetaYaPaso extends StatelessWidget {
+class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
   const TarjetaYaPaso({super.key});
 
   @override
@@ -63,27 +65,29 @@ class TarjetaYaPaso extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          height: 170,
+          width: setWidth(
+              375 * 0.9), // Original was MediaQuery * 0.9. Design width 375.
+          height: setHeight(170),
           decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(
                 color: const Color(0xFFFfE500),
-                width: 2,
+                width: setWidth(2),
               ),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(
+                  setHeight(20)), // Using setHeight for radius usually safe
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.1),
-                  spreadRadius: 3,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3),
+                  spreadRadius: setWidth(3),
+                  blurRadius: setWidth(7),
+                  offset: Offset(0, setHeight(3)),
                 )
               ]),
         ),
-        const Positioned(
-          top: 10,
-          left: 20,
+        Positioned(
+          top: setHeight(10),
+          left: setWidth(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,55 +98,57 @@ class TarjetaYaPaso extends StatelessWidget {
                   Text(
                     "Billetera",
                     style: TextStyle(
-                        fontSize: 17,
+                        fontSize: setSp(17),
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFFFFE500)),
+                        color: const Color(0xFFFFE500)),
                   ),
                   SizedBox(
-                    width: 10,
+                    width: setWidth(10),
                   ),
                   Text("Ya Paso",
                       style: TextStyle(
-                          fontSize: 17,
+                          fontSize: setSp(17),
                           fontFamily: "Lobster",
-                          color: Color(0xFFFFE500))),
+                          color: const Color(0xFFFFE500))),
                   SizedBox(
-                    width: 10,
+                    width: setWidth(10),
                   ),
                   Text("4654",
-                      style: TextStyle(fontSize: 20, color: Color(0xFF333333))),
+                      style: TextStyle(
+                          fontSize: setSp(20), color: const Color(0xFF333333))),
                 ],
               ),
               SizedBox(
-                height: 20,
+                height: setHeight(20),
               ),
               Text("Saldo Disponible",
-                  style: TextStyle(fontSize: 20, color: Color(0xFF333333))),
+                  style: TextStyle(
+                      fontSize: setSp(20), color: const Color(0xFF333333))),
               SizedBox(
-                height: 5,
+                height: setHeight(5),
               ),
               Text("\$0",
                   style: TextStyle(
-                      fontSize: 30,
+                      fontSize: setSp(30),
                       fontWeight: FontWeight.w500,
                       color: Colors.black))
             ],
           ),
         ),
         Positioned(
-          top: 10,
-          right: 10,
+          top: setHeight(10),
+          right: setWidth(10),
           child: Image.asset(
             "assets/images/y_yapaso.png",
-            width: 68,
+            width: setWidth(68),
           ),
         ),
         Positioned(
-          bottom: -20,
-          left: 15,
+          bottom: setHeight(-20),
+          left: setWidth(15),
           child: SizedBox(
-            width: 160,
-            height: 40,
+            width: setWidth(160),
+            height: setHeight(40),
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
@@ -150,7 +156,7 @@ class TarjetaYaPaso extends StatelessWidget {
                 shadowColor: Colors.grey.withOpacity(0.1),
                 backgroundColor: const Color(0xFFFfE500),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(setHeight(20)),
                 ),
               ),
               child: Row(
@@ -158,12 +164,12 @@ class TarjetaYaPaso extends StatelessWidget {
                 children: [
                   Image.asset(
                     "assets/images/icono_carga.png",
-                    width: 30,
+                    width: setWidth(30),
                   ),
-                  const Text(
+                  Text(
                     "Cargar",
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: setSp(18),
                         fontWeight: FontWeight.bold,
                         color: Colors.black),
                   )
@@ -173,23 +179,23 @@ class TarjetaYaPaso extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: -20,
-          right: 15,
+          bottom: setHeight(-20),
+          right: setWidth(15),
           child: SizedBox(
-            width: 160,
-            height: 40,
+            width: setWidth(160),
+            height: setHeight(40),
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
                 elevation: 5,
                 shadowColor: Colors.grey.withOpacity(0.1),
                 backgroundColor: Colors.white,
-                side: const BorderSide(
-                  color: Color(0xFFFfE500),
-                  width: 2,
+                side: BorderSide(
+                  color: const Color(0xFFFfE500),
+                  width: setWidth(2),
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(setHeight(20)),
                 ),
               ),
               child: Row(
@@ -197,7 +203,7 @@ class TarjetaYaPaso extends StatelessWidget {
                 children: [
                   Image.asset(
                     "assets/images/icono_trans.png",
-                    width: 30,
+                    width: setWidth(30),
                   ),
                   const Text(
                     "Transferir",
@@ -216,7 +222,7 @@ class TarjetaYaPaso extends StatelessWidget {
   }
 }
 
-class TransactionsPage extends StatelessWidget {
+class TransactionsPage extends StatelessWidget with ResponsiveMixin {
   final List<Map<String, dynamic>> transactions = [
     {
       "name": "Juan Garcia",
@@ -259,7 +265,7 @@ class TransactionsPage extends StatelessWidget {
       itemBuilder: (context, index) {
         final transaction = transactions[index];
         return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
+          padding: EdgeInsets.only(bottom: setHeight(10)), // setHeight(10)
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -269,16 +275,16 @@ class TransactionsPage extends StatelessWidget {
                 children: [
                   Text(
                     "${transaction["name"]}",
-                    style: const TextStyle(
-                      fontSize: 20,
+                    style: TextStyle(
+                      fontSize: setSp(20),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   Text(
                     "${transaction["description"]}",
-                    style: const TextStyle(
-                      color: Color(0xFF6A6A6A),
-                      fontSize: 17,
+                    style: TextStyle(
+                      color: const Color(0xFF6A6A6A),
+                      fontSize: setSp(17),
                     ),
                   ),
                 ],
@@ -288,17 +294,18 @@ class TransactionsPage extends StatelessWidget {
                 children: [
                   Text(
                     "\$${transaction["amount"]}",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      fontSize: 22,
+                      fontSize: setSp(22),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: setWidth(10)),
                   Icon(
                     transaction["isIncome"]
                         ? Icons.north_east
                         : Icons.south_west,
                     color: transaction["isIncome"] ? Colors.green : Colors.red,
+                    size: setSp(24), // default aprox 24
                   )
                 ],
               ),

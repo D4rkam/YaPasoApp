@@ -5,6 +5,7 @@ import 'package:prueba_buffet/app/controllers/pay_controller.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/input.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
 class PayScreen extends StatefulWidget {
   const PayScreen({super.key});
@@ -13,7 +14,7 @@ class PayScreen extends StatefulWidget {
   State<PayScreen> createState() => _PayScreenState();
 }
 
-class _PayScreenState extends State<PayScreen> {
+class _PayScreenState extends State<PayScreen> with ResponsiveMixin {
   final PayController payController = Get.put(PayController());
   final ShoppingCartController shoppingCartController = Get.find();
 
@@ -84,21 +85,23 @@ class _PayScreenState extends State<PayScreen> {
           backgroundColor: Colors.white,
           titleSpacing: 0,
           leading: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back_ios_new_rounded,
-              size: 30,
+              size: setSp(30),
             ),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
-          title: const Text(
+          title: Text(
             'Pago',
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style:
+                TextStyle(fontSize: setSp(25), fontWeight: FontWeight.normal),
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+          padding: EdgeInsets.symmetric(
+              vertical: setHeight(30), horizontal: setWidth(20)),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             // Horario de Retiro
@@ -121,31 +124,32 @@ class _PayScreenState extends State<PayScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 9),
+                  padding: EdgeInsets.only(left: setWidth(9)),
                   child: Container(
-                    height: 60,
-                    width: 60,
+                    height: setHeight(60),
+                    width: setWidth(60),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFE500),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.timer_sharp,
                       color: Colors.black,
-                      size: 40,
+                      size: setSp(40),
                     ),
                   ),
                 )
               ],
             ),
 
-            const SizedBox(height: 60),
-            const Text(
+            SizedBox(height: setHeight(60)),
+            Text(
               'Método de Pago',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, fontSize: setSp(30)),
             ),
-            const SizedBox(height: 32),
-            // Método de pago: Saldo
+            SizedBox(height: setHeight(32)),
+
             PaymentMethodTile(
               imageUrl: ProjectImages.yaPasoIcon,
               title: 'Tu saldo',
@@ -158,11 +162,11 @@ class _PayScreenState extends State<PayScreen> {
                 });
               },
             ),
-            // Método de pago: Transferencia
+
             PaymentMethodTile(
               imageUrl: ProjectImages.pagoTransferenciaIcon,
-              title: 'Transferencia',
-              value: 'transferencia',
+              title: 'Mercado Pago',
+              value: 'mercado_pago',
               groupValue: selectedMethod,
               isEnabled: true,
               onChanged: (value) {
@@ -171,29 +175,17 @@ class _PayScreenState extends State<PayScreen> {
                 });
               },
             ),
-            // Método de pago: Efectivo
-            PaymentMethodTile(
-              imageUrl: ProjectImages.pagoEfectivoIcon,
-              title: 'Efectivo',
-              value: 'efectivo',
-              groupValue: selectedMethod,
-              isEnabled: true,
-              onChanged: (value) {
-                setState(() {
-                  selectedMethod = value;
-                });
-              },
-            ),
-            const SizedBox(height: 20),
+
+            SizedBox(height: setHeight(20)),
             const Spacer(),
             SizedBox(
-              height: 80,
+              height: setHeight(80),
               child: ElevatedButton(
                 onPressed: () {
                   if (selectedMethod != null && selectedDateTime != null) {
                     GetStorage()
                         .write("order_datetime", selectedDateTime.toString());
-                    if (selectedMethod == "transferencia") {
+                    if (selectedMethod == "mercado_pago") {
                       payController.pay(shoppingCartController.cartItems);
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -216,11 +208,11 @@ class _PayScreenState extends State<PayScreen> {
                   foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: setHeight(16)),
                 ),
-                child: const Text(
+                child: Text(
                   'Pagar',
-                  style: TextStyle(fontSize: 30),
+                  style: TextStyle(fontSize: setSp(30)),
                 ),
               ),
             ),
@@ -229,7 +221,7 @@ class _PayScreenState extends State<PayScreen> {
   }
 }
 
-class PaymentMethodTile extends StatelessWidget {
+class PaymentMethodTile extends StatelessWidget with ResponsiveMixin {
   final String imageUrl;
   final String title;
   final String value;
@@ -252,8 +244,8 @@ class PaymentMethodTile extends StatelessWidget {
     return GestureDetector(
       onTap: isEnabled ? () => onChanged(value) : null,
       child: Container(
-        height: 96,
-        margin: const EdgeInsets.only(bottom: 25),
+        height: setHeight(96),
+        margin: EdgeInsets.only(bottom: setHeight(25)),
         decoration: BoxDecoration(
             color: (groupValue == value)
                 ? const Color(0xFF2C2F3D)
@@ -264,18 +256,18 @@ class PaymentMethodTile extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                   color: Colors.black.withOpacity(0.1),
-                  blurRadius: 2,
-                  spreadRadius: 0.1,
-                  offset: const Offset(0, 2))
+                  blurRadius: setWidth(2),
+                  spreadRadius: setWidth(0.1),
+                  offset: Offset(0, setHeight(2)))
             ]),
         child: Row(
           children: [
             Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(setWidth(16.0)),
                 child: Image.asset(
                   imageUrl,
-                  height: 70,
-                  width: 70,
+                  height: setHeight(70),
+                  width: setWidth(70),
                   color: (groupValue == value)
                       ? null
                       : isEnabled
@@ -292,12 +284,12 @@ class PaymentMethodTile extends StatelessWidget {
                       : isEnabled
                           ? Colors.black
                           : Colors.grey[400],
-                  fontSize: 25,
+                  fontSize: setSp(25),
                 ),
               ),
             ),
             Transform.scale(
-              scale: 1.5,
+              scale: setSp(1.5),
               child: Radio<String>(
                 value: value,
                 groupValue: groupValue,
