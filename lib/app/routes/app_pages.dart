@@ -41,7 +41,7 @@ abstract class AppPages {
     ),
     GetPage(
         name: Routes.PRODUCT,
-        page: () => const ProductScreen(),
+        page: () => ProductScreen(),
         binding: ProductBinding()),
     GetPage(
         name: Routes.CATEGORY,
@@ -51,7 +51,7 @@ abstract class AppPages {
     GetPage(name: Routes.ORDERS, page: () => Order()),
     GetPage(name: Routes.SHOPPING_CART, page: () => ShoppingCartScreen()),
     GetPage(name: Routes.SUCCESS_PAY, page: () => SuccessScreen()),
-    GetPage(name: Routes.FAILURE_PAY, page: () => const FailureScreen()),
-    GetPage(name: Routes.SUCCESS_PAY, page: () => const PendingScreen()),
+    GetPage(name: Routes.FAILURE_PAY, page: () => FailureScreen()),
+    GetPage(name: Routes.PENDING_PAY, page: () => PendingScreen()),
   ];
 }
