@@ -8,7 +8,6 @@ import 'package:prueba_buffet/utils/constants/image_strings.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/carrusel.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/category_item.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/container_input.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/navbar.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/product_grid.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/shopping_cart_button.dart';
@@ -157,6 +156,7 @@ class CustomSideMenu extends StatelessWidget with ResponsiveMixin {
             ),
             onTap: () {
               homeController.goToMisPedidos();
+              homeController.tabIndex.value = 1;
               Scaffold.of(context).closeDrawer();
             },
           ),
@@ -172,6 +172,7 @@ class CustomSideMenu extends StatelessWidget with ResponsiveMixin {
             ),
             onTap: () {
               homeController.goToMyBalance();
+              homeController.tabIndex.value = 1;
               Scaffold.of(context).closeDrawer();
             },
           ),

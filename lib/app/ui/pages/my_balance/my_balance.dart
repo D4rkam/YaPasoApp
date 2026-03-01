@@ -23,7 +23,7 @@ class MyBalance extends StatelessWidget with ResponsiveMixin {
         ),
         title: Text(
           'Mi Saldo',
-          style: TextStyle(fontSize: setSp(25), fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: setSp(25), fontWeight: FontWeight.normal),
         ),
       ),
       body: Center(
@@ -147,7 +147,7 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
           bottom: setHeight(-20),
           left: setWidth(15),
           child: SizedBox(
-            width: setWidth(160),
+            width: setWidth(150),
             height: setHeight(40),
             child: ElevatedButton(
               onPressed: () {},
@@ -182,7 +182,7 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
           bottom: setHeight(-20),
           right: setWidth(15),
           child: SizedBox(
-            width: setWidth(160),
+            width: setWidth(150),
             height: setHeight(40),
             child: ElevatedButton(
               onPressed: () {},

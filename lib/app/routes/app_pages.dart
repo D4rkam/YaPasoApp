@@ -9,6 +9,7 @@ import 'package:prueba_buffet/app/ui/pages/category/category.dart';
 import 'package:prueba_buffet/app/ui/pages/home/home.dart';
 import 'package:prueba_buffet/app/ui/pages/intro/intro.dart';
 import 'package:prueba_buffet/app/ui/pages/login/login.dart';
+import 'package:prueba_buffet/app/ui/pages/my_balance/my_balance.dart';
 import 'package:prueba_buffet/app/ui/pages/order/order.dart';
 import 'package:prueba_buffet/app/ui/pages/pay/pay.dart';
 import 'package:prueba_buffet/app/ui/pages/pay_state/failure.dart';
@@ -43,6 +44,10 @@ abstract class AppPages {
         name: Routes.PRODUCT,
         page: () => ProductScreen(),
         binding: ProductBinding()),
+    GetPage(
+      name: Routes.MY_BALANCE,
+      page: () => const MyBalance(),
+    ),
     GetPage(
         name: Routes.CATEGORY,
         page: () => const CategoryScreen(),
