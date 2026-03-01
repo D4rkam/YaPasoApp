@@ -1,10 +1,7 @@
-import 'dart:developer';
-
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/app/data/models/response_api.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
-import 'package:prueba_buffet/app/ui/pages/order/order.dart';
+import 'package:prueba_buffet/app/data/provider/base_provider.dart';
 import 'package:prueba_buffet/utils/constants/api_constants.dart';
 
 class ProductForOrder {
@@ -66,29 +63,19 @@ class Order {
   }
 }
 
-class UsersProvider extends GetConnect {
-  String urlCreate = ApiUrl.REGISTER;
-  String urlLogin = ApiUrl.LOGIN;
-  String urlUser = ApiUrl.USER;
-  String urlOrder = ApiUrl.ORDER;
-
-  User userSession = User.fromJson(GetStorage().read("user") ?? {});
+class UsersProvider extends BaseProvider {
+  // Los interceptores y la logica de refresh token son heredados de BaseProvider
 
   Future<Response> create(User user) async {
-    Response response = await post(
-      urlCreate,
-      user.toJson(),
-      headers: {"Content-Type": "application/json"},
-    );
-    return response;
+    // El interceptor ya sabe qué cookies enviar si existen
+    return await post(ApiUrl.REGISTER, user.toJson());
   }
 
   Future<ResponseApi> login(String username, String password) async {
+    print("Iniciando login para: $username");
+
     Response response = await post(
-      urlLogin,
-      headers: {
-        "Content-Type": "application/json",
-      },
+      ApiUrl.LOGIN,
       {
         "username": username,
         "password": password,
@@ -96,41 +83,30 @@ class UsersProvider extends GetConnect {
     );
 
     if (response.body == null) {
-      Get.snackbar("Error", "No se pudo ejecutar la peticion");
+      Get.snackbar("Error", "No se pudo conectar con el servidor");
       return ResponseApi(success: false);
     }
-    ResponseApi responseApi = ResponseApi.fromJson(
+
+    // Si el login fue exitoso, el Response Modifier de BaseProvider ya guardó las cookies
+    return ResponseApi.fromJson(
       response.body,
       response.statusCode == 200,
     );
-    return responseApi;
   }
 
   Future<ResponseApi> checkToken() async {
-    Response response = await get(
-      urlUser,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer ${userSession.token?["access_token"]}"
-      },
-    );
+    // El interceptor de BaseProvider se encargará de la lógica de reintento
+    // y renovación del token. Aquí solo necesitamos hacer la llamada.
+    Response response = await get(ApiUrl.USER);
+
     if (response.body == null) {
       return ResponseApi(success: false);
     }
-    ResponseApi responseApi =
-        ResponseApi.fromJson(response.body, response.isOk);
 
-    return responseApi;
+    return ResponseApi.fromJson(response.body, response.isOk);
   }
 
   Future<Response> createOrder(Map<String, dynamic> orderJson) async {
-    Response response = await post(
-        urlOrder,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer ${userSession.token?["access_token"]}"
-        },
-        orderJson);
-    return response;
+    return await post(ApiUrl.ORDER, orderJson);
   }
 }

@@ -1,18 +1,16 @@
 import 'dart:convert';
-
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
+import 'package:prueba_buffet/app/data/provider/base_provider.dart';
 import 'package:prueba_buffet/utils/constants/api_constants.dart';
 
-class PayProvider extends GetConnect {
-  User userSession = User.fromJson(GetStorage().read("user") ?? {});
+class PayProvider extends BaseProvider {
   String urlPay = ApiUrl.PAY;
 
   Future<Response> pay(List<ProductForCart> items) async {
     final List<Map<String, Object>> mappedItems = items.map((item) {
       return {
+        "id": item.id,
         "title": item.name,
         "unit_price": item.price,
         "quantity": item.quantity.value,
@@ -21,13 +19,14 @@ class PayProvider extends GetConnect {
 
     String itemsForRequest = jsonEncode(mappedItems);
 
+    // Los headers de Authorization/Cookie se manejarán automáticamente por
+    // el BaseProvider
     Response response = await post(
       urlPay,
+      itemsForRequest,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer ${userSession.token?["access_token"]}"
       },
-      itemsForRequest,
     );
 
     if (response.body == null) {
