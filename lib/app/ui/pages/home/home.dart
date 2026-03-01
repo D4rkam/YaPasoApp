@@ -3,15 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/home_controller.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/custom_bottom_bar.dart';
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/carrusel.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/category_item.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/container_input.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/navbar.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/product_grid.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/shopping_cart_button.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatelessWidget with ResponsiveMixin {
   HomeScreen({
     super.key,
   });
@@ -28,43 +30,48 @@ class HomeScreen extends StatelessWidget {
         slivers: [
           CustomAppBar(),
           const ContainerInputSearch(),
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.only(top: 40),
-              child: CarruselWidget(),
-            ),
-          ),
-          const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              child: Text('Categorías',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w400)),
+              padding: EdgeInsets.only(top: setHeight(40)),
+              child: const CarruselWidget(),
             ),
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(left: 20.0),
+              padding: EdgeInsets.symmetric(
+                  horizontal: setWidth(18), vertical: setHeight(10)),
+              child: Text('Categorías',
+                  style: TextStyle(
+                      fontSize: setSp(22), fontWeight: FontWeight.w400)),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(left: setWidth(20.0)),
               child: SizedBox(
-                height: 100,
+                height: setHeight(100),
                 child: ListCategory(
                   categorys: controller.listaCategorias,
                 ),
               ),
             ),
           ),
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+              padding: EdgeInsets.symmetric(
+                  horizontal: setWidth(18), vertical: setHeight(10)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Todos los Productos',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
+                    style: TextStyle(
+                        fontSize: setSp(22), fontWeight: FontWeight.w400),
                   ),
                   Text(
                     "Ver más",
-                    style: TextStyle(fontSize: 17, color: Color(0xFFB3B3B3)),
+                    style: TextStyle(
+                        fontSize: setSp(17), color: const Color(0xFFB3B3B3)),
                   )
                 ],
               ),
@@ -73,12 +80,12 @@ class HomeScreen extends StatelessWidget {
           const ProductGrid()
         ],
       ),
-      bottomNavigationBar: const NavBarWidget(),
+      bottomNavigationBar: CustomBottomBar(currentIndex: controller.tabIndex),
     );
   }
 }
 
-class CustomSideMenu extends StatelessWidget {
+class CustomSideMenu extends StatelessWidget with ResponsiveMixin {
   CustomSideMenu({
     super.key,
   });
@@ -88,28 +95,36 @@ class CustomSideMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: 230,
+      width: setWidth(230),
       backgroundColor: Colors.white,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-            margin: EdgeInsets.only(bottom: 0),
+          DrawerHeader(
+            margin: const EdgeInsets.only(bottom: 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CircleAvatar(
-                  radius: 30,
-                  backgroundImage: AssetImage(
+                  radius: setHeight(30),
+                  backgroundImage: const AssetImage(
                       'assets/images/steve_person.png'), // Cambia esto por la ruta de tu imagen
                 ),
-                SizedBox(height: 10),
-                Text("Darkam",
-                    style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                Text(
-                  "Thomas Linares",
-                  style: TextStyle(fontSize: 16),
+                SizedBox(height: setHeight(10)),
+                Flexible(
+                  child: Text(
+                    "Darkam",
+                    style: TextStyle(
+                        fontSize: setSp(20), fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Flexible(
+                  child: Text(
+                    "Thomas Linares",
+                    style: TextStyle(fontSize: setSp(16)),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
@@ -117,10 +132,10 @@ class CustomSideMenu extends StatelessWidget {
           ListTile(
             selected: true,
             selectedTileColor: const Color(0xFFFFE500),
-            leading: const Icon(
+            leading: Icon(
               Icons.home,
               color: Colors.black,
-              size: 30,
+              size: setSp(30),
             ),
             title: const Text(
               'Inicio',
@@ -131,10 +146,10 @@ class CustomSideMenu extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(
+            leading: Icon(
               Icons.assignment_rounded,
-              color: Color(0xFFFFE500),
-              size: 30,
+              color: const Color(0xFFFFE500),
+              size: setSp(30),
             ),
             title: const Text(
               'Mis Pedidos',
@@ -146,10 +161,10 @@ class CustomSideMenu extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(
+            leading: Icon(
               Icons.account_balance_wallet_rounded,
-              color: Color(0xFFFFE500),
-              size: 30,
+              color: const Color(0xFFFFE500),
+              size: setSp(30),
             ),
             title: const Text(
               'Mi Saldo',
@@ -161,10 +176,10 @@ class CustomSideMenu extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(
+            leading: Icon(
               Icons.logout,
-              color: Color(0xFFFFE500),
-              size: 30,
+              color: const Color(0xFFFFE500),
+              size: setSp(30),
             ),
             title: const Text(
               'Cerrar sesión',
@@ -180,7 +195,7 @@ class CustomSideMenu extends StatelessWidget {
   }
 }
 
-class CustomAppBar extends StatelessWidget {
+class CustomAppBar extends StatelessWidget with ResponsiveMixin {
   CustomAppBar({
     super.key,
   });
@@ -192,11 +207,12 @@ class CustomAppBar extends StatelessWidget {
     return SliverToBoxAdapter(
       child: Stack(children: [
         Container(
-          height: 150,
+          height: setHeight(150),
           color: const Color(0xFFFFE500),
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.only(top: 10, left: 29, right: 29),
+              padding: EdgeInsets.only(
+                  top: setHeight(10), left: setWidth(29), right: setWidth(29)),
               child: Row(
                 // mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -209,12 +225,13 @@ class CustomAppBar extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Row(
+                        Row(
                           children: [
                             Text('Saldo Disponible',
                                 style: TextStyle(
-                                    color: Color(0xFF5E5400), fontSize: 22)),
-                            Icon(
+                                    color: const Color(0xFF5E5400),
+                                    fontSize: setSp(22))),
+                            const Icon(
                               Icons.arrow_forward_ios_rounded,
                               color: Color(0xFF5E5400),
                             )
@@ -223,10 +240,10 @@ class CustomAppBar extends StatelessWidget {
                         Obx(
                           () => Text(
                             '\$${homeController.balanceUser.value}',
-                            style: const TextStyle(
+                            style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500,
-                                fontSize: 30),
+                                fontSize: setSp(30)),
                           ),
                         ),
                       ],

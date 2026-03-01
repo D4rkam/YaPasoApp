@@ -1,35 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/product_controller.dart';
-
-import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/counter_product.dart';
+
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/shopping_cart_button.dart';
+import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
+import 'package:prueba_buffet/app/data/models/product.dart';
 
-class ProductScreen extends GetView<ProductController> {
-  const ProductScreen({super.key});
-
-  // final List<Map<String, String>> sugerencias = [
-  //   {
-  //     'nombre': 'Coca Cola',
-  //     'precio': '\$700',
-  //     'imagen': 'assets/images/productos/coca_cola.png',
-  //   },
-  //   {
-  //     'nombre': 'Don satur',
-  //     'precio': '\$500',
-  //     'imagen': 'assets/images/productos/don_satur.png',
-  //   },
-  //   {
-  //     'nombre': 'Maiz inflado',
-  //     'precio': '\$650',
-  //     'imagen': 'assets/images/productos/maiz_inflado.png',
-  //   }
-  // ].cast<Map<String, String>>();
+class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
+  ProductScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // final ShoppingCartController shoppingCartController = Get.find();
     return GetBuilder<ProductController>(builder: (controller) {
       return Scaffold(
         // Barra de navegación
@@ -39,22 +22,23 @@ class ProductScreen extends GetView<ProductController> {
           backgroundColor: const Color(0xFFFFE500),
           titleSpacing: 0,
           leading: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back_ios_new_rounded,
-              size: 30,
+              size: setSp(30),
             ),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
-          title: const Text(
-            'Mi Saldo',
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          title: Text(
+            'Producto',
+            style:
+                TextStyle(fontSize: setSp(25), fontWeight: FontWeight.normal),
           ),
-          actions: const [
+          actions: [
             Padding(
-              padding: EdgeInsets.only(right: 20, top: 10),
-              child: ShoppingCartButton(),
+              padding: EdgeInsets.only(right: setWidth(20), top: setHeight(10)),
+              child: const ShoppingCartButton(),
             )
           ],
         ),
@@ -70,19 +54,25 @@ class ProductScreen extends GetView<ProductController> {
             children: [
               // Imagen del producto
               Container(
-                padding: const EdgeInsets.only(bottom: 16),
+                padding: EdgeInsets.only(bottom: setHeight(16)),
                 width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.3,
+                height: setHeight(220), // 30% de 812 (altura de diseño)
                 child: Image.network(
                   product.imageUrl, // Reemplaza con la ruta de tu imagen
-                  height: 200,
+                  height: setHeight(200),
                   width: double.infinity,
                   fit: BoxFit.fitHeight,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      "assets/images/not_load.png",
+                      width: setWidth(180),
+                    );
+                  },
                 ),
               ),
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: setWidth(10)),
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
@@ -92,7 +82,7 @@ class ProductScreen extends GetView<ProductController> {
                   ),
                   width: double.infinity,
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(setWidth(16)),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -102,12 +92,13 @@ class ProductScreen extends GetView<ProductController> {
                             children: [
                               Text(
                                 product.name,
-                                style: const TextStyle(
-                                    fontSize: 24, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontSize: setSp(24),
+                                    fontWeight: FontWeight.bold),
                               ),
                             ]),
 
-                        const SizedBox(height: 8),
+                        SizedBox(height: setHeight(8)),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,16 +107,16 @@ class ProductScreen extends GetView<ProductController> {
                               child: Text(
                                 product.description,
                                 softWrap: true,
-                                style: const TextStyle(
-                                    fontSize: 18,
+                                style: TextStyle(
+                                    fontSize: setSp(18),
                                     fontWeight: FontWeight.w500,
-                                    color: Color(0xFF4D4D4D)),
+                                    color: const Color(0xFF4D4D4D)),
                               ),
                             ),
                           ],
                         ),
 
-                        const SizedBox(height: 30),
+                        SizedBox(height: setHeight(30)),
 
                         // Contador
                         Row(
@@ -134,18 +125,18 @@ class ProductScreen extends GetView<ProductController> {
                           children: [
                             Text(
                               '\$${product.price}',
-                              style: const TextStyle(
-                                color: Color(0xFFFFE500),
-                                fontSize: 30,
+                              style: TextStyle(
+                                color: const Color(0xFF44A442),
+                                fontSize: setSp(30),
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                             SizedBox(
-                              width: 150,
-                              height: 40,
+                              width: setWidth(150),
+                              height: setHeight(40),
                               child: Counter(
-                                  widthButton: 40,
-                                  heightButton: 40,
+                                  widthButton: setWidth(40),
+                                  heightButton: setHeight(40),
                                   product: ProductForCart(
                                     id: product.id,
                                     name: product.name,
@@ -199,22 +190,6 @@ class ProductScreen extends GetView<ProductController> {
             ],
           );
         }),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.notifications),
-              label: 'Notificaciones',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Inicio',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.more_horiz),
-              label: 'Más',
-            ),
-          ],
-        ),
       );
     });
   }
@@ -298,40 +273,60 @@ class ProductScreen extends GetView<ProductController> {
   }
 
   Widget _addToShoppingCart({required BuildContext context}) {
+    final ShoppingCartController shoppingCartController = Get.find();
+    final product = controller.product.value!;
+
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.7,
       height: 50,
-      child: ElevatedButton(
-        onPressed: () => {},
-        style: ButtonStyle(
-          backgroundColor:
-              WidgetStateProperty.all<Color>(const Color(0xFFFFE500)),
-          foregroundColor: WidgetStateProperty.all<Color>(Colors.black),
-          textStyle: WidgetStateProperty.all<TextStyle>(
-            const TextStyle(
-              fontSize: 20,
+      // EL OBX DEBE EMPEZAR AQUÍ
+      child: Obx(() {
+        // Guardamos el estado en una variable para que el código sea más limpio
+        final bool inCart = shoppingCartController.isInCart(product.id);
+
+        return ElevatedButton(
+          onPressed: inCart
+              ? null // Opcional: deshabilitar si ya está en el carrito
+              : () {
+                  shoppingCartController.addItemToCart(
+                    ProductForCart(
+                      id: product.id,
+                      name: product.name,
+                      imagePath: product.imageUrl,
+                      price: product.price,
+                      quantity: 1.obs,
+                    ),
+                  );
+                },
+          style: ElevatedButton.styleFrom(
+            // CAMBIO DINÁMICO DE COLOR
+            backgroundColor: inCart
+                ? Colors.grey[400] // Color si ya está en el carrito
+                : const Color(0xFFFFE500), // Tu amarillo original
+            foregroundColor: Colors.black,
+            textStyle: TextStyle(
+              fontSize: setHeight(20),
               fontWeight: FontWeight.w600,
             ),
-          ),
-          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'Añadir al carrito',
-              style: TextStyle(fontWeight: FontWeight.w500),
-            ),
-            SizedBox(width: 8),
-            Icon(Icons.shopping_cart_rounded),
-          ],
-        ),
-      ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                inCart ? 'Producto en carrito' : 'Añadir al carrito',
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              SizedBox(width: setWidth(8)),
+              Icon(inCart
+                  ? Icons.check_circle_outline
+                  : Icons.shopping_cart_rounded),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

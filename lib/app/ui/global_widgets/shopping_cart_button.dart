@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/home_controller.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
-class ShoppingCartButton extends StatelessWidget {
+class ShoppingCartButton extends StatelessWidget with ResponsiveMixin {
   const ShoppingCartButton({
     super.key,
   });
@@ -17,10 +18,10 @@ class ShoppingCartButton extends StatelessWidget {
           homeController.goToShoppingCart();
         },
         child: Container(
-          width: 70,
-          height: 48,
+          width: setWidth(70),
+          height: setHeight(48),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(setHeight(10)),
             color: Colors.white,
           ),
           child: Row(
@@ -30,13 +31,13 @@ class ShoppingCartButton extends StatelessWidget {
               Obx(
                 () => Text(
                   "${controller.cartItems.length}",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w600, fontSize: 24),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: setSp(24)),
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.shopping_cart,
-                size: 26,
+                size: setHeight(22),
               ),
             ],
           ),

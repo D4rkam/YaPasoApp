@@ -3,9 +3,10 @@ import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/category_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/container_input.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/list_of_products.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/shopping_cart_button.dart';
 
-class CategoryScreen extends GetView<CategoryController> {
+class CategoryScreen extends GetView<CategoryController> with ResponsiveMixin {
   const CategoryScreen({super.key});
 
   @override
@@ -17,19 +18,19 @@ class CategoryScreen extends GetView<CategoryController> {
       builder: (controller) => Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
-            toolbarHeight: 100,
+            toolbarHeight: setHeight(100),
             backgroundColor: const Color(0xFFFFE500),
             titleSpacing: 0,
-            actions: const [
+            actions: [
               Padding(
-                padding: EdgeInsets.only(right: 30),
-                child: ShoppingCartButton(),
+                padding: EdgeInsets.only(right: setWidth(30)),
+                child: const ShoppingCartButton(),
               )
             ],
             leading: IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.arrow_back_ios_new_rounded,
-                size: 30,
+                size: setSp(30),
               ),
               onPressed: () {
                 Navigator.pop(context);
@@ -37,13 +38,14 @@ class CategoryScreen extends GetView<CategoryController> {
             ),
             title: Text(
               categoryTitle,
-              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              style:
+                  TextStyle(fontSize: setSp(25), fontWeight: FontWeight.bold),
             ),
           ),
           body: CustomScrollView(
             slivers: [
               const ContainerInputSearch(),
-              const SliverToBoxAdapter(child: SizedBox(height: 30)),
+              SliverToBoxAdapter(child: SizedBox(height: setHeight(30))),
               ListOfProducts(controller: controller),
             ],
           )
