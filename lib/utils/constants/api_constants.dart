@@ -1,4 +1,4 @@
-import 'package:prueba_buffet/enviroment/enviroment.dart';
+import 'package:prueba_buffet/environment/enviroment.dart';
 
 class ApiUrl {
   static const String _hostServer =
@@ -9,6 +9,8 @@ class ApiUrl {
   // ----- Authentication
   static const String REGISTER = "$_hostServer/api/auth/user"; // POST
   static const String LOGIN = "$_hostServer/api/auth/user/login"; // POST
+  static const String REFRESH_TOKEN =
+      "$_hostServer/api/auth/refresh-token"; // POST (Ajusta la ruta según tu API)
 
   // ----- User
   static const String USER = "$_hostServer/api/users/"; // GET
