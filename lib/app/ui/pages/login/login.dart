@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/login_controller.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/toggle_button.dart';
 
-class LoginScreen extends GetView<LoginController> {
+class LoginScreen extends GetView<LoginController> with ResponsiveMixin {
   const LoginScreen({super.key});
 
   @override
@@ -13,16 +14,16 @@ class LoginScreen extends GetView<LoginController> {
       builder: (controller) => Scaffold(
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
+            padding: EdgeInsets.symmetric(horizontal: setWidth(30)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 20),
+                SizedBox(height: setHeight(20)),
                 Padding(
-                  padding: const EdgeInsets.only(top: 20),
+                  padding: EdgeInsets.only(top: setHeight(20)),
                   child: Container(
-                    height: MediaQuery.of(context).size.height * 0.175,
+                    height: setHeight(142),
                     decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage("assets/images/logo-sin.png"),
@@ -31,9 +32,9 @@ class LoginScreen extends GetView<LoginController> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: setHeight(40)),
                 SizedBox(
-                  height: 40,
+                  height: setHeight(40),
                   child: CustomToggleButton(
                     labels: const ['Registrarse', 'Iniciar Sesión'],
                     initialSelectedIndex: 1,
@@ -42,21 +43,21 @@ class LoginScreen extends GetView<LoginController> {
                     },
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: setHeight(20)),
                 inputField(
                     label: "Username",
                     icon: Icons.person,
                     controllerTextField: controller.usernameController),
-                const SizedBox(height: 20),
+                SizedBox(height: setHeight(20)),
                 inputField(
                     label: "Contraseña",
                     icon: Icons.lock,
                     isPassword: true,
                     controllerTextField: controller.passwordController),
-                const SizedBox(height: 20),
+                SizedBox(height: setHeight(20)),
                 SizedBox(
                   width: double.infinity,
-                  height: 60,
+                  height: setHeight(60),
                   child: ElevatedButton(
                     onPressed: () => controller.login(),
                     style: ButtonStyle(
@@ -65,14 +66,14 @@ class LoginScreen extends GetView<LoginController> {
                       foregroundColor:
                           WidgetStateProperty.all<Color>(Colors.black),
                       textStyle: WidgetStateProperty.all<TextStyle>(
-                        const TextStyle(
-                          fontSize: 20,
+                        TextStyle(
+                          fontSize: setSp(20),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(setHeight(10)),
                         ),
                       ),
                     ),
@@ -96,21 +97,23 @@ class LoginScreen extends GetView<LoginController> {
   }) {
     return SizedBox(
       width: double.infinity,
-      height: 58,
+      height: setHeight(58),
       child: TextField(
         keyboardType: typeField,
         controller: controllerTextField,
         obscureText: isPassword,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon),
+          prefixIcon: Icon(icon, size: setSp(24)),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFC5C5C5), width: 3.0),
+            borderRadius: BorderRadius.circular(setHeight(10)),
+            borderSide: BorderSide(
+                color: const Color(0xFFC5C5C5), width: setWidth(3.0)),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFFFE500), width: 3.0),
+            borderRadius: BorderRadius.circular(setHeight(10)),
+            borderSide: BorderSide(
+                color: const Color(0xFFFFE500), width: setWidth(3.0)),
           ),
         ),
       ),

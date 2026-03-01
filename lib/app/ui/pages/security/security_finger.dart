@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:prueba_buffet/app/controllers/security_finger_controller.dart';
 import 'package:local_auth_android/local_auth_android.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
 class SecurityFinger extends StatefulWidget {
   const SecurityFinger({super.key});
@@ -11,7 +12,7 @@ class SecurityFinger extends StatefulWidget {
   State<SecurityFinger> createState() => _SecurityFingerState();
 }
 
-class _SecurityFingerState extends State<SecurityFinger> {
+class _SecurityFingerState extends State<SecurityFinger> with ResponsiveMixin {
   final LocalAuthentication auth = LocalAuthentication();
   final SecurityFingerController securityFingerController = Get.find();
 
@@ -48,39 +49,40 @@ class _SecurityFingerState extends State<SecurityFinger> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 100),
-              child: Image.asset("assets/images/bloqueo.png"),
+              padding: EdgeInsets.only(top: setHeight(100)),
+              child: Image.asset("assets/images/bloqueo.png",
+                  width: setWidth(250), height: setHeight(250)),
             ),
-            const Text(
+            Text(
               "Desbloquea",
               style: TextStyle(
-                  fontSize: 35,
+                  fontSize: setSp(35),
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF3F3F3F)),
+                  color: const Color(0xFF3F3F3F)),
             ),
             RichText(
-              text: const TextSpan(children: [
+              text: TextSpan(children: [
                 TextSpan(
                   text: "para usar",
                   style: TextStyle(
-                    fontSize: 30,
-                    color: Color(0xFF808080),
+                    fontSize: setSp(30),
+                    color: const Color(0xFF808080),
                   ),
                 ),
                 TextSpan(
                   text: " Ya Paso",
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: setSp(30),
                     fontFamily: "Lobster",
-                    color: Color(0xFF808080),
+                    color: const Color(0xFF808080),
                   ),
                 ),
               ]),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 150),
+              padding: EdgeInsets.only(top: setHeight(150)),
               child: SizedBox(
-                height: 60,
+                height: setHeight(60),
                 width: MediaQuery.of(context).size.width * 0.8,
                 child: ElevatedButton(
                   onPressed: _authenticate,
@@ -89,10 +91,10 @@ class _SecurityFingerState extends State<SecurityFinger> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       )),
-                  child: const Text(
+                  child: Text(
                     'Desbloquear',
                     style: TextStyle(
-                        fontSize: 30,
+                        fontSize: setSp(30),
                         fontWeight: FontWeight.bold,
                         color: Colors.black),
                   ),

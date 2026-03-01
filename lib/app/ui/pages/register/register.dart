@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/register_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/toggle_button.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
-class RegisterScreen extends GetView<RegisterController> {
+class RegisterScreen extends GetView<RegisterController> with ResponsiveMixin {
   const RegisterScreen({super.key});
 
   @override
@@ -11,16 +12,17 @@ class RegisterScreen extends GetView<RegisterController> {
     // final colors = Theme.of(context).colorScheme;
     return GetBuilder<RegisterController>(
       builder: (controller) => Scaffold(
+        backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
+            padding: EdgeInsets.symmetric(horizontal: setWidth(30)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 20),
+                SizedBox(height: setHeight(20)),
                 Padding(
-                  padding: const EdgeInsets.only(top: 20),
+                  padding: EdgeInsets.only(top: setHeight(20)),
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.175,
                     decoration: const BoxDecoration(
@@ -31,9 +33,9 @@ class RegisterScreen extends GetView<RegisterController> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: setHeight(20)),
                 SizedBox(
-                  height: 40,
+                  height: setHeight(40),
                   child: CustomToggleButton(
                     labels: const ['Registrarse', 'Iniciar Sesión'],
                     initialSelectedIndex: 0,
@@ -42,42 +44,42 @@ class RegisterScreen extends GetView<RegisterController> {
                     },
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: setHeight(20)),
                 inputField(
                     label: "Nombre",
                     icon: Icons.person,
                     textController: controller.nameController),
-                const SizedBox(height: 20),
+                SizedBox(height: setHeight(20)),
                 inputField(
                     label: "Apellido",
                     icon: Icons.person_outline,
                     textController: controller.lastNameController),
-                const SizedBox(height: 20),
+                SizedBox(height: setHeight(20)),
                 inputField(
                     label: "Nombre de Usuario",
                     icon: Icons.person_outline,
                     textController: controller.usernameController),
-                const SizedBox(height: 20),
+                SizedBox(height: setHeight(20)),
                 inputField(
                     label: "Contraseña",
                     icon: Icons.lock,
                     isPassword: true,
                     textController: controller.passwordController),
-                const SizedBox(height: 20),
+                SizedBox(height: setHeight(20)),
                 inputField(
                     label: "Confirmar Contraseña",
                     icon: Icons.lock,
                     isPassword: true,
                     textController: controller.confirmPasswordController),
-                const SizedBox(height: 20),
+                SizedBox(height: setHeight(20)),
                 inputField(
                     label: "N° Legajo",
                     icon: Icons.badge,
                     textController: controller.fileNumberController),
-                const SizedBox(height: 20),
+                SizedBox(height: setHeight(20)),
                 SizedBox(
                   width: double.infinity,
-                  height: 60,
+                  height: setHeight(60),
                   child: ElevatedButton(
                     onPressed: () => controller.register(context),
                     style: ButtonStyle(
@@ -86,8 +88,8 @@ class RegisterScreen extends GetView<RegisterController> {
                       foregroundColor:
                           WidgetStateProperty.all<Color>(Colors.black),
                       textStyle: WidgetStateProperty.all<TextStyle>(
-                        const TextStyle(
-                          fontSize: 20,
+                        TextStyle(
+                          fontSize: setSp(20),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -116,7 +118,7 @@ class RegisterScreen extends GetView<RegisterController> {
       TextInputType typeField = TextInputType.text}) {
     return SizedBox(
       width: double.infinity,
-      height: 58,
+      height: setHeight(58),
       child: TextField(
         keyboardType: typeField,
         controller: textController,
