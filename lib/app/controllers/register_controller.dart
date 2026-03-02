@@ -9,14 +9,94 @@ class RegisterController extends GetxController {
     Get.toNamed("/login");
   }
 
-  UsersProvider usersProvider = UsersProvider();
+  // final UsersProvider usersProvider = Get.find();
+  final UsersProvider usersProvider = Get.put(UsersProvider());
 
-  TextEditingController nameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
-  TextEditingController fileNumberController = TextEditingController();
+  // Paso actual
+  final PageController pageController = PageController();
+  var currentStep = 0.obs;
+
+  void onPageChanged(int index) {
+    currentStep.value = index;
+    print("Página actual: ${currentStep.value}");
+  }
+
+  void nextStep() {
+    if (currentStep.value < 4) {
+      currentStep.value++;
+      pageController.nextPage(
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    } else {
+      _finishRegister();
+    }
+  }
+
+  void previousStep() {
+    if (currentStep.value > 0) {
+      currentStep.value--;
+      pageController.previousPage(
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    } else {
+      Get.back();
+    }
+  }
+
+  // Datos del formulario
+  final nameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  var age = 14.obs;
+  var gender = ''.obs;
+  var province = 'Buenos Aires'.obs;
+  var emailController = TextEditingController();
+  var usernameController = TextEditingController();
+  var passwordController = TextEditingController();
+  var confirmPasswordController = TextEditingController();
+  var fileNumberController = TextEditingController();
+
+  void _finishRegister() async {
+    // Aquí mapeas todos los datos al modelo User
+    User user = User(
+      username: usernameController.text,
+      name: nameController.text,
+      lastName: lastNameController.text,
+      password: passwordController.text,
+      fileNum: fileNumberController.text,
+    );
+
+    Response response = await usersProvider.create(user);
+    if (response.statusCode == 201) {
+      Get.offAllNamed('/login');
+    }
+  }
+
+  var selectedProvince = ''.obs;
+  var selectedLocalidad = ''.obs;
+  var selectedEscuela = ''.obs;
+  final legajoController = TextEditingController();
+
+  // Listas de ejemplo (Podrías cargarlas desde tu UsersProvider en el futuro)
+  final List<String> provinces = ["Buenos Aires", "Santa Fe", "Córdoba"];
+
+  // Lógica de filtrado simple
+  List<String> get localidades => selectedProvince.value == "Buenos Aires"
+      ? ["La Plata", "Berisso", "Ensenada"]
+      : [];
+
+  List<String> get escuelas => selectedLocalidad.value == "La Plata"
+      ? ["UTN FRLP", "Normal 1", "Albert Thomas"]
+      : [];
+
+  // Métodos para cambiar selecciones
+  void updateProvince(String val) {
+    selectedProvince.value = val;
+    selectedLocalidad.value = ''; // Reset hijos
+    selectedEscuela.value = '';
+  }
+
+  void updateLocalidad(String val) {
+    selectedLocalidad.value = val;
+    selectedEscuela.value = ''; // Reset hijos
+  }
 
   void register(BuildContext context) async {
     String name = nameController.text.trim();
@@ -27,7 +107,13 @@ class RegisterController extends GetxController {
     String fileNumber = fileNumberController.text.trim();
 
     if (isValidForm(
-        name, lastName, username, password, confirmPassword, fileNumber)) {
+      name,
+      lastName,
+      username,
+      password,
+      confirmPassword,
+      fileNumber,
+    )) {
       ProgressDialog progressDialog = ProgressDialog(context: context);
       progressDialog.show(max: 100, msg: "Registrando Usuario");
 

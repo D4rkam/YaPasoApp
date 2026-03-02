@@ -37,7 +37,7 @@ abstract class AppPages {
     ),
     GetPage(
       name: Routes.REGISTER,
-      page: () => const RegisterScreen(),
+      page: () => const RegisterPage(),
       binding: RegisterBinding(),
     ),
     GetPage(
