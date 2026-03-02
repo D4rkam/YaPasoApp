@@ -9,6 +9,7 @@ class ApiUrl {
   // ----- Authentication
   static const String REGISTER = "$_hostServer/api/auth/user"; // POST
   static const String LOGIN = "$_hostServer/api/auth/user/login"; // POST
+  static const String LOGOUT = "$_hostServer/api/auth/logout"; // POST
   static const String REFRESH_TOKEN =
       "$_hostServer/api/auth/refresh-token"; // POST (Ajusta la ruta según tu API)
 
@@ -25,4 +26,6 @@ class ApiUrl {
       "$_hostServer/api/product/"; // GET
 
   static const String PAY = "$_hostServer/api/pay/"; // POST
+
+  static const String SCHOOLS = "$_hostServer/api/schools/"; // GET
 }

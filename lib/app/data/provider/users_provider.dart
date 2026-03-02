@@ -94,6 +94,12 @@ class UsersProvider extends BaseProvider {
     );
   }
 
+  @override
+  Future<Response> logout() async {
+    // El interceptor de BaseProvider se encargará de limpiar las cookies
+    return await post(ApiUrl.LOGOUT, {});
+  }
+
   Future<ResponseApi> checkToken() async {
     // El interceptor de BaseProvider se encargará de la lógica de reintento
     // y renovación del token. Aquí solo necesitamos hacer la llamada.
@@ -108,5 +114,13 @@ class UsersProvider extends BaseProvider {
 
   Future<Response> createOrder(Map<String, dynamic> orderJson) async {
     return await post(ApiUrl.ORDER, orderJson);
+  }
+
+  Future<List<Map<String, dynamic>>> getSchools() async {
+    final response = await get(ApiUrl.SCHOOLS);
+    if (response.body != null && response.body is List) {
+      return List<Map<String, dynamic>>.from(response.body);
+    }
+    return [];
   }
 }

@@ -14,11 +14,11 @@ class BaseProvider extends GetConnect {
     // 1. INTERCEPTOR DE PETICIÓN (Request Modifier)
     // Se ejecuta ANTES de que cualquier petición salga al servidor
     httpClient.addRequestModifier<dynamic>((request) {
-      final path = request.url.path;
+      final url = request.url.toString();
 
       // Si es Login o Registro, NO enviamos cookies (flujo limpio)
-      if (path.contains(ApiUrl.LOGIN) || path.contains(ApiUrl.REGISTER)) {
-        print("HTTP [REQ] -> $path (Sin cookies por ser Auth)");
+      if (url.contains(ApiUrl.LOGIN) || url.contains(ApiUrl.REGISTER)) {
+        print("HTTP [REQ] -> $url (Sin cookies por ser Auth)");
         return request;
       }
 
@@ -40,10 +40,15 @@ class BaseProvider extends GetConnect {
       print("HTTP [RES] -> URL: ${request.url}");
       print("HTTP [RES] -> Body: ${response.bodyString}");
 
+      if (response.statusCode == 404) {
+        print(
+            "HTTP [RES] -> Error 404: Recurso no encontrado en ${request.url}");
+        return response;
+      }
       // Manejo de expiración de token (401 Unauthorized)
       if (response.statusCode == 401 &&
-          !request.url.path.contains(ApiUrl.REFRESH_TOKEN) &&
-          !request.url.path.contains(ApiUrl.LOGIN)) {
+          !request.url.toString().contains(ApiUrl.REFRESH_TOKEN) &&
+          !request.url.toString().contains(ApiUrl.LOGIN)) {
         print("HTTP [RES] -> Token expirado. Intentando refrescar...");
         bool refreshed = await _refreshToken();
 
@@ -59,17 +64,18 @@ class BaseProvider extends GetConnect {
 
           // Leer el body de la request original si existe (consumiendo el Stream)
           dynamic requestBody;
-          if (request.method.toUpperCase() != 'GET' && request.method.toUpperCase() != 'HEAD') {
-             try {
-               // bodyBytes es un Stream<List<int>>, lo leemos todo y lo aplanamos
-               final bytesList = await request.bodyBytes.toList();
-               if (bytesList.isNotEmpty) {
-                 // Expandimos la lista de listas en una sola lista de bytes
-                  requestBody = bytesList.expand((x) => x).toList();
-               }
-             } catch (e) {
-               print("HTTP [RES] -> Error leyendo el body original: $e");
-             }
+          if (request.method.toUpperCase() != 'GET' &&
+              request.method.toUpperCase() != 'HEAD') {
+            try {
+              // bodyBytes es un Stream<List<int>>, lo leemos todo y lo aplanamos
+              final bytesList = await request.bodyBytes.toList();
+              if (bytesList.isNotEmpty) {
+                // Expandimos la lista de listas en una sola lista de bytes
+                requestBody = bytesList.expand((x) => x).toList();
+              }
+            } catch (e) {
+              print("HTTP [RES] -> Error leyendo el body original: $e");
+            }
           }
 
           // Realizamos la misma petición nuevamente
@@ -128,7 +134,14 @@ class BaseProvider extends GetConnect {
     if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     }
-    return false;
+    if (response.statusCode == 401) {
+      print("Refresh Token también expirado o inválido.");
+      return false;
+    } else {
+      print(
+          "Error inesperado al refrescar token: ${response.statusCode} - ${response.bodyString}");
+      return false;
+    }
   }
 
   // Cerrar sesión

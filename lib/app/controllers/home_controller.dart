@@ -4,9 +4,11 @@ import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/data/models/product.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:prueba_buffet/app/data/provider/products_provider.dart';
+import 'package:prueba_buffet/app/data/provider/users_provider.dart';
 
 class HomeController extends GetxController {
   ProductsProvider productsProvider = ProductsProvider();
+  UsersProvider usersProvider = UsersProvider();
   User userSession = User.fromJson(GetStorage().read("user") ?? {});
   var balanceUser = 0.obs;
   var tabIndex = 1.obs;
@@ -24,6 +26,7 @@ class HomeController extends GetxController {
       Get.delete<ShoppingCartController>();
     }
     GetStorage().remove("user");
+    usersProvider.logout();
     Get.offNamedUntil("/login", (route) => false);
   }
 
