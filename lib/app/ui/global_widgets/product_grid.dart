@@ -1,11 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/home_controller.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
-class ProductGrid extends StatelessWidget {
+class ProductGrid extends StatelessWidget with ResponsiveMixin {
   const ProductGrid({super.key});
 
   @override
@@ -24,12 +24,12 @@ class ProductGrid extends StatelessWidget {
                   "assets/images/not_load.png",
                   width: MediaQuery.of(context).size.width * 0.5,
                 ),
-                const Text(
+                Text(
                   "Revise su conexión a Internet",
                   style: TextStyle(
-                      fontSize: 20,
+                      fontSize: setSp(20),
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF8B8B8B)),
+                      color: const Color(0xFF8B8B8B)),
                 )
               ],
             )),
@@ -46,7 +46,7 @@ class ProductGrid extends StatelessWidget {
                   imagePath: products[i].imageUrl ?? "",
                   quantity: 1.obs),
             ),
-            childCount: products.length,
+            childCount: 4,
           ),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -60,7 +60,7 @@ class ProductGrid extends StatelessWidget {
   }
 }
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatelessWidget with ResponsiveMixin {
   final ProductForCart product;
   final ShoppingCartController controller = Get.find<ShoppingCartController>();
 
@@ -71,40 +71,40 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.deferToChild,
-      onTap: () {
-        Get.toNamed("/product", arguments: product.id);
-      },
-      child: SizedBox(
-        height: 100,
-        width: double.infinity,
-        child: Card(
-          color: Colors.white,
-          elevation: 1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Obx(
-            () => Stack(
+    return RepaintBoundary(
+      child: GestureDetector(
+        behavior: HitTestBehavior.deferToChild,
+        onTap: () {
+          Get.toNamed("/product", arguments: product.id);
+        },
+        child: SizedBox(
+          height: setHeight(100),
+          width: double.infinity,
+          child: Card(
+            color: Colors.white,
+            elevation: 1,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(setHeight(10)),
+            ),
+            child: Stack(
               // crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.only(top: 4),
+                  padding: EdgeInsets.only(top: setHeight(4)),
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: ClipRRect(
                       child: Image(
-                        image: NetworkImage(
+                        image: CachedNetworkImageProvider(
                             scale: 1,
                             product
                                 .imagePath), // Reemplaza con la URL de tu imagen
-                        height: 100,
+                        height: setHeight(90),
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Image.asset(
                             'assets/images/not_load.png', // Tu imagen de respaldo
-                            height: 100,
+                            height: setHeight(90),
                             fit: BoxFit.cover,
                           );
                         },
@@ -121,28 +121,29 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  bottom: 45,
-                  left: 12,
+                  bottom: setHeight(45),
+                  left: setHeight(12),
                   child: Text(
                     product.name,
-                    style: const TextStyle(
-                        fontSize: 17, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                        fontSize: setHeight(14), fontWeight: FontWeight.w500),
                   ),
                 ),
                 Positioned(
-                  bottom: 18,
-                  left: 12,
+                  bottom: setHeight(18),
+                  left: setHeight(12),
                   child: Text(
                     '\$${product.price}',
-                    style: const TextStyle(
-                        fontSize: 19,
+                    style: TextStyle(
+                        fontSize: setHeight(19),
                         color: Colors.green,
                         fontWeight: FontWeight.w500),
                   ),
                 ),
                 Align(
                   alignment: Alignment.bottomRight,
-                  child: IconButton(
+                  child: Obx(
+                    () => IconButton(
                       icon: Icon(
                         controller.isInCart(product.id)
                             ? Icons.check
@@ -158,11 +159,13 @@ class ProductCard extends StatelessWidget {
                       },
                       style: IconButton.styleFrom(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(setHeight(10)),
                         ),
                         backgroundColor: const Color(0xFFFFE500),
-                      )),
-                ),
+                      ),
+                    ),
+                  ),
+                )
               ],
             ),
           ),

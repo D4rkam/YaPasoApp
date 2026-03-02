@@ -278,7 +278,7 @@ class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
 
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.7,
-      height: 50,
+      height: setHeight(50),
       // EL OBX DEBE EMPEZAR AQUÍ
       child: Obx(() {
         // Guardamos el estado en una variable para que el código sea más limpio

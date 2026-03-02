@@ -44,6 +44,7 @@ dependencies:
   flutter_localization: ^0.3.0
   app_links: ^6.4.1
   flutter_screenutil: ^5.9.3
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_native_splash: ^2.4.0
