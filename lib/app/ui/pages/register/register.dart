@@ -2,144 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/register_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/custom_input.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/toggle_button.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
-
-class RegisterScreen extends GetView<RegisterController> with ResponsiveMixin {
-  const RegisterScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // final colors = Theme.of(context).colorScheme;
-    return GetBuilder<RegisterController>(
-      builder: (controller) => Scaffold(
-        backgroundColor: Colors.white,
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: setWidth(30)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: setHeight(20)),
-                Padding(
-                  padding: EdgeInsets.only(top: setHeight(20)),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.175,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage("assets/images/logo-sin.png"),
-                        fit: BoxFit.fitHeight,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: setHeight(20)),
-                SizedBox(
-                  height: setHeight(40),
-                  child: CustomToggleButton(
-                    labels: const ['Registrarse', 'Iniciar Sesión'],
-                    initialSelectedIndex: 0,
-                    onToggle: (index) {
-                      return controller.goToLoginPage();
-                    },
-                  ),
-                ),
-                SizedBox(height: setHeight(20)),
-                inputField(
-                    label: "Nombre",
-                    icon: Icons.person,
-                    textController: controller.nameController),
-                SizedBox(height: setHeight(20)),
-                inputField(
-                    label: "Apellido",
-                    icon: Icons.person_outline,
-                    textController: controller.lastNameController),
-                SizedBox(height: setHeight(20)),
-                inputField(
-                    label: "Nombre de Usuario",
-                    icon: Icons.person_outline,
-                    textController: controller.usernameController),
-                SizedBox(height: setHeight(20)),
-                inputField(
-                    label: "Contraseña",
-                    icon: Icons.lock,
-                    isPassword: true,
-                    textController: controller.passwordController),
-                SizedBox(height: setHeight(20)),
-                inputField(
-                    label: "Confirmar Contraseña",
-                    icon: Icons.lock,
-                    isPassword: true,
-                    textController: controller.confirmPasswordController),
-                SizedBox(height: setHeight(20)),
-                inputField(
-                    label: "N° Legajo",
-                    icon: Icons.badge,
-                    textController: controller.fileNumberController),
-                SizedBox(height: setHeight(20)),
-                SizedBox(
-                  width: double.infinity,
-                  height: setHeight(60),
-                  child: ElevatedButton(
-                    onPressed: () => controller.register(context),
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all<Color>(
-                          const Color(0xFFFFE500)),
-                      foregroundColor:
-                          WidgetStateProperty.all<Color>(Colors.black),
-                      textStyle: WidgetStateProperty.all<TextStyle>(
-                        TextStyle(
-                          fontSize: setSp(20),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                    child: const Text('Registrarme'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget inputField(
-      {required String label,
-      required IconData icon,
-      bool isPassword = false,
-      required TextEditingController textController,
-      TextInputType typeField = TextInputType.text}) {
-    return SizedBox(
-      width: double.infinity,
-      height: setHeight(58),
-      child: TextField(
-        keyboardType: typeField,
-        controller: textController,
-        obscureText: isPassword,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFC5C5C5), width: 3.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFFFE500), width: 3.0),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class RegisterPage extends GetView<RegisterController> with ResponsiveMixin {
   const RegisterPage({super.key});
@@ -257,60 +120,70 @@ class Step1Name extends GetView<RegisterController> with ResponsiveMixin {
 class Step2Age extends GetView<RegisterController> with ResponsiveMixin {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: setHeight(40)),
-        Text(
-          "¿Cuál es tu edad?",
-          style: TextStyle(
-            fontSize: setSp(26),
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        const Spacer(),
-        // Contenedor de la Ruleta
-        Center(
-          child: Container(
-            height: setHeight(320),
-            width: setWidth(140),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8F8F8), // Fondo gris muy claro
-              borderRadius: BorderRadius.circular(setWidth(40)),
-            ),
-            child: ListWheelScrollView.useDelegate(
-              itemExtent: 70, // Espacio vertical entre números
-              perspective: 0.005,
-              diameterRatio: 1.5,
-              onSelectedItemChanged: (index) {
-                controller.age.value = 12 + index;
-              },
-              physics: const FixedExtentScrollPhysics(),
-              childDelegate: ListWheelChildBuilderDelegate(
-                childCount: 10,
-                builder: (context, index) {
-                  return Obx(() {
-                    final isSelected = controller.age.value == (12 + index);
-                    return Center(
-                      child: Text(
-                        "${12 + index}",
-                        style: TextStyle(
-                          fontSize: isSelected ? setSp(38) : setSp(24),
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected
-                              ? Colors.black
-                              : const Color(0xFFCCCCCC),
-                        ),
-                      ),
-                    );
-                  });
-                },
+    return CustomScrollView(
+      slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Column(
+            children: [
+              SizedBox(height: setHeight(40)),
+              Text(
+                "¿Cuál es tu edad?",
+                style: TextStyle(
+                  fontSize: setSp(26),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
-            ),
+              const Spacer(),
+// Contenedor de la Ruleta
+              Center(
+                child: Container(
+                  height: setHeight(320),
+                  width: setWidth(140),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF8F8F8), // Fondo gris muy claro
+                    borderRadius: BorderRadius.circular(setWidth(40)),
+                  ),
+                  child: ListWheelScrollView.useDelegate(
+                    controller: controller.scrollController,
+                    itemExtent: 70, // Espacio vertical entre números
+                    perspective: 0.005,
+                    diameterRatio: 1.5,
+                    onSelectedItemChanged: (index) {
+                      controller.age.value = 12 + index;
+                    },
+                    physics: const FixedExtentScrollPhysics(),
+                    childDelegate: ListWheelChildBuilderDelegate(
+                      childCount: 10,
+                      builder: (context, index) {
+                        return Obx(() {
+                          final isSelected =
+                              controller.age.value == (12 + index);
+                          return Center(
+                            child: Text(
+                              "${12 + index}",
+                              style: TextStyle(
+                                fontSize: isSelected ? setSp(38) : setSp(24),
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: isSelected
+                                    ? Colors.black
+                                    : const Color(0xFFCCCCCC),
+                              ),
+                            ),
+                          );
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              const Spacer(),
+            ],
           ),
         ),
-        const Spacer(),
       ],
     );
   }
@@ -412,7 +285,7 @@ class Step4Location extends GetView<RegisterController> with ResponsiveMixin {
 
           // N° Legajo (Corregido a Input)
           CustomInput(
-            controller: controller.legajoController,
+            controller: controller.fileNumberController,
             label: "N° Legajo",
             keyboardType: TextInputType.number,
             // Solo habilitado si seleccionó la escuela
