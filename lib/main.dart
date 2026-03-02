@@ -33,8 +33,8 @@ class MyApp extends StatelessWidget {
           defaultTransition: Transition.fade,
           debugShowCheckedModeBanner: false,
           title: 'Ya paso',
-          initialRoute:
-              userSession.id != null ? Routes.SECURITY : Routes.INITIAL,
+          initialRoute: Routes.REGISTER,
+          // userSession.id != null ? Routes.SECURITY : Routes.INITIAL,
           getPages: AppPages.pages,
           initialBinding: InitialBinding(),
           navigatorKey: Get.key,
