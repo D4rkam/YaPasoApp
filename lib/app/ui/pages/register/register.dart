@@ -115,6 +115,32 @@ class Step1Name extends GetView<RegisterController> with ResponsiveMixin {
                 errorText: controller.lastNameError.value,
                 onChanged: (_) => controller.lastNameError.value = null,
               )),
+
+          SizedBox(height: setHeight(30)),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "¿Ya tienes cuenta? ",
+                style: TextStyle(
+                  fontSize: setSp(14),
+                  color: const Color(0xFFB3B3B3),
+                ),
+              ),
+              GestureDetector(
+                onTap: controller.goToLoginPage,
+                child: Text(
+                  "Inicia Sesión",
+                  style: TextStyle(
+                    fontSize: setSp(14),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
