@@ -99,18 +99,22 @@ class Step1Name extends GetView<RegisterController> with ResponsiveMixin {
           SizedBox(height: setHeight(50)),
 
           // Campo Nombre (En foco en tu imagen)
-          CustomInput(
-            controller: controller.nameController,
-            label: "Nombre",
-          ),
+          Obx(() => CustomInput(
+                controller: controller.nameController,
+                label: "Nombre",
+                errorText: controller.nameError.value,
+                onChanged: (_) => controller.nameError.value = null,
+              )),
 
           SizedBox(height: setHeight(25)),
 
           // Campo Apellido (Sin foco en tu imagen)
-          CustomInput(
-            controller: controller.lastNameController,
-            label: "Apellido",
-          ),
+          Obx(() => CustomInput(
+                controller: controller.lastNameController,
+                label: "Apellido",
+                errorText: controller.lastNameError.value,
+                onChanged: (_) => controller.lastNameError.value = null,
+              )),
         ],
       ),
     );
@@ -257,6 +261,7 @@ class Step4Location extends GetView<RegisterController> with ResponsiveMixin {
                 value: controller.selectedProvince.value,
                 items: controller.provinces,
                 onChanged: (val) => controller.updateProvince(val!),
+                errorText: controller.provinceError.value,
               )),
 
           SizedBox(height: setHeight(20)),
@@ -268,6 +273,7 @@ class Step4Location extends GetView<RegisterController> with ResponsiveMixin {
                 items: controller.localidades,
                 enabled: controller.selectedProvince.value.isNotEmpty,
                 onChanged: (val) => controller.updateLocalidad(val!),
+                errorText: controller.localidadError.value,
               )),
 
           SizedBox(height: setHeight(20)),
@@ -278,18 +284,24 @@ class Step4Location extends GetView<RegisterController> with ResponsiveMixin {
                 value: controller.selectedEscuela.value,
                 items: controller.escuelas,
                 enabled: controller.selectedLocalidad.value.isNotEmpty,
-                onChanged: (val) => controller.selectedEscuela.value = val!,
+                onChanged: (val) {
+                  controller.selectedEscuela.value = val!;
+                  controller.escuelaError.value = null;
+                },
+                errorText: controller.escuelaError.value,
               )),
 
           SizedBox(height: setHeight(20)),
 
           // N° Legajo (Corregido a Input)
-          CustomInput(
-            controller: controller.fileNumberController,
-            label: "N° Legajo",
-            keyboardType: TextInputType.number,
-            // Solo habilitado si seleccionó la escuela
-          ),
+          Obx(() => CustomInput(
+                controller: controller.fileNumberController,
+                label: "N° Legajo",
+                keyboardType: TextInputType.number,
+                errorText: controller.fileNumberError.value,
+                onChanged: (_) => controller.fileNumberError.value = null,
+                // Solo habilitado si seleccionó la escuela
+              )),
         ],
       ),
     );
@@ -301,34 +313,41 @@ class Step5Credentials extends GetView<RegisterController> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
-      child: Column(
-        children: [
-          Text("Último Paso",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          Text("Ingresa tus datos de acceso",
-              style: TextStyle(color: Colors.grey)),
-          const SizedBox(height: 30),
-          CustomInput(
-            controller: controller.emailController,
-            label: "Correo electrónico",
-          ),
-          const SizedBox(height: 15),
-          CustomInput(
-            controller: controller.usernameController,
-            label: "Nombre de usuario",
-          ),
-          const SizedBox(height: 15),
-          CustomInput(
-              controller: controller.passwordController,
-              label: "Contraseña",
-              isPassword: true),
-          const SizedBox(height: 15),
-          CustomInput(
-              controller: controller.confirmPasswordController,
-              label: "Confirmar contraseña",
-              isPassword: true),
-        ],
-      ),
+      child: Column(children: [
+        Text("Último Paso",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        Text("Ingresa tus datos de acceso",
+            style: TextStyle(color: Colors.grey)),
+        const SizedBox(height: 30),
+        Obx(() => CustomInput(
+              controller: controller.emailController,
+              label: "Email",
+              keyboardType: TextInputType.emailAddress,
+              errorText: controller.emailError.value,
+              onChanged: (_) => controller.emailError.value = null,
+            )),
+        const SizedBox(height: 15),
+        Obx(() => CustomInput(
+              controller: controller.usernameController,
+              label: "Nombre de usuario",
+              errorText: controller.usernameError.value,
+              onChanged: (_) => controller.usernameError.value = null,
+            )),
+        const SizedBox(height: 15),
+        Obx(() => CustomInput(
+            controller: controller.passwordController,
+            label: "Contraseña",
+            isPassword: true,
+            errorText: controller.passwordError.value,
+            onChanged: (_) => controller.passwordError.value = null)),
+        const SizedBox(height: 15),
+        Obx(() => CustomInput(
+            controller: controller.confirmPasswordController,
+            label: "Confirmar contraseña",
+            isPassword: true,
+            errorText: controller.confirmPasswordError.value,
+            onChanged: (_) => controller.confirmPasswordError.value = null)),
+      ]),
     );
   }
 }
@@ -406,6 +425,7 @@ class CustomDropdown extends StatelessWidget with ResponsiveMixin {
   final List<String> items;
   final Function(String?) onChanged;
   final bool enabled;
+  final String? errorText;
 
   CustomDropdown({
     required this.label,
@@ -413,6 +433,7 @@ class CustomDropdown extends StatelessWidget with ResponsiveMixin {
     required this.items,
     required this.onChanged,
     this.enabled = true,
+    this.errorText,
   });
 
   @override
@@ -426,6 +447,7 @@ class CustomDropdown extends StatelessWidget with ResponsiveMixin {
             DropdownButtonFormField<String>(
               value: value.isEmpty ? null : value,
               decoration: InputDecoration(
+                errorText: errorText,
                 labelText: label,
                 labelStyle: TextStyle(
                   color:
@@ -449,6 +471,14 @@ class CustomDropdown extends StatelessWidget with ResponsiveMixin {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(setHeight(10)),
                   borderSide: const BorderSide(color: Colors.black, width: 2),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(setHeight(10)),
+                  borderSide: const BorderSide(color: Colors.red, width: 1.5),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(setHeight(10)),
+                  borderSide: const BorderSide(color: Colors.red, width: 2),
                 ),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(setHeight(10))),

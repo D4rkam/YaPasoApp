@@ -50,6 +50,8 @@ class RegisterController extends GetxController {
   void nextStep() {
     FocusManager.instance.primaryFocus?.unfocus();
 
+    if (!validateCurrentStep()) return;
+
     if (currentStep.value < 3) {
       currentStep.value++;
       pageController.nextPage(
@@ -60,96 +62,94 @@ class RegisterController extends GetxController {
   }
 
   bool validateCurrentStep() {
+    bool isValid = true;
     switch (currentStep.value) {
       case 0: // Nombre y Apellido
         if (nameController.text.trim().isEmpty) {
-          Get.snackbar("Atención", "Por favor ingresa tu nombre",
-              backgroundColor: Colors.redAccent,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM);
-          return false;
+          nameError.value = "Ingresa tu nombre";
+          isValid = false;
+        } else {
+          nameError.value = null;
         }
         if (lastNameController.text.trim().isEmpty) {
-          Get.snackbar("Atención", "Por favor ingresa tu apellido",
-              backgroundColor: Colors.redAccent,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM);
-          return false;
+          lastNameError.value = "Ingresa tu apellido";
+          isValid = false;
+        } else {
+          lastNameError.value = null;
         }
         break;
 
       case 2: // Ubicación
         if (selectedProvince.value.isEmpty) {
-          Get.snackbar("Atención", "Selecciona una provincia",
-              backgroundColor: Colors.redAccent,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM);
-          return false;
+          provinceError.value = "Selecciona una provincia";
+          isValid = false;
+        } else {
+          provinceError.value = null;
         }
         if (selectedLocalidad.value.isEmpty) {
-          Get.snackbar("Atención", "Selecciona una localidad",
-              backgroundColor: Colors.redAccent,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM);
-          return false;
+          localidadError.value = "Selecciona una localidad";
+          isValid = false;
+        } else {
+          localidadError.value = null;
         }
         if (selectedEscuela.value.isEmpty) {
-          Get.snackbar("Atención", "Selecciona una escuela",
-              backgroundColor: Colors.redAccent,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM);
-          return false;
+          escuelaError.value = "Selecciona una escuela";
+          isValid = false;
+        } else {
+          escuelaError.value = null;
         }
         if (fileNumberController.text.trim().isEmpty) {
-          Get.snackbar("Atención", "Ingresa tu número de legajo",
-              backgroundColor: Colors.redAccent,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM);
-          return false;
+          fileNumberError.value = "Ingresa tu número de legajo";
+          isValid = false;
+        } else {
+          fileNumberError.value = null;
         }
         break;
 
       case 3: // Credenciales
         if (emailController.text.trim().isEmpty ||
             !GetUtils.isEmail(emailController.text.trim())) {
-          Get.snackbar("Atención", "Ingresa un email válido",
-              backgroundColor: Colors.redAccent,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM);
-          return false;
+          emailError.value = "Ingresa un email válido";
+          isValid = false;
+        } else {
+          emailError.value = null;
         }
         if (usernameController.text.trim().isEmpty) {
-          Get.snackbar("Atención", "Ingresa un nombre de usuario",
-              backgroundColor: Colors.redAccent,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM);
-          return false;
+          usernameError.value = "Ingresa un nombre de usuario";
+          isValid = false;
+        } else {
+          usernameError.value = null;
         }
-        if (passwordController.text.trim().isEmpty) {
-          Get.snackbar("Atención", "Ingresa una contraseña",
-              backgroundColor: Colors.redAccent,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM);
-          return false;
+
+        String password = passwordController.text.trim();
+        if (password.isEmpty) {
+          passwordError.value = "Ingresa una contraseña";
+          isValid = false;
+        } else if (password.length < 8) {
+          passwordError.value = "Debe tener al menos 8 caracteres";
+          isValid = false;
+        } else if (!password.contains(RegExp(r'[0-9]'))) {
+          passwordError.value = "Debe contener al menos un número";
+          isValid = false;
+        } else {
+          passwordError.value = null;
         }
+
         if (confirmPasswordController.text.trim().isEmpty) {
-          Get.snackbar("Atención", "Confirma tu contraseña",
-              backgroundColor: Colors.redAccent,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM);
-          return false;
+          confirmPasswordError.value = "Confirma tu contraseña";
+          isValid = false;
+        } else {
+          confirmPasswordError.value = null;
         }
-        if (passwordController.text.trim() !=
-            confirmPasswordController.text.trim()) {
-          Get.snackbar("Atención", "Las contraseñas no coinciden",
-              backgroundColor: Colors.redAccent,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM);
-          return false;
+        if (passwordController.text.trim().isNotEmpty &&
+            passwordController.text.trim() !=
+                confirmPasswordController.text.trim()) {
+          confirmPasswordError.value = "Las contraseñas no coinciden";
+          isValid = false;
         }
         break;
     }
-    return true;
+    return isValid;
   }
 
   void previousStep() {
@@ -179,6 +179,18 @@ class RegisterController extends GetxController {
   var selectedLocalidad = ''.obs;
   var selectedEscuela = ''.obs;
   // removed legajoController in favor of fileNumberController
+
+  // Error vars
+  var nameError = RxnString();
+  var lastNameError = RxnString();
+  var provinceError = RxnString();
+  var localidadError = RxnString();
+  var escuelaError = RxnString();
+  var fileNumberError = RxnString();
+  var emailError = RxnString();
+  var usernameError = RxnString();
+  var passwordError = RxnString();
+  var confirmPasswordError = RxnString();
 
   void _finishRegister() async {
     if (!validateCurrentStep()) return;
@@ -233,12 +245,14 @@ class RegisterController extends GetxController {
   // Métodos para cambiar selecciones
   void updateProvince(String val) {
     selectedProvince.value = val;
+    provinceError.value = null; // Limpiar error
     selectedLocalidad.value = ''; // Reset hijos
     selectedEscuela.value = '';
   }
 
   void updateLocalidad(String val) {
     selectedLocalidad.value = val;
+    localidadError.value = null; // Limpiar error
     selectedEscuela.value = ''; // Reset hijos
   }
 }

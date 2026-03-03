@@ -8,6 +8,8 @@ class CustomInput extends StatefulWidget {
   final IconData? icon;
   final bool isPassword;
   final TextInputType keyboardType;
+  final String? errorText;
+  final Function(String)? onChanged;
 
   const CustomInput({
     super.key,
@@ -17,6 +19,8 @@ class CustomInput extends StatefulWidget {
     this.icon,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
+    this.errorText,
+    this.onChanged,
   });
 
   @override
@@ -35,12 +39,14 @@ class _CustomInputState extends State<CustomInput> with ResponsiveMixin {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onChanged: widget.onChanged,
       controller: widget.controller,
       obscureText: _obscureText,
       keyboardType: widget.keyboardType,
       cursorColor: Colors.black,
       style: TextStyle(fontSize: setSp(16)),
       decoration: InputDecoration(
+        errorText: widget.errorText,
         labelText: widget.label,
         labelStyle: const TextStyle(color: Color(0xFFB3B3B3)),
         floatingLabelStyle:
@@ -71,6 +77,14 @@ class _CustomInputState extends State<CustomInput> with ResponsiveMixin {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(setHeight(10)),
           borderSide: const BorderSide(color: Colors.black, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(setHeight(10)),
+          borderSide: const BorderSide(color: Colors.red, width: 1.5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(setHeight(10)),
+          borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
       ),
     );
