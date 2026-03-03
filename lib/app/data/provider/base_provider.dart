@@ -14,11 +14,14 @@ class BaseProvider extends GetConnect {
     // 1. INTERCEPTOR DE PETICIÓN (Request Modifier)
     // Se ejecuta ANTES de que cualquier petición salga al servidor
     httpClient.addRequestModifier<dynamic>((request) {
-      final url = request.url.toString();
+      final requestPath = request.url.path;
+      final loginPath = Uri.parse(ApiUrl.LOGIN).path;
+      final registerPath = Uri.parse(ApiUrl.REGISTER).path;
 
       // Si es Login o Registro, NO enviamos cookies (flujo limpio)
-      if (url.contains(ApiUrl.LOGIN) || url.contains(ApiUrl.REGISTER)) {
-        print("HTTP [REQ] -> $url (Sin cookies por ser Auth)");
+      if (requestPath.contains(loginPath) ||
+          requestPath.contains(registerPath)) {
+        print("HTTP [REQ] -> ${request.url} (Sin cookies por ser Auth)");
         return request;
       }
 
@@ -46,9 +49,14 @@ class BaseProvider extends GetConnect {
         return response;
       }
       // Manejo de expiración de token (401 Unauthorized)
+      // Extraemos los paths para comparar sin depender del dominio/host
+      final requestPath = request.url.path;
+      final loginPath = Uri.parse(ApiUrl.LOGIN).path;
+      final refreshTokenPath = Uri.parse(ApiUrl.REFRESH_TOKEN).path;
+
       if (response.statusCode == 401 &&
-          !request.url.toString().contains(ApiUrl.REFRESH_TOKEN) &&
-          !request.url.toString().contains(ApiUrl.LOGIN)) {
+          !requestPath.contains(refreshTokenPath) &&
+          !requestPath.contains(loginPath)) {
         print("HTTP [RES] -> Token expirado. Intentando refrescar...");
         bool refreshed = await _refreshToken();
 
