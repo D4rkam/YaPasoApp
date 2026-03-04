@@ -24,60 +24,65 @@ class HomeScreen extends StatelessWidget with ResponsiveMixin {
     return Scaffold(
       drawer: CustomSideMenu(),
       backgroundColor: Colors.white,
-      body: CustomScrollView(
-        scrollBehavior: NoOverscrollBehavior(),
-        slivers: [
-          CustomAppBar(),
-          const ContainerInputSearch(),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(top: setHeight(40)),
-              child: const CarruselWidget(),
+      body: RefreshIndicator(
+        onRefresh: controller.refreshHome,
+        color: Colors.black,
+        backgroundColor: const Color(0xFFFFE500),
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            CustomAppBar(),
+            const ContainerInputSearch(),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.only(top: setHeight(40)),
+                child: const CarruselWidget(),
+              ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: setWidth(18), vertical: setHeight(10)),
-              child: Text('Categorías',
-                  style: TextStyle(
-                      fontSize: setSp(22), fontWeight: FontWeight.w400)),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: setWidth(18), vertical: setHeight(10)),
+                child: Text('Categorías',
+                    style: TextStyle(
+                        fontSize: setSp(22), fontWeight: FontWeight.w400)),
+              ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(left: setWidth(20.0)),
-              child: SizedBox(
-                height: setHeight(100),
-                child: ListCategory(
-                  categorys: controller.listaCategorias,
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.only(left: setWidth(20.0)),
+                child: SizedBox(
+                  height: setHeight(100),
+                  child: ListCategory(
+                    categorys: controller.listaCategorias,
+                  ),
                 ),
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: setWidth(18), vertical: setHeight(10)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Todos los Productos',
-                    style: TextStyle(
-                        fontSize: setSp(22), fontWeight: FontWeight.w400),
-                  ),
-                  Text(
-                    "Ver más",
-                    style: TextStyle(
-                        fontSize: setSp(17), color: const Color(0xFFB3B3B3)),
-                  )
-                ],
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: setWidth(18), vertical: setHeight(10)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Todos los Productos',
+                      style: TextStyle(
+                          fontSize: setSp(22), fontWeight: FontWeight.w400),
+                    ),
+                    Text(
+                      "Ver más",
+                      style: TextStyle(
+                          fontSize: setSp(17), color: const Color(0xFFB3B3B3)),
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-          const ProductGrid()
-        ],
+            const ProductGrid()
+          ],
+        ),
       ),
       bottomNavigationBar: CustomBottomBar(currentIndex: controller.tabIndex),
     );
@@ -240,7 +245,7 @@ class CustomAppBar extends StatelessWidget with ResponsiveMixin {
                         ),
                         Obx(
                           () => Text(
-                            '\$${homeController.balanceUser.value}',
+                            '\$${homeController.balanceUser.value.toStringAsFixed(2)}',
                             style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500,

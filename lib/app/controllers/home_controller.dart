@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:prueba_buffet/app/controllers/balance_controller.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/data/models/product.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
@@ -9,9 +10,12 @@ import 'package:prueba_buffet/app/data/provider/users_provider.dart';
 class HomeController extends GetxController {
   ProductsProvider productsProvider = ProductsProvider();
   UsersProvider usersProvider = UsersProvider();
-  User userSession = User.fromJson(GetStorage().read("user") ?? {});
-  var balanceUser = 0.obs;
+  User userSession = User.safeFromStorage();
   var tabIndex = 1.obs;
+
+  /// Saldo: referencia directa al BalanceController (fuente única de verdad)
+  BalanceController get balanceController => Get.find<BalanceController>();
+  Rx<double> get balanceUser => balanceController.balance;
 
   var productsFromApi = <Product>[].obs;
   List<String> listaCategorias = [
@@ -67,11 +71,7 @@ class HomeController extends GetxController {
     );
   }
 
-  void getBalance() {
-    balanceUser.value = userSession.balance!;
-  }
-
-  void getProducts() async {
+  Future<void> getProducts() async {
     var response = await productsProvider.getProducts();
 
     if (response.statusCode == 200) {
@@ -80,10 +80,19 @@ class HomeController extends GetxController {
     }
   }
 
+  /// Pull-to-refresh: refresca productos y saldo en paralelo.
+  Future<void> refreshHome() async {
+    await Future.wait([
+      getProducts(),
+      balanceController.fetchBalance(),
+    ]);
+  }
+
   @override
   void onInit() {
     super.onInit();
     getProducts();
-    getBalance();
+    // Refrescar saldo desde el servidor (lo hace BalanceController)
+    balanceController.fetchBalance();
   }
 }
