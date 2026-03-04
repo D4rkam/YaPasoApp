@@ -12,7 +12,7 @@ abstract class Routes {
   static const SHOPPING_CART = '/shopping_cart';
   static const PAY = '/pay';
   static const ORDERS = '/orders';
-  static const SUCCESS_PAY = '/success_pay';
-  static const FAILURE_PAY = '/failure_pay';
-  static const PENDING_PAY = '/pending_pay';
+  static const SUCCESS_PAY = '/success';
+  static const FAILURE_PAY = '/failure';
+  static const PENDING_PAY = '/pending';
 }
