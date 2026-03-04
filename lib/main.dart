@@ -14,8 +14,13 @@ late User userSession;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
-  userSession = User.fromJson(GetStorage().read("user") ?? {});
+  userSession = User.safeFromStorage();
   runApp(const MyApp());
+}
+
+String _resolveInitialRoute() {
+  if (userSession.id != null) return Routes.SECURITY;
+  return Routes.INITIAL;
 }
 
 class MyApp extends StatelessWidget {
@@ -33,8 +38,7 @@ class MyApp extends StatelessWidget {
           defaultTransition: Transition.fade,
           debugShowCheckedModeBanner: false,
           title: 'Ya paso',
-          initialRoute:
-              userSession.id != null ? Routes.SECURITY : Routes.INITIAL,
+          initialRoute: _resolveInitialRoute(),
           getPages: AppPages.pages,
           initialBinding: InitialBinding(),
           navigatorKey: Get.key,
