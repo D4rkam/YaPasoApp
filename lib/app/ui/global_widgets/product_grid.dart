@@ -40,13 +40,13 @@ class ProductGrid extends StatelessWidget with ResponsiveMixin {
           delegate: SliverChildBuilderDelegate(
             (ctx, i) => ProductCard(
               product: ProductForCart(
-                  id: products[i].id,
+                  id: products[i].id.toString(),
                   name: products[i].name,
                   price: products[i].price,
                   imagePath: products[i].imageUrl ?? "",
                   quantity: 1.obs),
             ),
-            childCount: 4,
+            childCount: (products.length > 4) ? 4 : products.length,
           ),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
