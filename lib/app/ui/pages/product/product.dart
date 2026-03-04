@@ -138,7 +138,7 @@ class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
                                   widthButton: setWidth(40),
                                   heightButton: setHeight(40),
                                   product: ProductForCart(
-                                    id: product.id,
+                                    id: product.id.toString(),
                                     name: product.name,
                                     imagePath: product.imageUrl,
                                     price: product.price,
@@ -282,7 +282,8 @@ class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
       // EL OBX DEBE EMPEZAR AQUÍ
       child: Obx(() {
         // Guardamos el estado en una variable para que el código sea más limpio
-        final bool inCart = shoppingCartController.isInCart(product.id);
+        final bool inCart =
+            shoppingCartController.isInCart(product.id.toString());
 
         return ElevatedButton(
           onPressed: inCart
@@ -290,7 +291,7 @@ class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
               : () {
                   shoppingCartController.addItemToCart(
                     ProductForCart(
-                      id: product.id,
+                      id: product.id.toString(),
                       name: product.name,
                       imagePath: product.imageUrl,
                       price: product.price,

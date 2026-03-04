@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class ProductForCart {
-  final int id;
+  final String id;
   final String name;
   final String imagePath;
   final int price;
@@ -45,7 +45,7 @@ class ShoppingCartController extends GetxController {
   // Lista de productos en el carrito con datos ficticios
   var cartItems = <ProductForCart>[].obs;
 
-  bool isInCart(int productId) {
+  bool isInCart(String productId) {
     return cartItems.any((item) => item.id == productId);
   }
 
@@ -68,7 +68,7 @@ class ShoppingCartController extends GetxController {
   }
 
   // Eliminar producto del carrito
-  void removeItemFromCart(int productId) {
+  void removeItemFromCart(String productId) {
     final product = cartItems.firstWhereOrNull((item) => item.id == productId);
     if (product != null) {
       cartItems.remove(product);
@@ -78,7 +78,7 @@ class ShoppingCartController extends GetxController {
   }
 
   // Actualizar la cantidad de un producto en el carrito
-  void updateQuantity(int productId, int quantity) {
+  void updateQuantity(String productId, int quantity) {
     var product = cartItems.firstWhereOrNull((item) => item.id == productId);
     if (product != null && quantity > 0) {
       product.quantity.value = quantity;

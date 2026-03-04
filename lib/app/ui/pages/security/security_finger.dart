@@ -16,6 +16,16 @@ class _SecurityFingerState extends State<SecurityFinger> with ResponsiveMixin {
   final LocalAuthentication auth = LocalAuthentication();
   final SecurityFingerController securityFingerController = Get.find();
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future<void> _authenticate() async {
     try {
       final isAuthenticated = await auth.authenticate(

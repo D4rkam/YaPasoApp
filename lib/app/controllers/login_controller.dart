@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/data/models/response_api.dart';
+import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
 
 class LoginController extends GetxController {
@@ -25,8 +26,14 @@ class LoginController extends GetxController {
       ResponseApi response = await usersProvider.login(username, password);
 
       if (response.success) {
-        GetStorage().write("user",
-            response.data); //Datos del usuario almacenados de manera local
+        // Sanitizar: parsear y re-serializar para garantizar tipos correctos
+        try {
+          final user = User.fromJson(response.data);
+          GetStorage().write("user", user.toJson());
+        } catch (e) {
+          print("⚠️ Login: Error sanitizando user data: $e");
+          GetStorage().write("user", response.data);
+        }
 
         goToHomePage();
       } else {
