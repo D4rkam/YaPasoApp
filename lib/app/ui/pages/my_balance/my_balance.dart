@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:prueba_buffet/app/controllers/balance_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/toggle_button.dart';
 
@@ -7,6 +9,7 @@ class MyBalance extends StatelessWidget with ResponsiveMixin {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<BalanceController>();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -29,7 +32,7 @@ class MyBalance extends StatelessWidget with ResponsiveMixin {
       body: Center(
         child: Column(
           children: [
-            const TarjetaYaPaso(),
+            TarjetaYaPaso(controller: controller),
             Padding(
               padding: EdgeInsets.only(top: setHeight(55)),
               child: SizedBox(
@@ -56,7 +59,9 @@ class MyBalance extends StatelessWidget with ResponsiveMixin {
 }
 
 class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
-  const TarjetaYaPaso({super.key});
+  final BalanceController? controller;
+
+  const TarjetaYaPaso({super.key, this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +118,7 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
                   SizedBox(
                     width: setWidth(10),
                   ),
-                  Text("4654",
+                  Text(controller?.fileNum.toString() ?? "",
                       style: TextStyle(
                           fontSize: setSp(20), color: const Color(0xFF333333))),
                 ],
@@ -127,11 +132,13 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
               SizedBox(
                 height: setHeight(5),
               ),
-              Text("\$0",
-                  style: TextStyle(
-                      fontSize: setSp(30),
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black))
+              Obx(() => Text(
+                    "\$${controller?.balance.value.toStringAsFixed(2) ?? '0.00'}",
+                    style: TextStyle(
+                        fontSize: setSp(30),
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black),
+                  ))
             ],
           ),
         ),
@@ -150,7 +157,9 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
             width: setWidth(150),
             height: setHeight(40),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                controller?.showLoadBalanceDialog();
+              },
               style: ElevatedButton.styleFrom(
                 elevation: 5,
                 shadowColor: Colors.grey.withOpacity(0.1),
