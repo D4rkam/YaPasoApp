@@ -27,5 +27,9 @@ class ApiUrl {
 
   static const String PAY = "$_hostServer/api/pay/"; // POST
 
+  static const String BALANCE = "$_hostServer/api/users/balance/"; // GET
+  static const String LOAD_BALANCE =
+      "$_hostServer/api/transactions/load-balance"; // POST
+
   static const String SCHOOLS = "$_hostServer/api/schools/"; // GET
 }

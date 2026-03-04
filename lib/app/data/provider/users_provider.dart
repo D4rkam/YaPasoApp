@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/app/data/models/response_api.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:prueba_buffet/app/data/provider/base_provider.dart';
@@ -116,11 +117,55 @@ class UsersProvider extends BaseProvider {
     return await post(ApiUrl.ORDER, orderJson);
   }
 
+  /// Obtiene los datos frescos del usuario desde el servidor y actualiza el storage local.
+  /// Retorna el User actualizado o null si falló.
+  Future<User?> refreshUserData() async {
+    print("UsersProvider: Solicitando datos frescos a ${ApiUrl.USER}");
+    Response response = await get(ApiUrl.USER);
+
+    print("UsersProvider response status: ${response.statusCode}");
+    print("UsersProvider response body: ${response.bodyString}");
+
+    if (response.isOk && response.body != null) {
+      // Sanitizar: parsear primero, luego escribir el toJson limpio
+      try {
+        final user = User.fromJson(response.body);
+        // Guardar la versión limpia (toJson) para evitar problemas de tipos
+        GetStorage().write("user", user.toJson());
+        print(
+            "UsersProvider: Usuario parseado correctamente. Saldo: ${user.balance}");
+        return user;
+      } catch (e) {
+        print("UsersProvider: Error parseando usuario: $e");
+        // Intentar guardar igual los datos crudos como fallback
+        GetStorage().write("user", response.body);
+      }
+    } else {
+      print("UsersProvider: Falló la obtención de datos frescos.");
+    }
+    return null;
+  }
+
   Future<List<Map<String, dynamic>>> getSchools() async {
     final response = await get(ApiUrl.SCHOOLS);
     if (response.body != null && response.body is List) {
       return List<Map<String, dynamic>>.from(response.body);
     }
     return [];
+  }
+
+  Future<Map<String, double>> getBalance() async {
+    final response = await get(
+      ApiUrl.BALANCE,
+      contentType: 'application/json',
+      decoder: (body) => body,
+    );
+    if (response.body != null && response.body is Map) {
+      final data = Map<String, dynamic>.from(response.body);
+      return data.map(
+        (key, value) => MapEntry(key, (value is num) ? value.toDouble() : 0.0),
+      );
+    }
+    return {};
   }
 }
