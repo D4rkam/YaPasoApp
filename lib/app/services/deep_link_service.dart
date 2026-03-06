@@ -44,13 +44,21 @@ class DeepLinkService extends GetxService {
     print('DeepLinkService: recibido → $uri');
 
     final route = _resolveRoute(uri);
+    final paymentId = _getPaymentId(uri);
+    final externalRef = _getExternalReference(uri);
+
     if (route == null) {
       print('DeepLinkService: URI ignorado (host no reconocido: ${uri.host})');
       return;
     }
 
     print('DeepLinkService: navegando a $route');
-    Get.offAllNamed(route);
+    print('DeepLinkService: payment_id → $paymentId');
+    print('DeepLinkService: external_reference → $externalRef');
+    Get.offAllNamed(route, arguments: {
+      'payment_id': paymentId,
+      'external_reference': externalRef,
+    });
   }
 
   /// Mapea el host del URI a una ruta de la app.
@@ -65,5 +73,14 @@ class DeepLinkService extends GetxService {
       default:
         return null;
     }
+  }
+
+  String? _getPaymentId(Uri uri) {
+    print(uri.queryParameters['payment_id']);
+    return uri.queryParameters['payment_id'];
+  }
+
+  String? _getExternalReference(Uri uri) {
+    return uri.queryParameters['external_reference'];
   }
 }
