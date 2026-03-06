@@ -155,7 +155,7 @@ class _PayScreenState extends State<PayScreen> with ResponsiveMixin {
               title: 'Tu saldo',
               value: 'saldo',
               groupValue: selectedMethod,
-              isEnabled: false,
+              isEnabled: payController.balanceSufficient,
               onChanged: (value) {
                 setState(() {
                   selectedMethod = value;
@@ -188,13 +188,10 @@ class _PayScreenState extends State<PayScreen> with ResponsiveMixin {
                     if (selectedMethod == "mercado_pago") {
                       payController.pay(shoppingCartController.cartItems);
                     }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Método: $selectedMethod, Fecha: $selectedDateTime',
-                        ),
-                      ),
-                    );
+                    if (selectedMethod == "saldo") {
+                      payController.createOrder();
+                      payController.pay_with_balance();
+                    }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(

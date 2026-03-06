@@ -35,4 +35,25 @@ class PayProvider extends BaseProvider {
     }
     return response;
   }
+
+  Future<Response> pay_with_balance(
+      double amount, int seller_id, int order_id) async {
+    Response response = await post(
+      ApiUrl.PAY_BALANCE,
+      jsonEncode({
+        "amount": amount,
+        "seller_id": seller_id,
+        "order_id": order_id,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    );
+
+    if (response.body == null) {
+      Get.snackbar("Error", "No se pudo ejecutar la peticion");
+      return const Response();
+    }
+    return response;
+  }
 }

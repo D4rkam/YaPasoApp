@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:prueba_buffet/app/controllers/balance_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/toggle_button.dart';
@@ -33,22 +34,41 @@ class MyBalance extends StatelessWidget with ResponsiveMixin {
         child: Column(
           children: [
             TarjetaYaPaso(controller: controller),
-            Padding(
-              padding: EdgeInsets.only(top: setHeight(55)),
-              child: SizedBox(
-                height: setHeight(40),
-                child: CustomToggleButton(
-                    labels: const ["Mi Actividad", "Historial"],
-                    initialSelectedIndex: 0,
-                    onToggle: (index) {
-                      return null;
-                    }),
-              ),
+            // Padding(
+            //   padding: EdgeInsets.only(top: setHeight(55)),
+            //   child: SizedBox(
+            //     height: setHeight(40),
+            //     child: CustomToggleButton(
+            //         labels: const ["Mi Actividad", "Historial"],
+            //         initialSelectedIndex: 0,
+            //         onToggle: (index) {
+            //           return null;
+            //         }),
+            //   ),
+            // ),
+            SizedBox(
+              height: setHeight(60),
             ),
+
+            Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: setWidth(20)),
+                  child: Text(
+                    "Mi actividad",
+                    style: TextStyle(
+                        fontSize: setSp(20),
+                        fontWeight: FontWeight.normal,
+                        color: const Color.fromARGB(255, 107, 107, 107)),
+                  ),
+                ),
+              ],
+            ),
+
             Expanded(
                 child: Padding(
               padding: EdgeInsets.only(
-                  top: setHeight(30), left: setWidth(30), right: setWidth(30)),
+                  top: setHeight(10), left: setWidth(20), right: setWidth(20)),
               child: TransactionsPage(),
             ))
           ],
@@ -133,7 +153,7 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
                 height: setHeight(5),
               ),
               Obx(() => Text(
-                    "\$${controller?.balance.value.toStringAsFixed(2) ?? '0.00'}",
+                    "\$${NumberFormat.decimalPatternDigits(locale: "es-AR", decimalDigits: 2).format(controller?.balance.value)}",
                     style: TextStyle(
                         fontSize: setSp(30),
                         fontWeight: FontWeight.w500,
@@ -152,7 +172,7 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
         ),
         Positioned(
           bottom: setHeight(-20),
-          left: setWidth(15),
+          left: setWidth(90),
           child: SizedBox(
             width: setWidth(150),
             height: setHeight(40),
@@ -187,45 +207,45 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
             ),
           ),
         ),
-        Positioned(
-          bottom: setHeight(-20),
-          right: setWidth(15),
-          child: SizedBox(
-            width: setWidth(150),
-            height: setHeight(40),
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                elevation: 5,
-                shadowColor: Colors.grey.withOpacity(0.1),
-                backgroundColor: Colors.white,
-                side: BorderSide(
-                  color: const Color(0xFFFfE500),
-                  width: setWidth(2),
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(setHeight(20)),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Image.asset(
-                    "assets/images/icono_trans.png",
-                    width: setWidth(30),
-                  ),
-                  const Text(
-                    "Transferir",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  )
-                ],
-              ),
-            ),
-          ),
-        )
+        // Positioned(
+        //   bottom: setHeight(-20),
+        //   right: setWidth(15),
+        //   child: SizedBox(
+        //     width: setWidth(150),
+        //     height: setHeight(40),
+        //     child: ElevatedButton(
+        //       onPressed: () {},
+        //       style: ElevatedButton.styleFrom(
+        //         elevation: 5,
+        //         shadowColor: Colors.grey.withOpacity(0.1),
+        //         backgroundColor: Colors.white,
+        //         side: BorderSide(
+        //           color: const Color(0xFFFfE500),
+        //           width: setWidth(2),
+        //         ),
+        //         shape: RoundedRectangleBorder(
+        //           borderRadius: BorderRadius.circular(setHeight(20)),
+        //         ),
+        //       ),
+        //       child: Row(
+        //         mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //         children: [
+        //           Image.asset(
+        //             "assets/images/icono_trans.png",
+        //             width: setWidth(30),
+        //           ),
+        //           const Text(
+        //             "Transferir",
+        //             style: TextStyle(
+        //                 fontSize: 18,
+        //                 fontWeight: FontWeight.bold,
+        //                 color: Colors.black),
+        //           )
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // )
       ],
     );
   }
@@ -234,34 +254,16 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
 class TransactionsPage extends StatelessWidget with ResponsiveMixin {
   final List<Map<String, dynamic>> transactions = [
     {
-      "name": "Juan Garcia",
-      "description": "Transferido con YaPaso",
+      "name": "Pedido #1234",
+      "description": "Pagado con saldo",
       "amount": 900,
-      "isIncome": true
+      "isIncome": false
     },
     {
-      "name": "Franco Tarela",
-      "description": "Transferido con YaPaso",
+      "name": "Carga de saldo",
+      "description": "Cargo con Mercado Pago",
       "amount": 750,
       "isIncome": true
-    },
-    {
-      "name": "Tomás Juarez",
-      "description": "Transferiste con YaPaso",
-      "amount": 500,
-      "isIncome": false
-    },
-    {
-      "name": "Agustina Moreira",
-      "description": "Cargaste Saldo",
-      "amount": 250,
-      "isIncome": true
-    },
-    {
-      "name": "Tomás Juarez",
-      "description": "Transferiste con YaPaso",
-      "amount": 100,
-      "isIncome": false
     },
   ];
 

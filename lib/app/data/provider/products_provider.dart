@@ -15,7 +15,7 @@ class ProductsProvider extends BaseProvider {
     return await get(ApiUrl.PRODUCTS_GET);
   }
 
-  Future<Response> getProductById(int id) async {
+  Future<Response> getProductById(String id) async {
     return await get("${ApiUrl.PRODUCT_GET}$id");
   }
 

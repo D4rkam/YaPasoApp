@@ -18,6 +18,7 @@ class ApiUrl {
 
   // ----- Orders
   static const String ORDER = "$_hostServer/api/order/"; // GET - POST
+  static const String ORDERS_USER = "$_hostServer/api/users/my-orders"; // GET
 
   // ----- Products
   static const String PRODUCT_GET = "$_hostServer/api/product/"; // GET
@@ -26,8 +27,10 @@ class ApiUrl {
       "$_hostServer/api/product/"; // GET
 
   static const String PAY = "$_hostServer/api/pay/"; // POST
+  static const String PAY_BALANCE =
+      "$_hostServer/api/pay/pay_with_balance"; // POST
 
-  static const String BALANCE = "$_hostServer/api/users/balance/"; // GET
+  static const String BALANCE = "$_hostServer/api/users/balance"; // GET
   static const String LOAD_BALANCE =
       "$_hostServer/api/transactions/load-balance"; // POST
 

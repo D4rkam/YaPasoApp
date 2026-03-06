@@ -7,7 +7,7 @@ class ProductController extends GetxController {
 
   final Rx<Product?> product = Rx<Product?>(null);
 
-  void getProduct(int id) async {
+  void getProduct(String id) async {
     Response response = await productsProvider.getProductById(id);
     product.value = Product.fromJson(response.body);
     product.refresh();
@@ -15,7 +15,6 @@ class ProductController extends GetxController {
 
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
     getProduct(Get.arguments);
   }

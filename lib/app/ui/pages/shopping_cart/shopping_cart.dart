@@ -76,6 +76,7 @@ class ScreenWithItems extends StatelessWidget with ResponsiveMixin {
             itemCount: controller.cartItems.length,
             itemBuilder: (context, index) {
               final product = controller.cartItems[index];
+              print(product.toJson());
               return Dismissible(
                 key: Key(product.id.toString()),
                 direction: DismissDirection.endToStart,

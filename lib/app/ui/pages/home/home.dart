@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:prueba_buffet/app/controllers/home_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/custom_bottom_bar.dart';
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
@@ -245,7 +246,7 @@ class CustomAppBar extends StatelessWidget with ResponsiveMixin {
                         ),
                         Obx(
                           () => Text(
-                            '\$${homeController.balanceUser.value.toStringAsFixed(2)}',
+                            '\$${NumberFormat.decimalPatternDigits(locale: "es-AR", decimalDigits: 2).format(homeController.balanceUser.value)}',
                             style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w500,
