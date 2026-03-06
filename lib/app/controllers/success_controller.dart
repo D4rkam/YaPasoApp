@@ -11,24 +11,42 @@ import 'package:intl/intl.dart';
 class SuccessController extends GetxController {
   UsersProvider usersProvider = UsersProvider();
   User userSession = User.safeFromStorage();
-  void goToHomeScreen() => Get.offNamedUntil("/home", (route) => false);
-  void goToOrderScreen() => Get.offNamedUntil("/orders", (route) => false);
+  void goToHomeScreen() =>
+      Get.offNamedUntil("/home", (route) => route.settings.name != "/success");
+  void goToOrderScreen() => Get.offNamedUntil(
+      "/orders", (route) => route.settings.name != "/success");
 
   final List<ProductForOrder> productsForOrder = [];
   late List<dynamic> cartItems;
   late String datetime;
+
+  static const String paymentBalance = "CARGA_SALDO";
+
+  String paymentId = "";
+  String externalReference = "";
+  bool isPaymentForBalance = false;
+  @override
+  void onInit() {
+    super.onInit();
+    paymentId = Get.parameters['payment_id'] ?? "";
+    externalReference =
+        Get.parameters['external_reference']?.split("|")[0] ?? "";
+    isPaymentForBalance = externalReference == paymentBalance;
+
+    if (isPaymentForBalance) {
+      print("Pago de carga de saldo detectado");
+      refreshBalance();
+    } else {
+      print("Pago de compra detectado → creando orden");
+      createOrder();
+    }
+  }
 
   void createOrder() async {
     try {
       // Si no hay carrito guardado, es una carga de saldo (no una compra)
       final rawCart = GetStorage().read("cart_items");
       final String jsonString = (rawCart != null) ? rawCart.toString() : "";
-      if (jsonString.isEmpty) {
-        print("SuccessController: No hay carrito → es carga de saldo");
-        // Refrescar solo el saldo desde el endpoint liviano
-        await _refreshBalance();
-        return;
-      }
 
       List<dynamic> jsonList = jsonDecode(jsonString);
       cartItems =
@@ -36,7 +54,7 @@ class SuccessController extends GetxController {
 
       // Construir la lista de productos para la orden
       cartItems.forEach((item) {
-        productsForOrder.add(ProductForOrder(id: item.id));
+        productsForOrder.add(ProductForOrder(id: int.tryParse(item.id) ?? 0));
       });
 
       final rawDatetime = GetStorage().read("order_datetime");
@@ -49,33 +67,42 @@ class SuccessController extends GetxController {
 
       DateTime datetime_type_datetime = DateTime.parse(datetime);
 
-      // userSession.id puede ser null si el parseo falló
-      final userId = userSession.id ?? 0;
+      final schoolId = userSession.schoolId;
+      if (schoolId == null) {
+        print("⚠️ SuccessController: userSession.id o schoolId es null");
+        await usersProvider.refreshUserData();
+        return;
+      }
+
       Order order = Order(
-          user_id: userId,
-          seller_id: 1,
-          products: productsForOrder,
-          datetime:
-              DateFormat("yyyy-MM-dd'T'HH:mm").format(datetime_type_datetime));
+        school_id: schoolId,
+        products: productsForOrder,
+        datetime:
+            DateFormat("yyyy-MM-dd'T'HH:mm").format(datetime_type_datetime),
+        payment_id: paymentId,
+      );
 
       print(order.toJson());
       Response response = await usersProvider.createOrder(order.toJson());
-      GetStorage().write("order", response.body);
-
+      if (response.body["detail"] != null) {
+        GetStorage().write("order", {"message": response.body});
+      } else {
+        GetStorage().write("order", response.body);
+      }
       // Refrescar solo el saldo desde el endpoint liviano
-      await _refreshBalance();
+      await refreshBalance();
     } catch (e, stack) {
       print("⚠️ SuccessController.createOrder CRASH: $e");
       print("Stack: $stack");
       // Intentar refrescar el saldo al menos
       try {
-        await _refreshBalance();
+        await refreshBalance();
       } catch (_) {}
     }
   }
 
   /// Refresca únicamente el saldo usando el endpoint liviano /api/users/balance
-  Future<void> _refreshBalance() async {
+  Future<void> refreshBalance() async {
     if (Get.isRegistered<BalanceController>()) {
       await Get.find<BalanceController>().fetchBalance();
     }

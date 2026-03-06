@@ -3,23 +3,10 @@ import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/success_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
-class SuccessScreen extends StatefulWidget {
-  @override
+class SuccessScreen extends StatelessWidget with ResponsiveMixin {
   SuccessScreen({super.key});
 
-  @override
-  State<SuccessScreen> createState() => _SuccessScreenState();
-}
-
-class _SuccessScreenState extends State<SuccessScreen> with ResponsiveMixin {
-  final SuccessController successController = Get.put(SuccessController());
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    successController.createOrder();
-  }
+  final SuccessController successController = Get.find<SuccessController>();
 
   @override
   Widget build(BuildContext context) {
@@ -38,17 +25,22 @@ class _SuccessScreenState extends State<SuccessScreen> with ResponsiveMixin {
                   width: setWidth(400),
                 ),
                 Text(
-                  "¡Compra realizada con exito!",
+                  successController.isPaymentForBalance
+                      ? "¡Carga de saldo realizada con éxito!"
+                      : "¡Compra realizada con éxito!",
+                  maxLines: 2,
                   style: TextStyle(
-                      fontSize: setSp(28), fontWeight: FontWeight.w600),
+                      fontSize: setSp(25), fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  "Puedes seguir la entrega en la sección \"mis pedidos\"",
+                  successController.isPaymentForBalance
+                      ? "Puedes ver tus movimientos en la sección \"Mi saldo\""
+                      : "Puedes ver tus pedidos en la sección \"Mis pedidos\"",
                   maxLines: 2,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: const Color(0xFF999999),
-                    fontSize: setSp(25),
+                    fontSize: setSp(20),
                   ),
                 ),
               ],
@@ -57,7 +49,7 @@ class _SuccessScreenState extends State<SuccessScreen> with ResponsiveMixin {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(
-                  height: setHeight(80),
+                  height: setHeight(60),
                   width: setWidth(350),
                   child: ElevatedButton(
                     onPressed: () {
@@ -65,21 +57,19 @@ class _SuccessScreenState extends State<SuccessScreen> with ResponsiveMixin {
                     },
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(setHeight(10)),
                         ),
                         backgroundColor: const Color(0xFFFFE500)),
                     child: Text(
                       "Mis Pedidos",
                       style: TextStyle(
-                          fontSize: setSp(35),
+                          fontSize: setSp(25),
                           color: Colors.black,
                           fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: setHeight(20),
-                ),
+                SizedBox(height: setHeight(20)),
                 GestureDetector(
                   onTap: () {
                     successController.goToHomeScreen();
@@ -87,7 +77,7 @@ class _SuccessScreenState extends State<SuccessScreen> with ResponsiveMixin {
                   child: Text(
                     "Volver a Inicio",
                     style: TextStyle(
-                        fontSize: setSp(25),
+                        fontSize: setSp(20),
                         color: const Color(0xFF999999),
                         fontWeight: FontWeight.w500),
                   ),
