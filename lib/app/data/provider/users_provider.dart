@@ -29,14 +29,16 @@ class ProductForOrder {
 
 class Order {
   Order({
-    required this.user_id,
-    required this.seller_id,
+    this.user_id,
+    required this.school_id,
     required this.products,
     required this.datetime,
+    this.payment_id,
   });
 
-  final int user_id;
-  final int seller_id;
+  final int? user_id;
+  final int school_id;
+  final String? payment_id;
   final List<ProductForOrder> products;
   final String datetime;
 
@@ -44,9 +46,10 @@ class Order {
   Map<String, dynamic> toJson() {
     return {
       'user_id': user_id,
-      'seller_id': seller_id,
+      'school_id': school_id,
       'products': products.map((product) => product.toJson()).toList(),
       'datetime_order': datetime, // Cambiar clave al formato esperado
+      'mp_payment_id': payment_id,
     };
   }
 
@@ -57,9 +60,10 @@ class Order {
         .toList();
     return Order(
       user_id: json['user_id'],
-      seller_id: json['seller_id'],
+      school_id: json['school_id'],
       products: products,
       datetime: json['datetime_order'],
+      payment_id: json['mp_payment_id'],
     );
   }
 }
@@ -167,5 +171,9 @@ class UsersProvider extends BaseProvider {
       );
     }
     return {};
+  }
+
+  Future<Response> getOrders() async {
+    return await get(ApiUrl.ORDERS_USER);
   }
 }

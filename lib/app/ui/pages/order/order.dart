@@ -1,213 +1,241 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:prueba_buffet/app/controllers/order_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
 class Order extends StatelessWidget with ResponsiveMixin {
   Order({super.key});
 
-  final OrderController orderController = Get.put(OrderController());
+  final OrderController orderController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFFFFE500),
+        elevation: 0,
         titleSpacing: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
             size: setSp(30),
+            color: Colors.black,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Get.back();
           },
         ),
         title: Text(
-          'Mis Pedidos',
-          style: TextStyle(fontSize: setSp(25), fontWeight: FontWeight.bold),
+          'Mis pedidos',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: setSp(22),
+            fontWeight: FontWeight.normal,
+          ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              color: const Color(0xFFFFE500),
-              height: setHeight(100),
-              width: double.infinity,
-              child: Center(
-                  child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: const Color(0xFF2D303E),
-                    ),
-                    child: Text(
-                      "Activos",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: setSp(25)),
+      body: Column(
+        children: [
+          // Tabs
+          Container(
+            color: const Color(0xFFFFE500),
+            height: setHeight(80),
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: setWidth(24), vertical: setHeight(8)),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2D303E),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    "Activos",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: setSp(18),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: const Color(0xFFFFE500),
+                ),
+                SizedBox(width: setWidth(20)),
+                GestureDetector(
+                  onTap: () {},
+                  child: Text(
+                    "Vencidos",
+                    style: TextStyle(
+                      color: const Color(0xFF414141),
+                      fontWeight: FontWeight.w500,
+                      fontSize: setSp(18),
                     ),
-                    child: Text(
-                      "Vencidos",
-                      style: TextStyle(
-                          color: const Color(0xFF414141),
-                          fontWeight: FontWeight.w500,
-                          fontSize: setSp(25)),
-                    ),
-                  )
-                ],
-              )),
+                  ),
+                ),
+              ],
             ),
-            (orderController.formattedDateTime.isNotEmpty)
-                ? CustomExpandablePanel(orderController: orderController)
-                : Container()
-          ],
-        ),
+          ),
+
+          // Lista de pedidos
+          Expanded(
+            child: Obx(() {
+              if (orderController.isLoading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(color: Color(0xFFFFE500)),
+                );
+              }
+              if (orderController.orders.isEmpty) {
+                return Center(
+                  child: Text(
+                    'No tenés pedidos aún',
+                    style: TextStyle(
+                      color: const Color(0xFF999999),
+                      fontSize: setSp(18),
+                    ),
+                  ),
+                );
+              }
+              return ListView.separated(
+                padding: EdgeInsets.symmetric(
+                    vertical: setHeight(20), horizontal: setWidth(20)),
+                itemCount: orderController.orders.length,
+                separatorBuilder: (_, __) => SizedBox(height: setHeight(16)),
+                itemBuilder: (_, i) {
+                  final order =
+                      orderController.orders[i] as Map<String, dynamic>;
+
+                  return ExpandableTicketCard(order: order);
+                },
+              );
+            }),
+          ),
+        ],
       ),
     );
   }
 }
 
-class TicketCard extends StatelessWidget with ResponsiveMixin {
-  const TicketCard({super.key});
+// Contenido interno del Ticket
+class TicketContent extends StatelessWidget with ResponsiveMixin {
+  final Map<String, dynamic> order;
+  const TicketContent({super.key, required this.order});
+
+  String _formatDate(String? raw) {
+    if (raw == null) return '-';
+    try {
+      final dt = DateTime.parse(raw);
+      return DateFormat("dd MMM yyyy", "es").format(dt);
+    } catch (_) {
+      return raw;
+    }
+  }
+
+  String _formatTime(String? raw) {
+    if (raw == null) return '-';
+    try {
+      final dt = DateTime.parse(raw);
+      return DateFormat("HH:mm").format(dt);
+    } catch (_) {
+      return '-';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final products = (order['products'] as List?) ?? [];
+    final productNames = products.map((p) => p['name'] as String).join(', ');
+    final total = order['total'];
+    final datetime = order['datetime_order'] as String?;
+    final mpPaymentId = order['mp_payment_id'];
+
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Detalles del ticket
+        // Parte superior del ticket
         Padding(
-          padding: EdgeInsets.all(setWidth(16.0)),
+          padding: EdgeInsets.fromLTRB(
+              setWidth(24), setHeight(24), setWidth(24), setHeight(16)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
-                    'Lugar de retiro',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500, color: Color(0xFF7A7878)),
-                  ),
-                  Text(
-                    'Horario',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500, color: Color(0xFF7A7878)),
-                  ),
+                children: [
+                  _buildLabel('Lugar de retiro'),
+                  _buildLabel('Total'),
                 ],
               ),
               SizedBox(height: setHeight(4)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Buffet',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: setSp(18)),
-                  ),
-                  Text(
-                    '09:30',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: setSp(18)),
-                  ),
+                  _buildValue('Buffet', setSp(20)),
+                  _buildValue('\$$total', setSp(20)),
                 ],
               ),
               SizedBox(height: setHeight(16)),
-              const Text(
-                'Método de Pago',
-                style: TextStyle(
-                    fontWeight: FontWeight.w500, color: Color(0xFF7A7878)),
-              ),
+              _buildLabel('Productos'),
               SizedBox(height: setHeight(4)),
-              Text(
-                'Transferencia',
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, fontSize: setSp(18)),
-              ),
+              _buildValue(
+                  productNames.isNotEmpty ? productNames : '-', setSp(16)),
             ],
           ),
         ),
+
         // Línea punteada
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: setWidth(16)),
-          child: Divider(
-            color: Colors.grey[400],
-            height: setHeight(1),
-            thickness: setHeight(2),
-            endIndent: setWidth(8),
-            indent: setWidth(8),
+          padding: EdgeInsets.symmetric(horizontal: setWidth(24)),
+          child: CustomPaint(
+            size: Size(double.infinity, setHeight(1)),
+            painter: DashedLinePainter(),
           ),
         ),
-        // Información adicional
+
+        // Parte inferior del ticket
         Padding(
-          padding: EdgeInsets.all(setWidth(16.0)),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Fecha',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Color(0xFF7A7878)),
-              ),
-              Text(
-                'Lugar',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Color(0xFF7A7878)),
-              ),
-              Text(
-                'Hora',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Color(0xFF7A7878)),
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.all(setWidth(8.0)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('26 / 11 / 2024',
-                  style: TextStyle(
-                      fontSize: setSp(16),
-                      color: const Color(0xFF2E313F),
-                      fontWeight: FontWeight.bold)),
-              Text('Buffet',
-                  style: TextStyle(
-                      fontSize: setSp(16),
-                      color: const Color(0xFF2E313F),
-                      fontWeight: FontWeight.bold)),
-              Text('9:30',
-                  style: TextStyle(
-                      fontSize: setSp(16),
-                      color: const Color(0xFF2E313F),
-                      fontWeight: FontWeight.bold)),
-            ],
-          ),
-        ),
-        // Código de barras
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: setHeight(16)),
+          padding: EdgeInsets.fromLTRB(
+              setWidth(24), setHeight(16), setWidth(24), setHeight(24)),
           child: Column(
             children: [
-              SizedBox(
-                height: setHeight(60),
-                child: Image.asset(
-                    "assets/images/codigo_barra.png"), // Aquí puedes usar un paquete de código de barras
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildLabel('Fecha de retiro'),
+                  _buildLabel('Hora'),
+                ],
+              ),
+              SizedBox(height: setHeight(8)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildValue(_formatDate(datetime), setSp(14)),
+                  _buildValue(_formatTime(datetime), setSp(14)),
+                ],
+              ),
+              SizedBox(height: setHeight(24)),
+              Column(
+                children: [
+                  SizedBox(
+                    height: setHeight(25),
+                    child: Text(
+                      mpPaymentId != null ? 'N° de pago' : 'ID Pedido',
+                      style: TextStyle(
+                          fontSize: setSp(19), fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(height: setHeight(4)),
+                  Text(
+                    mpPaymentId?.toString() ?? '#${order['id']}',
+                    style: TextStyle(
+                      fontSize: setSp(15),
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -215,98 +243,202 @@ class TicketCard extends StatelessWidget with ResponsiveMixin {
       ],
     );
   }
+
+  Widget _buildLabel(String text) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontWeight: FontWeight.w500,
+        color: Color(0xFF7A7878),
+      ),
+    );
+  }
+
+  Widget _buildValue(String text, double fontSize) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontWeight: FontWeight.normal,
+        fontSize: fontSize,
+        color: const Color(0xFF111111),
+      ),
+    );
+  }
 }
 
-class CustomExpandablePanel extends StatefulWidget {
-  const CustomExpandablePanel({super.key, required this.orderController});
+// --- UTILIDADES GRÁFICAS ---
 
-  final OrderController orderController;
+// Crea los recortes semicirculares a los lados del ticket
+class TicketClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0, size.height);
+    path.lineTo(size.width, size.height);
+    path.lineTo(size.width, 0);
+    path.lineTo(0, 0);
+
+    const double holeRadius = 12.0;
+    // Posición aproximada de la línea punteada
+    final double holePosition = size.height * 0.52;
+
+    // Recorte izquierdo
+    path.addOval(
+        Rect.fromCircle(center: Offset(0, holePosition), radius: holeRadius));
+    // Recorte derecho
+    path.addOval(Rect.fromCircle(
+        center: Offset(size.width, holePosition), radius: holeRadius));
+
+    // FillType.evenOdd permite que los óvalos "corten" el rectángulo principal
+    path.fillType = PathFillType.evenOdd;
+    return path;
+  }
 
   @override
-  _CustomExpandablePanelState createState() => _CustomExpandablePanelState();
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
-class _CustomExpandablePanelState extends State<CustomExpandablePanel>
+// Dibuja la línea horizontal punteada
+class DashedLinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    double dashWidth = 5.0;
+    double dashSpace = 4.0;
+    double startX = 0.0;
+
+    final paint = Paint()
+      ..color = const Color(0xFFBDBDBD)
+      ..strokeWidth = 1.5;
+
+    while (startX < size.width) {
+      canvas.drawLine(Offset(startX, 0), Offset(startX + dashWidth, 0), paint);
+      startX += dashWidth + dashSpace;
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class ExpandableTicketCard extends StatefulWidget {
+  final Map<String, dynamic> order;
+  const ExpandableTicketCard({super.key, required this.order});
+
+  @override
+  State<ExpandableTicketCard> createState() => _ExpandableTicketCardState();
+}
+
+class _ExpandableTicketCardState extends State<ExpandableTicketCard>
     with SingleTickerProviderStateMixin, ResponsiveMixin {
   bool isExpanded = false;
 
+  String _formatDate(String? raw) {
+    if (raw == null) return '-';
+    try {
+      final dt = DateTime.parse(raw);
+      return DateFormat("dd MMM yyyy", "es").format(dt);
+    } catch (_) {
+      return raw;
+    }
+  }
+
+  Color _statusColor(String? status) {
+    switch (status) {
+      case 'PAGADO':
+        return const Color(0xFF67FF5E);
+      case 'PENDIENTE_PAGO':
+        return const Color(0xFFFFE500);
+      case 'CANCELADO':
+        return const Color(0xFFFF5252);
+      default:
+        return const Color(0xFFD7D7D7);
+    }
+  }
+
+  String _statusLabel(String? status) {
+    switch (status) {
+      case 'PAGADO':
+        return 'Pagado';
+      case 'PENDIENTE_PAGO':
+        return 'Pendiente';
+      case 'CANCELADO':
+        return 'Cancelado';
+      default:
+        return status ?? '-';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(setWidth(16)),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: setWidth(10),
-            spreadRadius: setWidth(2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Encabezado (siempre visible)
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                isExpanded = !isExpanded;
-              });
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              ),
-              padding: EdgeInsets.all(setWidth(16)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Obx(
-                    () => Text(
-                      widget.orderController.formattedDateTime.value,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: setWidth(20)),
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFFAFAFA), // Fondo del contenedor exterior
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            // Cabecera (Siempre visible y clickeable)
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isExpanded = !isExpanded;
+                });
+              },
+              child: Container(
+                // Color transparente para que todo el área sea clickeable
+                color: Colors.transparent,
+                padding: EdgeInsets.all(setWidth(20)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _formatDate(widget.order['datetime_order'] as String?),
                       style: TextStyle(
-                          fontSize: setSp(18), fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: setWidth(12), vertical: setHeight(6)),
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 113, 255, 118),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Text(
-                      'Activo',
-                      style: TextStyle(
-                        color: Colors.black,
+                        fontSize: setSp(20),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: setWidth(16), vertical: setHeight(6)),
+                      decoration: BoxDecoration(
+                        color: _statusColor(widget.order['status'] as String?),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        _statusLabel(widget.order['status'] as String?),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: setSp(16),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          // Contenido expandible con animación de tamaño
-          AnimatedSize(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            child: AnimatedOpacity(
-              opacity: isExpanded ? 1 : 0,
-              duration: const Duration(milliseconds: 600),
+
+            // Cuerpo del ticket (Colapsable)
+            AnimatedSize(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
               child: isExpanded
-                  ? Padding(
-                      padding: EdgeInsets.all(setWidth(16)),
-                      child: const Center(
-                        child: TicketCard(),
-                      ))
-                  : Container(),
+                  ? ClipPath(
+                      clipper:
+                          TicketClipper(), // El clipper que hace los recortes
+                      child: Container(
+                        color: const Color(0xFFF0F0F0), // Fondo gris del ticket
+                        child: TicketContent(order: widget.order),
+                      ),
+                    )
+                  : const SizedBox
+                      .shrink(), // Oculta el contenido si no está expandido
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
