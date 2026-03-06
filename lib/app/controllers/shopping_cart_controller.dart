@@ -9,6 +9,7 @@ class ProductForCart {
   final String imagePath;
   final int price;
   final RxInt quantity;
+  final int maxQuantity;
 
   ProductForCart({
     required this.id,
@@ -16,6 +17,7 @@ class ProductForCart {
     required this.imagePath,
     required this.price,
     required this.quantity,
+    this.maxQuantity = 99,
   });
 
   // Método para convertir a JSON
@@ -25,7 +27,8 @@ class ProductForCart {
       'name': name,
       'quantity': quantity.value,
       "price": price,
-      "imagePath": imagePath
+      "imagePath": imagePath,
+      "maxQuantity": maxQuantity,
     };
   }
 
@@ -37,6 +40,7 @@ class ProductForCart {
       quantity: RxInt(json['quantity']),
       imagePath: json["imagePath"],
       price: json["price"],
+      maxQuantity: json["maxQuantity"] ?? 99,
     );
   }
 }
@@ -75,6 +79,11 @@ class ShoppingCartController extends GetxController {
       product.quantity.value = 1;
       cartItems.refresh();
     }
+  }
+
+  void clearCart() {
+    cartItems.clear();
+    cartItems.refresh();
   }
 
   // Actualizar la cantidad de un producto en el carrito

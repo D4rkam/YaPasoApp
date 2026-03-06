@@ -44,7 +44,8 @@ class ProductGrid extends StatelessWidget with ResponsiveMixin {
                   name: products[i].name,
                   price: products[i].price,
                   imagePath: products[i].imageUrl ?? "",
-                  quantity: 1.obs),
+                  quantity: (products[i].quantity > 0) ? 1.obs : 0.obs,
+                  maxQuantity: products[i].quantity),
             ),
             childCount: (products.length > 4) ? 4 : products.length,
           ),
@@ -143,27 +144,43 @@ class ProductCard extends StatelessWidget with ResponsiveMixin {
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Obx(
-                    () => IconButton(
-                      icon: Icon(
-                        controller.isInCart(product.id)
-                            ? Icons.check
-                            : Icons.add_shopping_cart,
-                        color: Colors.black,
-                      ),
-                      onPressed: () {
-                        if (controller.isInCart(product.id)) {
-                          controller.removeItemFromCart(product.id);
-                        } else {
-                          controller.addItemToCart(product);
-                        }
-                      },
-                      style: IconButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(setHeight(10)),
-                        ),
-                        backgroundColor: const Color(0xFFFFE500),
-                      ),
-                    ),
+                    () => product.quantity.value > 0
+                        ? IconButton(
+                            icon: Icon(
+                              controller.isInCart(product.id)
+                                  ? Icons.check
+                                  : Icons.add_shopping_cart,
+                              color: Colors.black,
+                            ),
+                            onPressed: () {
+                              if (controller.isInCart(product.id)) {
+                                controller.removeItemFromCart(product.id);
+                              } else {
+                                controller.addItemToCart(product);
+                              }
+                            },
+                            style: IconButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(setHeight(10)),
+                              ),
+                              backgroundColor: const Color(0xFFFFE500),
+                            ),
+                          )
+                        : IconButton(
+                            icon: const Icon(
+                              Icons.remove_shopping_cart,
+                              color: Colors.grey,
+                            ),
+                            onPressed: null,
+                            style: IconButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(setHeight(10)),
+                              ),
+                              backgroundColor: const Color(0xFFD7D7D7),
+                            ),
+                          ),
                   ),
                 )
               ],

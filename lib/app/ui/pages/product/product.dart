@@ -135,15 +135,17 @@ class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
                               width: setWidth(150),
                               height: setHeight(40),
                               child: Counter(
-                                  widthButton: setWidth(40),
-                                  heightButton: setHeight(40),
-                                  product: ProductForCart(
-                                    id: product.id.toString(),
-                                    name: product.name,
-                                    imagePath: product.imageUrl,
-                                    price: product.price,
-                                    quantity: 1.obs,
-                                  )),
+                                widthButton: setWidth(40),
+                                heightButton: setHeight(40),
+                                product: ProductForCart(
+                                  id: product.id.toString(),
+                                  name: product.name,
+                                  imagePath: product.imageUrl,
+                                  price: product.price,
+                                  quantity: 0.obs,
+                                  maxQuantity: product.quantity,
+                                ),
+                              ),
                             )
                           ],
                         ),
@@ -286,7 +288,7 @@ class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
             shoppingCartController.isInCart(product.id.toString());
 
         return ElevatedButton(
-          onPressed: inCart
+          onPressed: inCart || product.quantity == 0
               ? null // Opcional: deshabilitar si ya está en el carrito
               : () {
                   shoppingCartController.addItemToCart(
@@ -296,6 +298,7 @@ class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
                       imagePath: product.imageUrl,
                       price: product.price,
                       quantity: 1.obs,
+                      maxQuantity: product.quantity,
                     ),
                   );
                 },
