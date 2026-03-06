@@ -2,14 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/bindings/balance_binding.dart';
 import 'package:prueba_buffet/app/bindings/category_binding.dart';
-import 'package:prueba_buffet/app/bindings/home_binding.dart';
 import 'package:prueba_buffet/app/bindings/login_binding.dart';
+import 'package:prueba_buffet/app/bindings/main_shell_binding.dart';
 import 'package:prueba_buffet/app/bindings/order_binding.dart';
 import 'package:prueba_buffet/app/bindings/product_binding.dart';
 import 'package:prueba_buffet/app/bindings/register_binding.dart';
 import 'package:prueba_buffet/app/bindings/success_binding.dart';
 import 'package:prueba_buffet/app/ui/pages/category/category.dart';
-import 'package:prueba_buffet/app/ui/pages/home/home.dart';
+import 'package:prueba_buffet/app/ui/pages/main_shell/main_shell.dart';
 import 'package:prueba_buffet/app/ui/pages/intro/intro.dart';
 import 'package:prueba_buffet/app/ui/pages/login/login.dart';
 import 'package:prueba_buffet/app/ui/pages/my_balance/my_balance.dart';
@@ -30,8 +30,8 @@ abstract class AppPages {
     GetPage(name: Routes.SECURITY, page: () => const SecurityFinger()),
     GetPage(
       name: Routes.HOME,
-      page: () => HomeScreen(),
-      binding: HomeBinding(),
+      page: () => MainShell(),
+      binding: MainShellBinding(),
     ),
     GetPage(
       name: Routes.LOGIN,

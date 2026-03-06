@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:prueba_buffet/app/controllers/order_controller.dart';
+import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
 class Order extends StatelessWidget with ResponsiveMixin {
@@ -98,8 +99,12 @@ class Order extends StatelessWidget with ResponsiveMixin {
                 );
               }
               return ListView.separated(
-                padding: EdgeInsets.symmetric(
-                    vertical: setHeight(20), horizontal: setWidth(20)),
+                padding: EdgeInsets.only(
+                  top: setHeight(20),
+                  bottom: setHeight(100),
+                  left: setWidth(20),
+                  right: setWidth(20),
+                ),
                 itemCount: orderController.orders.length,
                 separatorBuilder: (_, __) => SizedBox(height: setHeight(16)),
                 itemBuilder: (_, i) {
@@ -439,6 +444,126 @@ class _ExpandableTicketCardState extends State<ExpandableTicketCard>
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Versión embebida en el MainShell (sin Scaffold/AppBar propio).
+class OrderContent extends StatelessWidget with ResponsiveMixin {
+  OrderContent({super.key});
+
+  final OrderController orderController = Get.find();
+
+  @override
+  Widget build(BuildContext context) {
+    final MainShellController shellController = Get.find();
+    return NotificationListener<UserScrollNotification>(
+      onNotification: (notification) {
+        shellController.updateScrollDirection(notification.direction);
+        return true;
+      },
+      child: Column(
+        children: [
+          // Header amarillo (reemplaza AppBar)
+          Container(
+            color: const Color(0xFFFFE500),
+            width: double.infinity,
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: setWidth(20),
+                  top: setHeight(16),
+                  bottom: setHeight(8),
+                ),
+                child: Text(
+                  'Mis pedidos',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: setSp(22),
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Tabs
+          Container(
+            color: const Color(0xFFFFE500),
+            height: setHeight(80),
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: setWidth(24), vertical: setHeight(8)),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2D303E),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    "Activos",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: setSp(18),
+                    ),
+                  ),
+                ),
+                SizedBox(width: setWidth(20)),
+                GestureDetector(
+                  onTap: () {},
+                  child: Text(
+                    "Vencidos",
+                    style: TextStyle(
+                      color: const Color(0xFF414141),
+                      fontWeight: FontWeight.w500,
+                      fontSize: setSp(18),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Lista de pedidos
+          Expanded(
+            child: Obx(() {
+              if (orderController.isLoading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(color: Color(0xFFFFE500)),
+                );
+              }
+              if (orderController.orders.isEmpty) {
+                return Center(
+                  child: Text(
+                    'No tenés pedidos aún',
+                    style: TextStyle(
+                      color: const Color(0xFF999999),
+                      fontSize: setSp(18),
+                    ),
+                  ),
+                );
+              }
+              return ListView.separated(
+                padding: EdgeInsets.only(
+                  top: setHeight(20),
+                  bottom: setHeight(100),
+                  left: setWidth(20),
+                  right: setWidth(20),
+                ),
+                itemCount: orderController.orders.length,
+                separatorBuilder: (_, __) => SizedBox(height: setHeight(16)),
+                itemBuilder: (_, i) {
+                  final order =
+                      orderController.orders[i] as Map<String, dynamic>;
+                  return ExpandableTicketCard(order: order);
+                },
+              );
+            }),
+          ),
+        ],
       ),
     );
   }

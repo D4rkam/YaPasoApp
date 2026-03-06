@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:prueba_buffet/app/controllers/home_controller.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
@@ -11,11 +10,10 @@ class ShoppingCartButton extends StatelessWidget with ResponsiveMixin {
 
   @override
   Widget build(BuildContext context) {
-    final HomeController homeController = Get.find();
     return GetBuilder<ShoppingCartController>(builder: (controller) {
       return GestureDetector(
         onTap: () {
-          homeController.goToShoppingCart();
+          Get.toNamed('/shopping_cart');
         },
         child: Container(
           width: setWidth(70),

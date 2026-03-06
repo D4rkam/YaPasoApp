@@ -11,7 +11,6 @@ class HomeController extends GetxController {
   ProductsProvider productsProvider = ProductsProvider();
   UsersProvider usersProvider = UsersProvider();
   User userSession = User.safeFromStorage();
-  var tabIndex = 1.obs;
 
   /// Saldo: referencia directa al BalanceController (fuente única de verdad)
   BalanceController get balanceController => Get.find<BalanceController>();
@@ -49,12 +48,6 @@ class HomeController extends GetxController {
   void goToShoppingCart() {
     Get.toNamed(
       "/shopping_cart",
-    );
-  }
-
-  void goToMisPedidos() {
-    Get.toNamed(
-      "/orders",
     );
   }
 
