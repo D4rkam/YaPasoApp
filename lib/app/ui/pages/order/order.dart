@@ -6,9 +6,10 @@ import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
 class Order extends StatelessWidget with ResponsiveMixin {
-  Order({super.key});
+  final ScrollController scrollController = ScrollController();
+  final OrderController controller = Get.find();
 
-  final OrderController orderController = Get.find();
+  Order({super.key}) {}
 
   @override
   Widget build(BuildContext context) {
@@ -82,12 +83,12 @@ class Order extends StatelessWidget with ResponsiveMixin {
           // Lista de pedidos
           Expanded(
             child: Obx(() {
-              if (orderController.isLoading.value) {
+              if (controller.isLoading.value) {
                 return const Center(
                   child: CircularProgressIndicator(color: Color(0xFFFFE500)),
                 );
               }
-              if (orderController.orders.isEmpty) {
+              if (controller.allOrders.isEmpty) {
                 return Center(
                   child: Text(
                     'No tenés pedidos aún',
@@ -105,13 +106,14 @@ class Order extends StatelessWidget with ResponsiveMixin {
                   left: setWidth(20),
                   right: setWidth(20),
                 ),
-                itemCount: orderController.orders.length,
+                itemCount: controller.allOrders.length,
                 separatorBuilder: (_, __) => SizedBox(height: setHeight(16)),
                 itemBuilder: (_, i) {
-                  final order =
-                      orderController.orders[i] as Map<String, dynamic>;
+                  final order = controller.allOrders[i] as Map<String, dynamic>;
 
-                  return ExpandableTicketCard(order: order);
+                  return RepaintBoundary(
+                    child: ExpandableTicketCard(order: order),
+                  );
                 },
               );
             }),
@@ -194,6 +196,8 @@ class TicketContent extends StatelessWidget with ResponsiveMixin {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: setWidth(24)),
           child: CustomPaint(
+            isComplex: true,
+            willChange: false,
             size: Size(double.infinity, setHeight(1)),
             painter: DashedLinePainter(),
           ),
@@ -431,13 +435,12 @@ class _ExpandableTicketCardState extends State<ExpandableTicketCard>
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
               child: isExpanded
-                  ? ClipPath(
-                      clipper:
-                          TicketClipper(), // El clipper que hace los recortes
-                      child: Container(
-                        color: const Color(0xFFF0F0F0), // Fondo gris del ticket
-                        child: TicketContent(order: widget.order),
+                  ? Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF0F0F0),
+                        borderRadius: BorderRadius.circular(12),
                       ),
+                      child: TicketContent(order: widget.order),
                     )
                   : const SizedBox
                       .shrink(), // Oculta el contenido si no está expandido
@@ -451,9 +454,16 @@ class _ExpandableTicketCardState extends State<ExpandableTicketCard>
 
 /// Versión embebida en el MainShell (sin Scaffold/AppBar propio).
 class OrderContent extends StatelessWidget with ResponsiveMixin {
-  OrderContent({super.key});
-
-  final OrderController orderController = Get.find();
+  final ScrollController scrollController = ScrollController();
+  final OrderController controller = Get.find();
+  OrderContent({super.key}) {
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 200) {
+        controller.fetchMoreOrders();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -530,12 +540,12 @@ class OrderContent extends StatelessWidget with ResponsiveMixin {
           // Lista de pedidos
           Expanded(
             child: Obx(() {
-              if (orderController.isLoading.value) {
+              if (controller.isLoading.value) {
                 return const Center(
                   child: CircularProgressIndicator(color: Color(0xFFFFE500)),
                 );
               }
-              if (orderController.orders.isEmpty) {
+              if (controller.allOrders.isEmpty) {
                 return Center(
                   child: Text(
                     'No tenés pedidos aún',
@@ -547,18 +557,35 @@ class OrderContent extends StatelessWidget with ResponsiveMixin {
                 );
               }
               return ListView.separated(
+                controller: scrollController,
                 padding: EdgeInsets.only(
                   top: setHeight(20),
                   bottom: setHeight(100),
                   left: setWidth(20),
                   right: setWidth(20),
                 ),
-                itemCount: orderController.orders.length,
+                itemCount: controller.ordersEncargadas.length,
                 separatorBuilder: (_, __) => SizedBox(height: setHeight(16)),
                 itemBuilder: (_, i) {
-                  final order =
-                      orderController.orders[i] as Map<String, dynamic>;
-                  return ExpandableTicketCard(order: order);
+                  if (i == controller.ordersEncargadas.length) {
+                    if (controller.isFetchingMore.value) {
+                      return const Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
+
+                    if (controller.nextCursor == null &&
+                        controller.ordersEncargadas.isNotEmpty) {
+                      return const Center(
+                          child: Text("No hay más transacciones"));
+                    }
+                    return const SizedBox.shrink();
+                  }
+                  final order = controller.ordersEncargadas[i];
+                  return RepaintBoundary(
+                    child: ExpandableTicketCard(order: order),
+                  );
                 },
               );
             }),

@@ -6,7 +6,6 @@ import 'package:prueba_buffet/app/ui/global_widgets/counter_product.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/shopping_cart_button.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
-import 'package:prueba_buffet/app/data/models/product.dart';
 
 class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
   ProductScreen({super.key});
@@ -142,7 +141,7 @@ class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
                                   name: product.name,
                                   imagePath: product.imageUrl,
                                   price: product.price,
-                                  quantity: 0.obs,
+                                  quantity: controller.quantitySelected,
                                   maxQuantity: product.quantity,
                                 ),
                               ),
@@ -152,34 +151,6 @@ class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
 
                         const Spacer(),
 
-                        // Sugerencias "Para acompañar"
-                        // Column(
-                        //   crossAxisAlignment: CrossAxisAlignment.start,
-                        //   children: [
-                        //     const Text(
-                        //       'Para acompañar',
-                        //       style: TextStyle(
-                        //           fontSize: 20, fontWeight: FontWeight.w600),
-                        //     ),
-                        //     const SizedBox(height: 16),
-                        //     SizedBox(
-                        //       height: 150,
-                        //       child: ListView.builder(
-                        //         scrollDirection: Axis.horizontal,
-                        //         itemCount: sugerencias
-                        //             .length, // Reemplaza 'sugerencias' con tu lista de datos
-                        //         itemBuilder: (context, index) {
-                        //           final sugerencia = sugerencias[index];
-                        //           return ProductSuggestionCard(
-                        //             productName: sugerencia["nombre"]!,
-                        //             productPrice: sugerencia["precio"]!,
-                        //             imagePath: sugerencia["imagen"]!,
-                        //           );
-                        //         },
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
                         const Spacer(),
                         SafeArea(
                             child: Center(
@@ -196,84 +167,6 @@ class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
     });
   }
 
-  // Función auxiliar para crear cada sugerencia
-  Widget _buildSugerencia(String nombre, String precio, String imagen) {
-    return Container(
-      width: 150,
-      margin: const EdgeInsets.only(right: 8),
-      child: Column(
-        children: [
-          Image.asset(
-            imagen, // Reemplaza con la ruta de tu imagen
-            height: 100,
-            fit: BoxFit.cover,
-          ),
-          Text(nombre),
-          Text(precio),
-        ],
-      ),
-    );
-  }
-
-  //widget to add or remove cant of product
-  Widget _buildCounter(int count) {
-    return Material(
-      color: Colors.transparent,
-      child: SizedBox(
-        width: 160,
-        height: 45,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            InkWell(
-              overlayColor:
-                  WidgetStateProperty.all(Colors.black.withOpacity(0.2)),
-              onTap: null,
-              child: Ink(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: const Color(0xFFD7D7D7),
-                ),
-                child: const Icon(
-                  Icons.remove,
-                  color: Color(0xFF6F6F6F),
-                ),
-              ),
-            ),
-            Text(
-              '$count',
-              style: const TextStyle(
-                color: Color(0xFFD3BF09),
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
-            ), // Mostrar la cantidad seleccionada
-            InkWell(
-              onTap: () {},
-              overlayColor:
-                  WidgetStateProperty.all(Colors.black.withOpacity(0.1)),
-              child: Ink(
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: const Color(0xFFF9EA68),
-                ),
-                child: const Icon(
-                  Icons.add,
-                  color: Color(0xFFD3BF09),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _addToShoppingCart({required BuildContext context}) {
     final ShoppingCartController shoppingCartController = Get.find();
     final product = controller.product.value!;
@@ -288,7 +181,7 @@ class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
             shoppingCartController.isInCart(product.id.toString());
 
         return ElevatedButton(
-          onPressed: inCart || product.quantity == 0
+          onPressed: (inCart || controller.quantitySelected.value == 0)
               ? null // Opcional: deshabilitar si ya está en el carrito
               : () {
                   shoppingCartController.addItemToCart(
@@ -297,14 +190,14 @@ class ProductScreen extends GetView<ProductController> with ResponsiveMixin {
                       name: product.name,
                       imagePath: product.imageUrl,
                       price: product.price,
-                      quantity: 1.obs,
+                      quantity: controller.quantitySelected,
                       maxQuantity: product.quantity,
                     ),
                   );
                 },
           style: ElevatedButton.styleFrom(
             // CAMBIO DINÁMICO DE COLOR
-            backgroundColor: inCart
+            backgroundColor: (inCart || controller.quantitySelected.value == 0)
                 ? Colors.grey[400] // Color si ya está en el carrito
                 : const Color(0xFFFFE500), // Tu amarillo original
             foregroundColor: Colors.black,

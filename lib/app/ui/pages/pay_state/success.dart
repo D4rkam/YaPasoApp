@@ -29,6 +29,7 @@ class SuccessScreen extends StatelessWidget with ResponsiveMixin {
                       ? "¡Carga de saldo realizada con éxito!"
                       : "¡Compra realizada con éxito!",
                   maxLines: 2,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: setSp(25), fontWeight: FontWeight.w600),
                 ),

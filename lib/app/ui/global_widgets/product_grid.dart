@@ -74,7 +74,6 @@ class ProductCard extends StatelessWidget with ResponsiveMixin {
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: GestureDetector(
-        behavior: HitTestBehavior.deferToChild,
         onTap: () {
           Get.toNamed("/product", arguments: product.id);
         },

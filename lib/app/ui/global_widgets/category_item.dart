@@ -39,7 +39,7 @@ class CategoryItem extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.4),
+                color: const Color(0x66000000),
                 borderRadius: BorderRadius.circular(50),
               ),
               child: Center(

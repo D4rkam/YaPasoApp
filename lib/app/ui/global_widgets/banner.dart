@@ -29,7 +29,7 @@ class BannerCard extends StatelessWidget {
               height: double.infinity,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Colors.black.withOpacity(0.3)),
+                  color: const Color(0x4D000000)),
             ),
             if (isNew)
               Positioned(

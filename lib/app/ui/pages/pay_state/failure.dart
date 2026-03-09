@@ -17,9 +17,14 @@ class FailureScreen extends StatelessWidget with ResponsiveMixin {
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset(
-                  "assets/images/error_pago.png",
+                Container(
                   width: setWidth(400),
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage(
+                            "assets/images/error_pago.png",
+                          ),
+                          fit: BoxFit.fitHeight)),
                 ),
                 Text(
                   "¡Falló la transacción!",

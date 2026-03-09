@@ -31,7 +31,9 @@ class HomeContent extends StatelessWidget with ResponsiveMixin {
         color: Colors.black,
         backgroundColor: const Color(0xFFFFE500),
         child: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: ClampingScrollPhysics(),
+          ),
           slivers: [
             CustomAppBar(),
             const ContainerInputSearch(),

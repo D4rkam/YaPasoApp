@@ -3,14 +3,21 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:prueba_buffet/app/controllers/balance_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/toggle_button.dart';
 
 class MyBalance extends StatelessWidget with ResponsiveMixin {
-  const MyBalance({super.key});
+  final ScrollController scrollController = ScrollController();
+  final controller = Get.find<BalanceController>();
+  MyBalance({super.key}) {
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 200) {
+        controller.getMoreTransactions();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<BalanceController>();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -34,22 +41,9 @@ class MyBalance extends StatelessWidget with ResponsiveMixin {
         child: Column(
           children: [
             TarjetaYaPaso(controller: controller),
-            // Padding(
-            //   padding: EdgeInsets.only(top: setHeight(55)),
-            //   child: SizedBox(
-            //     height: setHeight(40),
-            //     child: CustomToggleButton(
-            //         labels: const ["Mi Actividad", "Historial"],
-            //         initialSelectedIndex: 0,
-            //         onToggle: (index) {
-            //           return null;
-            //         }),
-            //   ),
-            // ),
             SizedBox(
               height: setHeight(60),
             ),
-
             Row(
               children: [
                 Padding(
@@ -57,19 +51,21 @@ class MyBalance extends StatelessWidget with ResponsiveMixin {
                   child: Text(
                     "Mi actividad",
                     style: TextStyle(
-                        fontSize: setSp(20),
+                        fontSize: setSp(25),
                         fontWeight: FontWeight.normal,
                         color: const Color.fromARGB(255, 107, 107, 107)),
                   ),
                 ),
               ],
             ),
-
             Expanded(
                 child: Padding(
               padding: EdgeInsets.only(
                   top: setHeight(10), left: setWidth(20), right: setWidth(20)),
-              child: TransactionsPage(),
+              child: TransactionsPage(
+                controller: controller,
+                scrollController: scrollController,
+              ),
             ))
           ],
         ),
@@ -252,78 +248,102 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
 }
 
 class TransactionsPage extends StatelessWidget with ResponsiveMixin {
-  final List<Map<String, dynamic>> transactions = [
-    {
-      "name": "Pedido #1234",
-      "description": "Pagado con saldo",
-      "amount": 900,
-      "isIncome": false
-    },
-    {
-      "name": "Carga de saldo",
-      "description": "Cargo con Mercado Pago",
-      "amount": 750,
-      "isIncome": true
-    },
-  ];
+  TransactionsPage(
+      {super.key, required this.controller, required this.scrollController});
 
-  TransactionsPage({super.key});
+  final ScrollController scrollController;
+  final BalanceController controller;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: transactions.length,
-      itemBuilder: (context, index) {
-        final transaction = transactions[index];
-        return Padding(
-          padding: EdgeInsets.only(bottom: setHeight(10)), // setHeight(10)
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "${transaction["name"]}",
-                    style: TextStyle(
-                      fontSize: setSp(20),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    "${transaction["description"]}",
-                    style: TextStyle(
-                      color: const Color(0xFF6A6A6A),
-                      fontSize: setSp(17),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "\$${transaction["amount"]}",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: setSp(22),
-                    ),
-                  ),
-                  SizedBox(width: setWidth(10)),
-                  Icon(
-                    transaction["isIncome"]
-                        ? Icons.north_east
-                        : Icons.south_west,
-                    color: transaction["isIncome"] ? Colors.green : Colors.red,
-                    size: setSp(24), // default aprox 24
-                  )
-                ],
-              ),
-            ],
-          ),
+    return Obx(() {
+      if (controller.isLoading.value && controller.transactions.isEmpty) {
+        return const Center(
+            child: CircularProgressIndicator(color: Color(0xFFFFE500)));
+      }
+
+      // 2. Estado Vacío (Sin actividad)
+      if (controller.transactions.isEmpty && !controller.isLoading.value) {
+        return const Center(
+          child: Text("Aún no tienes movimientos",
+              style: TextStyle(color: Colors.grey)),
         );
-      },
-    );
+      }
+      return ListView.builder(
+        controller: scrollController,
+        itemCount: controller.transactions.length + 1,
+        itemBuilder: (context, index) {
+          // Si llegamos al final de la lista de elementos
+          if (index == controller.transactions.length) {
+            // Mostramos un circulito de carga si estamos trayendo más
+            if (controller.isFetchingMore.value) {
+              return const Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+            // Si no hay más páginas (nextCursor == null), podemos mostrar un texto
+            if (controller.nextCursor == null &&
+                controller.transactions.isNotEmpty) {
+              return const Center(child: Text("No hay más transacciones"));
+            }
+            return const SizedBox.shrink();
+          }
+          final transaction = controller.transactions[index];
+          return Padding(
+            padding: EdgeInsets.only(bottom: setHeight(10)), // setHeight(10)
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      (transaction["type"] == "CARGA_SALDO")
+                          ? "Carga de Saldo"
+                          : "Compra",
+                      style: TextStyle(
+                        fontSize: setSp(20),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      "${DateFormat('dd/MM/yyyy').format(DateTime.parse(transaction["created_at"]))}",
+                      style: TextStyle(
+                        color: const Color(0xFF6A6A6A),
+                        fontSize: setSp(17),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "\$${transaction["amount"]}",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: setSp(22),
+                      ),
+                    ),
+                    SizedBox(width: setWidth(10)),
+                    Icon(
+                      transaction["type"] == "CARGA_SALDO"
+                          ? Icons.north_east
+                          : Icons.south_west,
+                      color: transaction["type"] == "CARGA_SALDO"
+                          ? Colors.green
+                          : Colors.red,
+                      size: setSp(24), // default aprox 24
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    });
   }
 }
