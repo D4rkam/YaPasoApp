@@ -50,7 +50,11 @@ class PayController extends GetxController {
         0.0, (sum, item) => sum + (item.price * item.quantity.value));
 
     print('Total a pagar vía MP: $_totalAmount');
-    Response response = await payProvider.pay(items);
+    final rawDatetime = GetStorage().read("order_datetime");
+    String datetimeOrder =
+        rawDatetime?.toString() ?? DateTime.now().toIso8601String();
+    Response response = await payProvider.pay(items.toList(), datetimeOrder);
+
     if (response.statusCode == 200 || response.statusCode == 201) {
       final paymentResponse = PaymentResponse.fromJson(response.body);
       final initPoint = paymentResponse.preference.initPoint;
@@ -78,7 +82,8 @@ class PayController extends GetxController {
 
       // Construir la lista de productos para la orden
       cartItems.forEach((item) {
-        productsForOrder.add(ProductForOrder(id: int.tryParse(item.id) ?? 0));
+        productsForOrder.add(ProductForOrder(
+            id: int.tryParse(item.id) ?? 0, quantity: item.quantity.value));
       });
 
       final rawDatetime = GetStorage().read("order_datetime");

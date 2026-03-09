@@ -7,7 +7,7 @@ import 'package:prueba_buffet/utils/constants/api_constants.dart';
 class PayProvider extends BaseProvider {
   String urlPay = ApiUrl.PAY;
 
-  Future<Response> pay(List<ProductForCart> items) async {
+  Future<Response> pay(List<ProductForCart> items, String datetimeOrder) async {
     final List<Map<String, Object>> mappedItems = items.map((item) {
       return {
         "id": item.id,
@@ -17,13 +17,16 @@ class PayProvider extends BaseProvider {
       };
     }).toList();
 
-    String itemsForRequest = jsonEncode(mappedItems);
+    String requestBody = jsonEncode({
+      "items": mappedItems,
+      "datetime_order": datetimeOrder,
+    });
 
     // Los headers de Authorization/Cookie se manejarán automáticamente por
     // el BaseProvider
     Response response = await post(
       urlPay,
-      itemsForRequest,
+      requestBody,
       headers: {
         "Content-Type": "application/json",
       },
