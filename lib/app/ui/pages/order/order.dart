@@ -9,7 +9,7 @@ class Order extends StatelessWidget with ResponsiveMixin {
   final ScrollController scrollController = ScrollController();
   final OrderController controller = Get.find();
 
-  Order({super.key}) {}
+  Order({super.key});
 
   @override
   Widget build(BuildContext context) {

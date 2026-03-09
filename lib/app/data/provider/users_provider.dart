@@ -8,14 +8,17 @@ import 'package:prueba_buffet/utils/constants/api_constants.dart';
 class ProductForOrder {
   ProductForOrder({
     required this.id,
+    required this.quantity,
   });
 
   final int id;
+  final int quantity;
 
   // Convertir a JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      "quantity": quantity,
     };
   }
 
@@ -23,6 +26,7 @@ class ProductForOrder {
   factory ProductForOrder.fromJson(Map<String, dynamic> json) {
     return ProductForOrder(
       id: json['id'],
+      quantity: json['quantity'],
     );
   }
 }
