@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:prueba_buffet/app/controllers/balance_controller.dart';
+import 'package:prueba_buffet/app/controllers/order_controller.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/data/models/payment_response.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
@@ -45,12 +46,17 @@ class PayController extends GetxController {
   }
 
   void pay(List<ProductForCart> items) async {
+    var _totalAmount = items.fold(
+        0.0, (sum, item) => sum + (item.price * item.quantity.value));
+
+    print('Total a pagar vía MP: $_totalAmount');
     Response response = await payProvider.pay(items);
     if (response.statusCode == 200 || response.statusCode == 201) {
       final paymentResponse = PaymentResponse.fromJson(response.body);
       final initPoint = paymentResponse.preference.initPoint;
 
       if (initPoint.isNotEmpty) {
+        GetStorage().write("pending_cart_total", _totalAmount);
         await _launchMercadoPago(initPoint);
       } else {
         Get.snackbar('Error', 'No se recibió el link de pago');
@@ -104,25 +110,46 @@ class PayController extends GetxController {
         GetStorage().write("order", response.body);
       }
       // Refrescar solo el saldo desde el endpoint liviano
-      await refreshBalance();
     } catch (e) {
       // Intentar refrescar el saldo al menos
-      try {
-        await refreshBalance();
-      } catch (_) {}
+      try {} catch (_) {}
     }
   }
 
   Future<void> pay_with_balance() async {
     final order = GetStorage().read("order");
     final seller_id = order["products"][0]["seller_id"];
-    Response response = await payProvider.pay_with_balance(
-      order["total"],
+    final double totalToDeduct = (order["total"] is int)
+        ? (order["total"] as int).toDouble()
+        : order["total"];
+
+    Response response = await payProvider.payWithBalance(
+      totalToDeduct,
       seller_id,
       order["id"],
     );
 
     if (response.statusCode == 200) {
+      // 1. Actualizar balance y transacción localmente
+      if (Get.isRegistered<BalanceController>()) {
+        final balanceCtrl = Get.find<BalanceController>();
+        balanceCtrl.balance.value -= totalToDeduct;
+        balanceCtrl.transactions.insert(0, {
+          "type": "PAGO",
+          "amount": totalToDeduct,
+          "created_at": DateTime.now().toIso8601String(),
+        });
+      }
+
+      // 2. Inyectar la orden actualizada en OrderController
+      if (Get.isRegistered<OrderController>()) {
+        final Map<String, dynamic> updatedOrder =
+            Map<String, dynamic>.from(order);
+        updatedOrder['status'] = 'ENCARGADO';
+        Get.find<OrderController>().addOrUpdateOrderLocally(updatedOrder);
+      }
+
+      // 3. Limpiar storage después de usar los datos
       shoppingCartController.clearCart();
       GetStorage().remove("order_datetime");
       GetStorage().remove("order");
@@ -132,13 +159,6 @@ class PayController extends GetxController {
       Get.snackbar('Error', response.bodyString ?? 'Error al procesar el pago',
           backgroundColor: const Color(0xFFFF5252),
           colorText: const Color(0xFFFFFFFF));
-    }
-    refreshBalance();
-  }
-
-  Future<void> refreshBalance() async {
-    if (Get.isRegistered<BalanceController>()) {
-      await Get.find<BalanceController>().fetchBalance();
     }
   }
 

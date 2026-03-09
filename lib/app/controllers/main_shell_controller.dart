@@ -14,7 +14,18 @@ class MainShellController extends GetxController {
   /// Tab 2 (Pedidos) → page 1
   int get pageIndex => tabIndex.value >= 2 ? 1 : 0;
 
+  void goToOrdersTab() {
+    tabIndex.value = 2;
+  }
+
+  /// Guarda la última dirección procesada para evitar asignaciones redundantes.
+  ScrollDirection _lastDirection = ScrollDirection.idle;
+
   void updateScrollDirection(ScrollDirection direction) {
+    if (direction == _lastDirection || direction == ScrollDirection.idle)
+      return;
+    _lastDirection = direction;
+
     if (direction == ScrollDirection.reverse && isExpanded.value) {
       isExpanded.value = false;
     } else if (direction == ScrollDirection.forward && !isExpanded.value) {

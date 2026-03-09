@@ -36,7 +36,7 @@ class PayProvider extends BaseProvider {
     return response;
   }
 
-  Future<Response> pay_with_balance(
+  Future<Response> payWithBalance(
       double amount, int seller_id, int order_id) async {
     Response response = await post(
       ApiUrl.PAY_BALANCE,

@@ -13,6 +13,10 @@ class MainShellBinding implements Bindings {
     if (!Get.isRegistered<UsersProvider>()) {
       Get.lazyPut<UsersProvider>(() => UsersProvider());
     }
-    Get.lazyPut<OrderController>(() => OrderController());
+    // put (no lazy) para que las órdenes se carguen al entrar al shell
+    // y la inyección local funcione siempre
+    if (!Get.isRegistered<OrderController>()) {
+      Get.put<OrderController>(OrderController());
+    }
   }
 }

@@ -27,7 +27,7 @@ class PaymentResponse {
   factory PaymentResponse.fromJson(Map<String, dynamic> json) {
     return PaymentResponse(
       preference:
-          MercadoPagoPreference.fromJson(Map<String, dynamic>.from(json ?? {})),
+          MercadoPagoPreference.fromJson(Map<String, dynamic>.from(json)),
     );
   }
 }

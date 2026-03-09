@@ -13,13 +13,18 @@ class BalanceController extends GetxController {
   final User userSession = User.safeFromStorage();
   late Rx<double> balance;
   late int fileNum;
+  var transactions = <Map<String, dynamic>>[].obs;
 
-  final isLoading = false.obs;
+  var isLoading = false.obs;
+  var isFetchingMore = false.obs;
+
+  String? nextCursor;
 
   @override
-  void onInit() {
+  void onInit() async {
     balance = (userSession.balance ?? 0.0).obs;
     fileNum = int.tryParse(userSession.fileNum) ?? 0;
+    await getMyInitialTransactions();
     super.onInit();
   }
 
@@ -41,19 +46,6 @@ class BalanceController extends GetxController {
       print("⚠️ BalanceController.refreshFromStorage CRASH: $e");
     }
   }
-
-  /// Obtiene el saldo actualizado desde el servidor (requiere sesión activa)
-  // Future<void> fetchFreshBalance() async {
-  //   try {
-  //     final user = await _usersProvider.refreshUserData();
-  //     if (user != null && user.balance != null) {
-  //       balance.value = user.balance!;
-  //       print("BalanceController.fetchFreshBalance → balance: ${user.balance}");
-  //     }
-  //   } catch (e) {
-  //     print("Error obteniendo saldo fresco: $e");
-  //   }
-  // }
 
   Future<void> fetchBalance() async {
     try {
@@ -167,6 +159,9 @@ class BalanceController extends GetxController {
         final initPoint = paymentResponse.preference.initPoint;
         // final sandboxInitPoint = paymentResponse.preference.sandoxInitPoint;
 
+        // Guardar el monto para actualizarlo localmente cuando vuelva de Mercado Pago
+        GetStorage().write("pending_load_amount", amount);
+
         Get.back(); // Cerrar el diálogo
 
         if (initPoint.isNotEmpty) {
@@ -196,5 +191,43 @@ class BalanceController extends GetxController {
       Get.snackbar('Error', 'No se pudo abrir Mercado Pago',
           backgroundColor: Colors.redAccent, colorText: Colors.white);
     }
+  }
+
+  Future<void> getMyInitialTransactions() async {
+    isLoading.value = true;
+    try {
+      print("[BALANCE CONTROLLER] Obteniendo transacciones iniciales...");
+      final response = await _walletProvider.getTransactions();
+
+      if (response.statusCode == 200) {
+        transactions.assignAll(
+            List<Map<String, dynamic>>.from(response.body['transactions']));
+        nextCursor = response.body['next_cursor'];
+      }
+    } catch (e) {
+      Get.snackbar('Error', e.toString(),
+          backgroundColor: Colors.redAccent, colorText: Colors.white);
+    }
+    isLoading.value = false;
+  }
+
+  Future<void> getMoreTransactions() async {
+    if (nextCursor == null || isFetchingMore.value) return;
+
+    isFetchingMore.value = true;
+    try {
+      final response =
+          await _walletProvider.getTransactions(cursor: nextCursor!);
+      if (response.statusCode == 200) {
+        final newTransactions =
+            List<Map<String, dynamic>>.from(response.body['transactions']);
+        transactions.addAll(newTransactions);
+        nextCursor = response.body['next_cursor'];
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'No se pudieron obtener más transacciones',
+          backgroundColor: Colors.redAccent, colorText: Colors.white);
+    }
+    isFetchingMore.value = false;
   }
 }

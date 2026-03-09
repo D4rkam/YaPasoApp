@@ -33,6 +33,8 @@ class ApiUrl {
   static const String BALANCE = "$_hostServer/api/users/balance"; // GET
   static const String LOAD_BALANCE =
       "$_hostServer/api/transactions/load-balance"; // POST
+  static const String TRANSACTIONS =
+      "$_hostServer/api/transactions/my-transactions"; // GET
 
   static const String SCHOOLS = "$_hostServer/api/schools/"; // GET
 }

@@ -7,7 +7,8 @@ class InitialBinding implements Bindings {
   @override
   void dependencies() {
     Get.put(BalanceController(), permanent: true);
-    Get.lazyPut<ShoppingCartController>(() => ShoppingCartController());
+    Get.lazyPut<ShoppingCartController>(() => ShoppingCartController(),
+        fenix: true);
     Get.lazyPut<SecurityFingerController>(() => SecurityFingerController());
   }
 }

@@ -173,7 +173,17 @@ class UsersProvider extends BaseProvider {
     return {};
   }
 
-  Future<Response> getOrders() async {
-    return await get(ApiUrl.ORDERS_USER);
+  Future<Response> getOrders(
+      {int limit = 10,
+      String? cursor,
+      DateTime? filter_date,
+      bool? desc}) async {
+    final query = {
+      'limit': limit.toString(),
+      if (cursor != null) 'cursor': cursor,
+      if (filter_date != null) 'filter_date': filter_date.toIso8601String(),
+      if (desc != null) 'desc': desc.toString(),
+    };
+    return await get(ApiUrl.ORDERS_USER, query: query);
   }
 }

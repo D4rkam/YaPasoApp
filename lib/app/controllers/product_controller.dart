@@ -7,6 +7,8 @@ class ProductController extends GetxController {
 
   final Rx<Product?> product = Rx<Product?>(null);
 
+  final RxInt quantitySelected = 0.obs;
+
   void getProduct(String id) async {
     Response response = await productsProvider.getProductById(id);
     product.value = Product.fromJson(response.body);

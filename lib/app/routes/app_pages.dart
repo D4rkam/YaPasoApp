@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/bindings/balance_binding.dart';
 import 'package:prueba_buffet/app/bindings/category_binding.dart';
@@ -49,7 +48,7 @@ abstract class AppPages {
         binding: ProductBinding()),
     GetPage(
       name: Routes.MY_BALANCE,
-      page: () => const MyBalance(),
+      page: () => MyBalance(),
       binding: BalanceBinding(),
     ),
     GetPage(

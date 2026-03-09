@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/app/controllers/balance_controller.dart';
+import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
+import 'package:prueba_buffet/app/controllers/order_controller.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
@@ -13,8 +15,14 @@ class SuccessController extends GetxController {
   User userSession = User.safeFromStorage();
   void goToHomeScreen() =>
       Get.offNamedUntil("/home", (route) => route.settings.name != "/success");
-  void goToOrderScreen() => Get.offNamedUntil(
-      "/orders", (route) => route.settings.name != "/success");
+  void goToOrderScreen() {
+    if (Get.isRegistered<MainShellController>()) {
+      Get.find<MainShellController>().goToOrdersTab();
+      Get.offAllNamed("/home");
+    } else {
+      Get.offAllNamed("/home");
+    }
+  }
 
   final List<ProductForOrder> productsForOrder = [];
   late List<dynamic> cartItems;
@@ -25,17 +33,25 @@ class SuccessController extends GetxController {
   String paymentId = "";
   String externalReference = "";
   bool isPaymentForBalance = false;
+  String paymentStatus = "";
+
   @override
   void onInit() {
     super.onInit();
     paymentId = Get.parameters['payment_id'] ?? "";
+    paymentStatus = Get.parameters['status'] ?? "";
     externalReference =
         Get.parameters['external_reference']?.split("|")[0] ?? "";
     isPaymentForBalance = externalReference == paymentBalance;
 
     if (isPaymentForBalance) {
-      print("Pago de carga de saldo detectado");
-      refreshBalance();
+      print("Pago de carga de saldo detectado (status: $paymentStatus)");
+      if (paymentStatus == "approved") {
+        _applyLocalBalanceLoad();
+      } else {
+        // Pago no aprobado → limpiar monto pendiente
+        GetStorage().remove("pending_load_amount");
+      }
     } else {
       print("Pago de compra detectado → creando orden");
       createOrder();
@@ -88,16 +104,53 @@ class SuccessController extends GetxController {
         GetStorage().write("order", {"message": response.body});
       } else {
         GetStorage().write("order", response.body);
+
+        // Inyectar la orden localmente en OrderController para no volver a pedir al servidor
+        if (Get.isRegistered<OrderController>()) {
+          final Map<String, dynamic> newOrder =
+              Map<String, dynamic>.from(response.body);
+          if (!newOrder.containsKey('status')) {
+            newOrder['status'] = 'ENCARGADO';
+          }
+          Get.find<OrderController>().addOrUpdateOrderLocally(newOrder);
+        }
+
+        // Inyectar transacción sintética (el backend no la devuelve en este flujo)
+        if (Get.isRegistered<BalanceController>()) {
+          final pendingTotal = GetStorage().read("pending_cart_total");
+          if (pendingTotal != null) {
+            final double amount = (pendingTotal as num).toDouble();
+            Get.find<BalanceController>().transactions.insert(0, {
+              "type": "PAGO",
+              "amount": amount,
+              "created_at": DateTime.now().toIso8601String(),
+            });
+            GetStorage().remove("pending_cart_total");
+          }
+        }
       }
-      // Refrescar solo el saldo desde el endpoint liviano
-      await refreshBalance();
     } catch (e, stack) {
       print("⚠️ SuccessController.createOrder CRASH: $e");
       print("Stack: $stack");
-      // Intentar refrescar el saldo al menos
-      try {
-        await refreshBalance();
-      } catch (_) {}
+    }
+  }
+
+  /// Aplica la carga de saldo localmente sin llamar al servidor.
+  /// Usa el monto guardado en storage antes de abrir Mercado Pago.
+  void _applyLocalBalanceLoad() {
+    try {
+      final pendingAmount = GetStorage().read("pending_load_amount");
+      if (pendingAmount != null && Get.isRegistered<BalanceController>()) {
+        final balanceCtrl = Get.find<BalanceController>();
+        final double amount = (pendingAmount as num).toDouble();
+
+        balanceCtrl.balance.value += amount;
+
+        GetStorage().remove("pending_load_amount");
+        print("SuccessController: saldo actualizado localmente +$amount");
+      }
+    } catch (e) {
+      print("⚠️ SuccessController._applyLocalBalanceLoad CRASH: $e");
     }
   }
 
