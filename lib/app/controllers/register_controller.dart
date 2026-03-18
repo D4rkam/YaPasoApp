@@ -48,7 +48,6 @@ class RegisterController extends GetxController {
 
   void onPageChanged(int index) {
     currentStep.value = index;
-    print("Página actual: ${currentStep.value}");
   }
 
   void nextStep() {

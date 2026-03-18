@@ -41,6 +41,8 @@ List? _safeList(dynamic v) {
   if (v is List) return v;
   return [];
 }
+import 'package:prueba_buffet/utils/logger.dart';
+
 // ──────────────────────────────────────────────────────────────────────────
 
 class User {
@@ -102,9 +104,8 @@ class User {
         token: _safeMap(json["token"]),
       );
     } catch (e, stack) {
-      print("⚠️ User.fromJson CRASH capturado: $e");
-      print("Stack: $stack");
-      print("rawJson type: ${rawJson.runtimeType} → $rawJson");
+      logger.e("⚠️ User.fromJson CRASH capturado: $e", stackTrace: stack);
+      logger.e("rawJson type: ${rawJson.runtimeType} → $rawJson");
       // Devolver usuario vacío para que la app no muera
       return User();
     }
@@ -118,8 +119,7 @@ class User {
       if (raw == null) return User();
       return User.fromJson(raw);
     } catch (e, stack) {
-      print("⚠️ User.safeFromStorage CRASH: $e");
-      print("Stack: $stack");
+      logger.e("⚠️ User.safeFromStorage CRASH: $e", stackTrace: stack);
       return User();
     }
   }

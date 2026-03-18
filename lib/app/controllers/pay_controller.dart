@@ -17,6 +17,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:prueba_buffet/utils/logger.dart';
 
 class PayController extends GetxController {
   PayProvider payProvider = PayProvider();
@@ -87,7 +88,7 @@ class PayController extends GetxController {
       }
       return true; // Si su celular no tiene lector, lo dejamos pasar por defecto
     } catch (e) {
-      print("Error con la biometría: $e");
+      logger.e("Error con la biometría: $e");
       // Si falla algo técnico, permitimos el pago para no bloquearle el uso de la app
       return true;
     }
@@ -139,7 +140,7 @@ class PayController extends GetxController {
     var _totalAmount = items.fold(
         0.0, (sum, item) => sum + (item.price * item.quantity.value));
 
-    print('Total a pagar vía MP: $_totalAmount');
+    logger.d('Total a pagar vía MP: $_totalAmount');
     final rawDatetime = GetStorage().read("order_datetime");
     String datetimeOrder =
         rawDatetime?.toString() ?? DateTime.now().toIso8601String();
@@ -204,7 +205,7 @@ class PayController extends GetxController {
       );
 
       // ---> DEBUG: Imprimimos el JSON exacto para ver por qué da 422
-      print("📤 Payload enviado a /api/order/ : ${jsonEncode(order.toJson())}");
+      logger.d("📤 Payload enviado a /api/order/ : ${jsonEncode(order.toJson())}");
 
       Response response = await usersProvider.createOrder(order.toJson());
 
@@ -231,14 +232,14 @@ class PayController extends GetxController {
         return false; // FRACASO
       }
     } catch (e, stack) {
-      print("⚠️ Crash en createOrder: $e\n$stack");
+      logger.e("⚠️ Crash en createOrder: $e\n$stack");
       return false;
     }
   }
 
   Future<void> pay_with_balance() async {
     final order = GetStorage().read("order");
-    print(order);
+    logger.d(order);
 
     // 1. Verificamos que la orden exista y tenga la estructura correcta
     if (order == null || order["id"] == null || order["seller_id"] == null) {
@@ -259,7 +260,7 @@ class PayController extends GetxController {
             ? order["total"]
             : double.tryParse(order["total"].toString()) ?? 0.0;
 
-    print(
+    logger.d(
         "💰 Iniciando pago con saldo - Orden: $order_id, Vendedor: $seller_id, Total: \$$totalToDeduct");
 
     // 4. Llamamos a la API de pago
@@ -302,7 +303,7 @@ class PayController extends GetxController {
 
       goToSuccess();
     } else {
-      print("❌ Error al pagar con saldo: ${response?.data}");
+      logger.e("❌ Error al pagar con saldo: ${response?.data}");
       CustomToast.showError(
           title: 'Error',
           message: 'No se pudo procesar el pago con saldo virtual.');

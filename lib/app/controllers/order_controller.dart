@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
+import 'package:prueba_buffet/utils/logger.dart';
 
 class OrderController extends GetxController {
   final UsersProvider usersProvider = Get.find();
@@ -149,7 +150,7 @@ class OrderController extends GetxController {
         if (isInitial) hasFetched[status] = true;
       }
     } catch (e) {
-      print("Error fetching orders for $status: $e");
+      logger.e("Error fetching orders for $status: $e");
     } finally {
       if (isInitial) {
         isLoading.value = false;

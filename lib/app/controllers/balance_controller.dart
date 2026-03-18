@@ -9,6 +9,8 @@ import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
 import 'package:prueba_buffet/app/ui/pages/load_balance/load_balance.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:prueba_buffet/utils/logger.dart';
+
 class BalanceController extends GetxController {
   final WalletProvider _walletProvider = WalletProvider();
   final UsersProvider _usersProvider = UsersProvider();
@@ -37,7 +39,7 @@ class BalanceController extends GetxController {
       final userData = GetStorage().read("user");
       if (userData != null) {
         final user = User.fromJson(userData);
-        print(
+        logger.i(
             "BalanceController.refreshFromStorage → balance: ${user.balance}");
         if (user.balance != null) {
           balance.value = user.balance!;
@@ -45,7 +47,7 @@ class BalanceController extends GetxController {
         fileNum = int.tryParse(user.fileNum) ?? 0;
       }
     } catch (e) {
-      print("⚠️ BalanceController.refreshFromStorage CRASH: $e");
+      logger.e("⚠️ BalanceController.refreshFromStorage CRASH: $e");
     }
   }
 
@@ -54,10 +56,10 @@ class BalanceController extends GetxController {
       final result = await _usersProvider.getBalance();
       if (result.containsKey('balance')) {
         balance.value = double.tryParse(result['balance'].toString()) ?? 0.0;
-        print("BalanceController.fetchBalance → balance: ${balance.value}");
+        logger.i("BalanceController.fetchBalance → balance: ${balance.value}");
       }
     } catch (e) {
-      print("Error obteniendo saldo fresco: $e");
+      logger.e("Error obteniendo saldo fresco: $e");
     }
   }
 
@@ -135,7 +137,7 @@ class BalanceController extends GetxController {
   Future<void> getMyInitialTransactions() async {
     isLoading.value = true;
     try {
-      print("[BALANCE CONTROLLER] Obteniendo transacciones iniciales...");
+      logger.i("[BALANCE CONTROLLER] Obteniendo transacciones iniciales...");
       final response = await _walletProvider.getTransactions();
 
       if (response.statusCode == 200) {

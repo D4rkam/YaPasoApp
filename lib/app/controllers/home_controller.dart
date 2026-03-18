@@ -11,6 +11,8 @@ import 'package:prueba_buffet/app/data/provider/products_provider.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
 
+import 'package:prueba_buffet/utils/logger.dart';
+
 class HomeController extends GetxController {
   ProductsProvider productsProvider = ProductsProvider();
   UsersProvider usersProvider = UsersProvider();
@@ -215,7 +217,7 @@ class HomeController extends GetxController {
             title: "Error", message: "No se pudo actualizar el perfil");
       }
     } catch (e) {
-      print("Error al actualizar perfil: $e");
+      logger.e("Error al actualizar perfil: $e");
     } finally {
       isUpdatingProfile.value = false;
     }
@@ -248,7 +250,7 @@ class HomeController extends GetxController {
             title: "Error", message: "No se pudo actualizar el email");
       }
     } catch (e) {
-      print("Error al actualizar email: $e");
+      logger.e("Error al actualizar email: $e");
     } finally {
       isUpdatingEmail.value = false;
     }
@@ -278,7 +280,7 @@ class HomeController extends GetxController {
             title: "Error", message: "Verifica tu contraseña actual");
       }
     } catch (e) {
-      print("Error al actualizar contraseña: $e");
+      logger.e("Error al actualizar contraseña: $e");
     } finally {
       isUpdatingPassword.value = false;
     }

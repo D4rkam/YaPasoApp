@@ -8,6 +8,8 @@ import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:prueba_buffet/app/data/provider/base_provider.dart';
 import 'package:prueba_buffet/utils/constants/api_constants.dart';
 
+import 'package:prueba_buffet/utils/logger.dart';
+
 // (Tus clases ProductForOrder y Order se mantienen EXACTAMENTE igual)
 class ProductForOrder {
   ProductForOrder({required this.id, required this.quantity});
@@ -56,7 +58,7 @@ class UsersProvider extends BaseProvider {
   }
 
   Future<ResponseApi> login(String username, String password) async {
-    print("Iniciando login para: $username");
+    logger.i("Iniciando login para: $username");
     try {
       Response response = await dio.post(
         ApiUrl.LOGIN,
@@ -91,7 +93,7 @@ class UsersProvider extends BaseProvider {
     } on DioException catch (e) {
       // Si llega acá, es porque el interceptor se rindió (el refresh falló).
       // El BaseProvider ya llamó a logout() por dentro, así que solo devolvemos false.
-      print("UsersProvider checkToken: Fallo definitivo. ${e.message}");
+      logger.e("UsersProvider checkToken: Fallo definitivo. ${e.message}");
       return ResponseApi(success: false);
     }
   }
@@ -101,21 +103,21 @@ class UsersProvider extends BaseProvider {
   }
 
   Future<User?> refreshUserData() async {
-    print("UsersProvider: Solicitando datos frescos a ${ApiUrl.USER}");
+    logger.i("UsersProvider: Solicitando datos frescos a ${ApiUrl.USER}");
     try {
       Response response = await dio.get(ApiUrl.USER);
-      print("UsersProvider response status: ${response.statusCode}");
-      print("UsersProvider response data: ${response.data}");
+      logger.i("UsersProvider response status: ${response.statusCode}");
+      logger.i("UsersProvider response data: ${response.data}");
 
       if (response.statusCode == 200 && response.data != null) {
         final user = User.fromJson(response.data);
         GetStorage().write("user", user.toJson());
-        print(
+        logger.i(
             "UsersProvider: Usuario parseado correctamente. Saldo: ${user.balance}");
         return user;
       }
     } catch (e) {
-      print("UsersProvider: Error obteniendo/parseando usuario: $e");
+      logger.e("UsersProvider: Error obteniendo/parseando usuario: $e");
     }
     return null;
   }
@@ -127,7 +129,7 @@ class UsersProvider extends BaseProvider {
         return List<Map<String, dynamic>>.from(response.data);
       }
     } catch (e) {
-      print("Error getSchools: $e");
+      logger.e("Error getSchools: $e");
     }
     return [];
   }
@@ -144,7 +146,7 @@ class UsersProvider extends BaseProvider {
             MapEntry(key, (value is num) ? value.toDouble() : 0.0));
       }
     } catch (e) {
-      print("Error getBalance: $e");
+      logger.e("Error getBalance: $e");
     }
     return {};
   }

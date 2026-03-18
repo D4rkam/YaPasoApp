@@ -9,6 +9,8 @@ import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/app/ui/pages/terminos_condiciones/terminos_condiciones.dart';
 
+import 'package:prueba_buffet/utils/logger.dart';
+
 class ConfiguracionContent extends StatefulWidget {
   const ConfiguracionContent({super.key});
 
@@ -62,7 +64,7 @@ class _ConfiguracionContentState extends State<ConfiguracionContent>
       }
       return true;
     } catch (e) {
-      print("Error autenticando: $e");
+      logger.e("Error autenticando: $e");
       return false;
     }
   }

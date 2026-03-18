@@ -5,12 +5,14 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/utils/constants/api_constants.dart';
 
+import 'package:prueba_buffet/utils/logger.dart';
+
 class BaseProvider {
   final GetStorage _storage = GetStorage();
   late Dio dio;
 
   BaseProvider() {
-    print("--- Inicializando BaseProvider (DIO) ---");
+    logger.i("--- Inicializando BaseProvider (DIO) ---");
 
     dio = Dio(BaseOptions(
       // baseUrl: 'http://192.168.1.39:8000',
@@ -47,9 +49,9 @@ class BaseProvider {
         if (cookies.isNotEmpty) {
           // Usamos 'cookie' en minúscula para evitar que el cliente nativo lo filtre
           options.headers['cookie'] = cookies.join('; ');
-          print("🚀 ENVIANDO HEADERS: ${options.headers['cookie']}");
+          logger.i("🚀 ENVIANDO HEADERS: ${options.headers['cookie']}");
         } else {
-          print("❌ NO HAY COOKIES PARA ENVIAR. EL REQUEST VA DESNUDO.");
+          logger.w("❌ NO HAY COOKIES PARA ENVIAR. EL REQUEST VA DESNUDO.");
         }
 
         return handler.next(options);
@@ -120,7 +122,7 @@ class BaseProvider {
 
     if (setCookies.isEmpty &&
         response.requestOptions.path.contains(ApiUrl.LOGIN)) {
-      print(
+      logger.w(
           "⚠️ ALERTA LOGIN: FastAPI respondió 200 pero NO envió cabeceras 'set-cookie'.");
     }
 
@@ -183,6 +185,6 @@ class BaseProvider {
     _storage.remove("access_token_user");
     _storage.remove("refresh_token");
     _storage.remove("user");
-    print("Sesión cerrada y cookies destruidas.");
+    logger.i("Sesión cerrada y cookies destruidas.");
   }
 }
