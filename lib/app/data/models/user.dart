@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:get_storage/get_storage.dart';
+import 'package:prueba_buffet/utils/logger.dart';
 
 User userFromJson(String str) => User.fromJson(json.decode(str));
 
@@ -41,7 +42,6 @@ List? _safeList(dynamic v) {
   if (v is List) return v;
   return [];
 }
-import 'package:prueba_buffet/utils/logger.dart';
 
 // ──────────────────────────────────────────────────────────────────────────
 
