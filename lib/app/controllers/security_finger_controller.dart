@@ -4,6 +4,7 @@ import 'package:prueba_buffet/app/controllers/balance_controller.dart';
 import 'package:prueba_buffet/app/data/models/response_api.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
+import 'package:prueba_buffet/utils/logger.dart';
 
 class SecurityFingerController extends GetxController {
   UsersProvider usersProvider = UsersProvider();
@@ -23,7 +24,7 @@ class SecurityFingerController extends GetxController {
           final user = User.fromJson(response.data);
           _storage.write("user", user.toJson());
         } catch (e) {
-          print("⚠️ SecurityFinger: Error sanitizando user data: $e");
+          logger.e("SecurityFinger: Error sanitizando user data: $e");
           _storage.write("user", response.data);
         }
       }
@@ -37,7 +38,7 @@ class SecurityFingerController extends GetxController {
       // 3. Si falló, es porque el interceptor dijo "basta" (ej: Refresh Token expirado).
       // El BaseProvider ya limpió el CookieJar y el Storage interno.
       // Solo aseguramos la limpieza local y mandamos al Login.
-      print("checkToken falló definitivamente → Redirigiendo a Login");
+      logger.i("checkToken falló definitivamente → Redirigiendo a Login");
       _storage.remove("user");
       Get.offNamedUntil('/login', (route) => false);
     }

@@ -3,9 +3,11 @@ import 'package:dio/dio.dart' show Response; // Importamos Dio
 import 'package:prueba_buffet/app/data/provider/base_provider.dart';
 import 'package:prueba_buffet/utils/constants/api_constants.dart';
 
+import 'package:prueba_buffet/utils/logger.dart';
+
 class ProductsProvider extends BaseProvider {
   ProductsProvider() {
-    print("--- Inicializando ProductsProvider (Hereda de BaseProvider) ---");
+    logger.i("--- Inicializando ProductsProvider (Hereda de BaseProvider) ---");
   }
 
   Future<Response> getProducts({int limit = 20, String? cursor}) async {

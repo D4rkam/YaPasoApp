@@ -6,6 +6,7 @@ import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
 import 'package:prueba_buffet/app/controllers/order_controller.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
+import 'package:prueba_buffet/utils/logger.dart';
 
 class PayStateController extends GetxController {
   void goToHomeScreen() =>
@@ -48,7 +49,7 @@ class PayStateController extends GetxController {
     // Aquí adentro, Flutter ya terminó de dibujar la pantalla,
     // así que es 100% seguro mostrar Snackbars y hacer limpiezas.
     if (isPaymentForBalance) {
-      print("Pago de carga de saldo detectado (status: $paymentStatus)");
+      logger.i("Pago de carga de saldo detectado (status: $paymentStatus)");
       if (paymentStatus == "approved") {
         _applyLocalBalanceLoad();
       } else {
@@ -56,7 +57,8 @@ class PayStateController extends GetxController {
         GetStorage().remove("pending_load_amount");
       }
     } else {
-      print("Pago de compra detectado → Limpiando carrito y refrescando datos");
+      logger.i(
+          "Pago de compra detectado → Limpiando carrito y refrescando datos");
       _cleanCartAndRefreshData();
     }
   }
@@ -132,7 +134,7 @@ class PayStateController extends GetxController {
 
         // Limpiamos el storage
         GetStorage().remove("pending_load_amount");
-        print("SuccessController: saldo actualizado optimista +$amount");
+        logger.i("SuccessController: saldo actualizado optimista +$amount");
 
         // Pedimos datos frescos para confirmar en background
         await balanceCtrl.fetchBalance();
@@ -153,7 +155,7 @@ class PayStateController extends GetxController {
             message: "Tu saldo ya está disponible en tu billetera.");
       }
     } catch (e) {
-      print("⚠️ SuccessController._applyLocalBalanceLoad CRASH: $e");
+      logger.e("SuccessController._applyLocalBalanceLoad CRASH: $e");
     }
   }
 
