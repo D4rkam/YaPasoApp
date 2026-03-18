@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 
 class CategoryItem extends StatelessWidget {
   final String title;
+
   final String imageUrl;
+
   final Color? backgroundColor;
+
   final void Function()? onTap;
 
   const CategoryItem(

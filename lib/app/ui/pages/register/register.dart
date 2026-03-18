@@ -1,8 +1,10 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/register_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/custom_input.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/app/ui/pages/terminos_condiciones/terminos_condiciones.dart';
 
 class RegisterPage extends GetView<RegisterController> with ResponsiveMixin {
   const RegisterPage({super.key});
@@ -14,34 +16,40 @@ class RegisterPage extends GetView<RegisterController> with ResponsiveMixin {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
-          child: Column(
-            children: [
-              _buildProgressBar(),
-              Expanded(
-                child: PageView(
-                  onPageChanged: controller.onPageChanged,
-                  controller: controller.pageController,
-                  physics:
-                      const NeverScrollableScrollPhysics(), // Bloqueamos el swipe manual
-                  children: [
-                    SingleChildScrollView(child: Step1Name()),
-                    Step2Age(),
-                    Step4Location(),
-                    SingleChildScrollView(child: Step5Credentials()),
-                  ],
+          child: LayoutBuilder(builder: (context, constraints) {
+            return Column(
+              children: [
+                _buildProgressBar(),
+                Expanded(
+                  child: PageView(
+                    onPageChanged: controller.onPageChanged,
+                    controller: controller.pageController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      SingleChildScrollView(child: Step1Name()),
+                      Step2Age(),
+                      SingleChildScrollView(child: Step4Location()),
+                      SingleChildScrollView(child: Step5Credentials()),
+                    ],
+                  ),
                 ),
-              ),
-              Obx(
-                () => RegisterNavigation(
-                  onBack: controller.previousStep,
-                  onNext: controller.nextStep,
-                  nextLabel: controller.currentStep.value == 4
-                      ? "Finalizar"
-                      : "Continuar",
-                ),
-              )
-            ],
-          ),
+                // SafeArea local para el botón de abajo por si el cel no tiene bordes rectos
+                SafeArea(
+                  top: false,
+                  child: Obx(
+                    () => RegisterNavigation(
+                      onBack: controller.previousStep,
+                      onNext: controller.nextStep,
+                      nextLabel: controller.currentStep.value ==
+                              3 // Era 4, pero la lista tiene 4 items (0,1,2,3)
+                          ? "Finalizar"
+                          : "Continuar",
+                    ),
+                  ),
+                )
+              ],
+            );
+          }),
         ),
       ),
     );
@@ -49,7 +57,8 @@ class RegisterPage extends GetView<RegisterController> with ResponsiveMixin {
 
   Widget _buildProgressBar() {
     return Obx(() => Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+          padding: EdgeInsets.symmetric(
+              vertical: setHeight(20), horizontal: setWidth(30)),
           child: Row(
             children: List.generate(
                 4,
@@ -98,7 +107,6 @@ class Step1Name extends GetView<RegisterController> with ResponsiveMixin {
           ),
           SizedBox(height: setHeight(50)),
 
-          // Campo Nombre (En foco en tu imagen)
           Obx(() => CustomInput(
                 controller: controller.nameController,
                 label: "Nombre",
@@ -108,7 +116,6 @@ class Step1Name extends GetView<RegisterController> with ResponsiveMixin {
 
           SizedBox(height: setHeight(25)),
 
-          // Campo Apellido (Sin foco en tu imagen)
           Obx(() => CustomInput(
                 controller: controller.lastNameController,
                 label: "Apellido",
@@ -141,6 +148,7 @@ class Step1Name extends GetView<RegisterController> with ResponsiveMixin {
               ),
             ],
           ),
+          SizedBox(height: setHeight(20)), // Espacio extra inferior
         ],
       ),
     );
@@ -166,18 +174,17 @@ class Step2Age extends GetView<RegisterController> with ResponsiveMixin {
                 ),
               ),
               const Spacer(),
-// Contenedor de la Ruleta
               Center(
                 child: Container(
                   height: setHeight(320),
                   width: setWidth(140),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF8F8F8), // Fondo gris muy claro
+                    color: const Color(0xFFF8F8F8),
                     borderRadius: BorderRadius.circular(setWidth(40)),
                   ),
                   child: ListWheelScrollView.useDelegate(
                     controller: controller.scrollController,
-                    itemExtent: 70, // Espacio vertical entre números
+                    itemExtent: 70,
                     perspective: 0.005,
                     diameterRatio: 1.5,
                     onSelectedItemChanged: (index) {
@@ -219,58 +226,10 @@ class Step2Age extends GetView<RegisterController> with ResponsiveMixin {
   }
 }
 
-// class Step3Gender extends GetView<RegisterController> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       children: [
-//         Text("¿Cuál es tu género?",
-//             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-//         const SizedBox(height: 40),
-//         _genderOption("Hombre", Icons.male),
-//         _genderOption("Mujer", Icons.female),
-//         _genderOption("Otro", Icons.circle_outlined),
-//       ],
-//     );
-//   }
-
-//   Widget _genderOption(String label, IconData icon) {
-//     return Obx(() {
-//       final isSelected = controller.gender.value == label;
-//       return GestureDetector(
-//         onTap: () => controller.gender.value = label,
-//         child: AnimatedContainer(
-//           duration: const Duration(milliseconds: 200),
-//           margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-//           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-//           decoration: BoxDecoration(
-//             color:
-//                 isSelected ? const Color(0xFF2D2E37) : const Color(0xFFF5F5F5),
-//             borderRadius: BorderRadius.circular(15),
-//           ),
-//           child: Row(
-//             children: [
-//               Icon(icon,
-//                   color: isSelected ? Colors.white : Colors.grey, size: 28),
-//               const SizedBox(width: 20),
-//               Text(label,
-//                   style: TextStyle(
-//                       color: isSelected ? Colors.white : Colors.black54,
-//                       fontSize: 18,
-//                       fontWeight:
-//                           isSelected ? FontWeight.bold : FontWeight.normal)),
-//             ],
-//           ),
-//         ),
-//       );
-//     });
-//   }
-// }
-
 class Step4Location extends GetView<RegisterController> with ResponsiveMixin {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: setWidth(30)),
       child: Column(
         children: [
@@ -280,8 +239,6 @@ class Step4Location extends GetView<RegisterController> with ResponsiveMixin {
             style: TextStyle(fontSize: setSp(26), fontWeight: FontWeight.bold),
           ),
           SizedBox(height: setHeight(40)),
-
-          // Provincia
           Obx(() => CustomDropdown(
                 label: "Provincia",
                 value: controller.selectedProvince.value,
@@ -289,10 +246,7 @@ class Step4Location extends GetView<RegisterController> with ResponsiveMixin {
                 onChanged: (val) => controller.updateProvince(val!),
                 errorText: controller.provinceError.value,
               )),
-
           SizedBox(height: setHeight(20)),
-
-          // Localidad - Solo se activa si hay Provincia
           Obx(() => CustomDropdown(
                 label: "Localidad",
                 value: controller.selectedLocalidad.value,
@@ -301,10 +255,7 @@ class Step4Location extends GetView<RegisterController> with ResponsiveMixin {
                 onChanged: (val) => controller.updateLocalidad(val!),
                 errorText: controller.localidadError.value,
               )),
-
           SizedBox(height: setHeight(20)),
-
-          // Escuela - Solo se activa si hay Localidad
           Obx(() => CustomDropdown(
                 label: "Escuela",
                 value: controller.selectedEscuela.value,
@@ -316,64 +267,129 @@ class Step4Location extends GetView<RegisterController> with ResponsiveMixin {
                 },
                 errorText: controller.escuelaError.value,
               )),
-
           SizedBox(height: setHeight(20)),
-
-          // N° Legajo (Corregido a Input)
           Obx(() => CustomInput(
                 controller: controller.fileNumberController,
                 label: "N° Legajo",
                 keyboardType: TextInputType.number,
                 errorText: controller.fileNumberError.value,
                 onChanged: (_) => controller.fileNumberError.value = null,
-                // Solo habilitado si seleccionó la escuela
               )),
+          SizedBox(height: setHeight(20)),
         ],
       ),
     );
   }
 }
 
-class Step5Credentials extends GetView<RegisterController> {
+class Step5Credentials extends GetView<RegisterController>
+    with ResponsiveMixin {
+  const Step5Credentials({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(children: [
-        Text("Último Paso",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        Text("Ingresa tus datos de acceso",
-            style: TextStyle(color: Colors.grey)),
-        const SizedBox(height: 30),
-        Obx(() => CustomInput(
-              controller: controller.emailController,
-              label: "Email",
-              keyboardType: TextInputType.emailAddress,
-              errorText: controller.emailError.value,
-              onChanged: (_) => controller.emailError.value = null,
-            )),
-        const SizedBox(height: 15),
-        Obx(() => CustomInput(
-              controller: controller.usernameController,
-              label: "Nombre de usuario",
-              errorText: controller.usernameError.value,
-              onChanged: (_) => controller.usernameError.value = null,
-            )),
-        const SizedBox(height: 15),
-        Obx(() => CustomInput(
-            controller: controller.passwordController,
-            label: "Contraseña",
-            isPassword: true,
-            errorText: controller.passwordError.value,
-            onChanged: (_) => controller.passwordError.value = null)),
-        const SizedBox(height: 15),
-        Obx(() => CustomInput(
-            controller: controller.confirmPasswordController,
-            label: "Confirmar contraseña",
-            isPassword: true,
-            errorText: controller.confirmPasswordError.value,
-            onChanged: (_) => controller.confirmPasswordError.value = null)),
-      ]),
+      padding: EdgeInsets.all(setWidth(20)),
+      child: Column(
+        children: [
+          Text("Último Paso",
+              style:
+                  TextStyle(fontSize: setSp(24), fontWeight: FontWeight.bold)),
+          Text("Ingresa tus datos de acceso",
+              style: TextStyle(color: Colors.grey, fontSize: setSp(14))),
+          SizedBox(height: setHeight(30)),
+          Obx(() => CustomInput(
+                controller: controller.emailController,
+                label: "Email",
+                keyboardType: TextInputType.emailAddress,
+                errorText: controller.emailError.value,
+                onChanged: (_) => controller.emailError.value = null,
+              )),
+          SizedBox(height: setHeight(15)),
+          Obx(() => CustomInput(
+                controller: controller.usernameController,
+                label: "Nombre de usuario",
+                errorText: controller.usernameError.value,
+                onChanged: (_) => controller.usernameError.value = null,
+              )),
+          SizedBox(height: setHeight(15)),
+          Obx(() => CustomInput(
+              controller: controller.passwordController,
+              label: "Contraseña",
+              isPassword: true,
+              errorText: controller.passwordError.value,
+              onChanged: (_) => controller.passwordError.value = null)),
+          SizedBox(height: setHeight(15)),
+          Obx(() => CustomInput(
+              controller: controller.confirmPasswordController,
+              label: "Confirmar contraseña",
+              isPassword: true,
+              errorText: controller.confirmPasswordError.value,
+              onChanged: (_) => controller.confirmPasswordError.value = null)),
+          SizedBox(height: setHeight(25)),
+          Obx(() => Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: setHeight(24),
+                    width: setWidth(24),
+                    child: Checkbox(
+                      value: controller.acceptedTerms.value,
+                      onChanged: (value) {
+                        controller.acceptedTerms.value = value ?? false;
+                        controller.termsError.value = null;
+                      },
+                      activeColor: const Color(0xFFFFE500),
+                      checkColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: setWidth(12)),
+                  Expanded(
+                    child: Text.rich(
+                      TextSpan(
+                        text: "He leído y acepto los ",
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: setSp(14),
+                        ),
+                        children: [
+                          TextSpan(
+                            text: "Términos y Condiciones",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                                fontSize: setSp(14)),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Get.to(
+                                    () => const TerminosYCondicionesScreen());
+                              },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )),
+          Obx(() => controller.termsError.value != null
+              ? Padding(
+                  padding: EdgeInsets.only(top: setHeight(8)),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      controller.termsError.value!,
+                      style: TextStyle(color: Colors.red, fontSize: setSp(12)),
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink()),
+          SizedBox(height: setHeight(20)),
+        ],
+      ),
     );
   }
 }
@@ -394,10 +410,10 @@ class RegisterNavigation extends StatelessWidget with ResponsiveMixin {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-          horizontal: setWidth(30), vertical: setHeight(20)),
+          horizontal: setWidth(30),
+          vertical: setHeight(10)), // Bajé el margen vertical para teclados
       child: Row(
         children: [
-          // Botón Atrás (Cuadrado con borde suave)
           GestureDetector(
             onTap: onBack,
             child: Container(
@@ -419,7 +435,6 @@ class RegisterNavigation extends StatelessWidget with ResponsiveMixin {
             ),
           ),
           SizedBox(width: setWidth(20)),
-          // Botón Continuar/Finalizar
           Expanded(
             child: ElevatedButton(
               onPressed: onNext,
@@ -454,6 +469,7 @@ class CustomDropdown extends StatelessWidget with ResponsiveMixin {
   final String? errorText;
 
   CustomDropdown({
+    super.key,
     required this.label,
     required this.value,
     required this.items,
@@ -471,6 +487,7 @@ class CustomDropdown extends StatelessWidget with ResponsiveMixin {
         child: Column(
           children: [
             DropdownButtonFormField<String>(
+              isExpanded: true, // 👈 Evita que el texto largo rompa el dropdown
               value: value.isEmpty ? null : value,
               decoration: InputDecoration(
                 errorText: errorText,

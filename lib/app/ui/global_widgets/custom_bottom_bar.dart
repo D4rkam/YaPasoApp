@@ -12,7 +12,13 @@ class FloatingBottomBar extends StatelessWidget with ResponsiveMixin {
   Widget build(BuildContext context) {
     return Obx(() {
       final isExpanded = controller.isExpanded.value;
-      final selectedIndex = controller.tabIndex.value;
+      // Mapear pageIndex → tabIndex visual: 0→1(Inicio), 1→2(Pedidos), 2/3→ninguno
+      final page = controller.pageIndex.value;
+      final int selectedIndex = (page == 0)
+          ? 1
+          : (page == 1)
+              ? 2
+              : -1;
 
       return AnimatedContainer(
         duration: const Duration(milliseconds: 350),
@@ -58,8 +64,10 @@ class FloatingBottomBar extends StatelessWidget with ResponsiveMixin {
       onTap: () {
         if (index == 0) {
           Scaffold.of(context).openDrawer();
-        } else {
-          controller.tabIndex.value = index;
+        } else if (index == 1) {
+          controller.goToHome();
+        } else if (index == 2) {
+          controller.goToOrdersTab();
         }
       },
       behavior: HitTestBehavior.opaque,

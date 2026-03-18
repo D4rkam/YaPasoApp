@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:prueba_buffet/app/controllers/balance_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class MyBalance extends StatelessWidget with ResponsiveMixin {
   final ScrollController scrollController = ScrollController();
@@ -23,53 +24,63 @@ class MyBalance extends StatelessWidget with ResponsiveMixin {
       appBar: AppBar(
         backgroundColor: Colors.white,
         titleSpacing: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: setSp(30),
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        // leading: IconButton(
+        //   icon: Icon(
+        //     Icons.arrow_back_ios_new_rounded,
+        //     size: setSp(30),
+        //   ),
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        // ),
         title: Text(
           'Mi Saldo',
           style: TextStyle(fontSize: setSp(25), fontWeight: FontWeight.normal),
         ),
       ),
-      body: Center(
-        child: Column(
+      body: LayoutBuilder(builder: (context, constraints) {
+        return Column(
           children: [
-            TarjetaYaPaso(controller: controller),
-            SizedBox(
-              height: setHeight(60),
-            ),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: setWidth(20)),
-                  child: Text(
-                    "Mi actividad",
-                    style: TextStyle(
-                        fontSize: setSp(25),
-                        fontWeight: FontWeight.normal,
-                        color: const Color.fromARGB(255, 107, 107, 107)),
-                  ),
+            Flexible(
+              flex: 0,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TarjetaYaPaso(controller: controller),
+                    SizedBox(
+                      height: setHeight(40),
+                    ),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: setWidth(20), bottom: setHeight(10)),
+                          child: Text(
+                            "Mi actividad",
+                            style: TextStyle(
+                                fontSize: setSp(22),
+                                fontWeight: FontWeight.normal,
+                                color:
+                                    const Color.fromARGB(255, 107, 107, 107)),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                        child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: setWidth(20)),
+                      child: TransactionsPage(
+                        controller: controller,
+                        scrollController: scrollController,
+                      ),
+                    ))
+                  ],
                 ),
-              ],
-            ),
-            Expanded(
-                child: Padding(
-              padding: EdgeInsets.only(
-                  top: setHeight(10), left: setWidth(20), right: setWidth(20)),
-              child: TransactionsPage(
-                controller: controller,
-                scrollController: scrollController,
               ),
-            ))
+            ),
           ],
-        ),
-      ),
+        );
+      }),
     );
   }
 }
@@ -148,13 +159,29 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
               SizedBox(
                 height: setHeight(5),
               ),
-              Obx(() => Text(
-                    "\$${NumberFormat.decimalPatternDigits(locale: "es-AR", decimalDigits: 2).format(controller?.balance.value)}",
-                    style: TextStyle(
-                        fontSize: setSp(30),
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black),
-                  ))
+              Obx(() {
+                final double targetBalance = controller?.balance.value ?? 0;
+
+                return TweenAnimationBuilder<double>(
+                  // El Tween le dice a Flutter "Viaja hasta este número"
+                  tween: Tween<double>(begin: 0, end: targetBalance),
+                  duration: const Duration(
+                      milliseconds: 800), // Tarda casi 1 segundo en contar
+                  curve: Curves
+                      .easeOutCirc, // Empieza rápido y frena suavemente al llegar
+
+                  // 'animValue' es el número que va cambiando en tiempo real (ej: 80.1, 80.5, 81.0...)
+                  builder: (context, animValue, child) {
+                    return Text(
+                      "\$${NumberFormat.decimalPatternDigits(locale: "es-AR", decimalDigits: 2).format(animValue)}",
+                      style: TextStyle(
+                          fontSize: setSp(30),
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
+                    );
+                  },
+                );
+              }),
             ],
           ),
         ),
@@ -174,7 +201,7 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
             height: setHeight(40),
             child: ElevatedButton(
               onPressed: () {
-                controller?.showLoadBalanceDialog();
+                controller?.goToLoadBalanceScreen();
               },
               style: ElevatedButton.styleFrom(
                 elevation: 5,
@@ -195,7 +222,7 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
                     "Cargar",
                     style: TextStyle(
                         fontSize: setSp(18),
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                         color: Colors.black),
                   )
                 ],
@@ -203,45 +230,6 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
             ),
           ),
         ),
-        // Positioned(
-        //   bottom: setHeight(-20),
-        //   right: setWidth(15),
-        //   child: SizedBox(
-        //     width: setWidth(150),
-        //     height: setHeight(40),
-        //     child: ElevatedButton(
-        //       onPressed: () {},
-        //       style: ElevatedButton.styleFrom(
-        //         elevation: 5,
-        //         shadowColor: Colors.grey.withOpacity(0.1),
-        //         backgroundColor: Colors.white,
-        //         side: BorderSide(
-        //           color: const Color(0xFFFfE500),
-        //           width: setWidth(2),
-        //         ),
-        //         shape: RoundedRectangleBorder(
-        //           borderRadius: BorderRadius.circular(setHeight(20)),
-        //         ),
-        //       ),
-        //       child: Row(
-        //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        //         children: [
-        //           Image.asset(
-        //             "assets/images/icono_trans.png",
-        //             width: setWidth(30),
-        //           ),
-        //           const Text(
-        //             "Transferir",
-        //             style: TextStyle(
-        //                 fontSize: 18,
-        //                 fontWeight: FontWeight.bold,
-        //                 color: Colors.black),
-        //           )
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        // )
       ],
     );
   }
@@ -262,36 +250,36 @@ class TransactionsPage extends StatelessWidget with ResponsiveMixin {
             child: CircularProgressIndicator(color: Color(0xFFFFE500)));
       }
 
-      // 2. Estado Vacío (Sin actividad)
       if (controller.transactions.isEmpty && !controller.isLoading.value) {
         return const Center(
           child: Text("Aún no tienes movimientos",
               style: TextStyle(color: Colors.grey)),
         );
       }
+
       return ListView.builder(
         controller: scrollController,
         itemCount: controller.transactions.length + 1,
         itemBuilder: (context, index) {
-          // Si llegamos al final de la lista de elementos
           if (index == controller.transactions.length) {
-            // Mostramos un circulito de carga si estamos trayendo más
             if (controller.isFetchingMore.value) {
               return const Padding(
                 padding: EdgeInsets.all(20.0),
                 child: Center(child: CircularProgressIndicator()),
               );
             }
-            // Si no hay más páginas (nextCursor == null), podemos mostrar un texto
             if (controller.nextCursor == null &&
                 controller.transactions.isNotEmpty) {
               return const Center(child: Text("No hay más transacciones"));
             }
             return const SizedBox.shrink();
           }
+
           final transaction = controller.transactions[index];
-          return Padding(
-            padding: EdgeInsets.only(bottom: setHeight(10)), // setHeight(10)
+
+          // 1. Armamos tu diseño original intacto
+          Widget transactionItem = Padding(
+            padding: EdgeInsets.only(bottom: setHeight(10)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -309,7 +297,8 @@ class TransactionsPage extends StatelessWidget with ResponsiveMixin {
                       ),
                     ),
                     Text(
-                      "${DateFormat('dd/MM/yyyy').format(DateTime.parse(transaction["created_at"]))}",
+                      DateFormat('dd/MM/yyyy')
+                          .format(DateTime.parse(transaction["created_at"])),
                       style: TextStyle(
                         color: const Color(0xFF6A6A6A),
                         fontSize: setSp(17),
@@ -335,13 +324,38 @@ class TransactionsPage extends StatelessWidget with ResponsiveMixin {
                       color: transaction["type"] == "CARGA_SALDO"
                           ? Colors.green
                           : Colors.red,
-                      size: setSp(24), // default aprox 24
+                      size: setSp(24),
                     )
                   ],
                 ),
               ],
             ),
           );
+
+          // ---> 2. LA MAGIA DE FLUTTER_ANIMATE <---
+
+          // Si es la transacción más reciente (arriba de todo)
+          if (index == 0) {
+            return transactionItem
+                .animate()
+                .fade(duration: 500.ms)
+                .slideX(
+                    begin: 0.2,
+                    end: 0,
+                    duration: 400.ms,
+                    curve: Curves.easeOutQuad)
+                // Efecto "Shimmer" (brillo) amarillo de Ya Paso
+                .shimmer(
+                    color: const Color(0xFFFFE500).withOpacity(0.5),
+                    duration: 1200.ms);
+          }
+          // Para el resto del historial, una animación de lista suave
+          else {
+            return transactionItem
+                .animate()
+                .fade(duration: 400.ms)
+                .slideY(begin: 0.1, end: 0, duration: 300.ms);
+          }
         },
       );
     });

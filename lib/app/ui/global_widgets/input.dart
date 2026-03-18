@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 
 class InputWidget extends StatelessWidget {
-  InputWidget(
-      {super.key,
-      required this.hintText,
-      this.icon,
-      required this.withIcon,
-      this.textEditingController});
+  const InputWidget({
+    // <-- Agrega el const aquí
+    super.key,
+    required this.hintText,
+    this.icon,
+    required this.withIcon,
+    this.textEditingController,
+    this.onChanged,
+    this.focusNode,
+  });
 
   final String hintText;
   final bool withIcon;
   final IconData? icon;
-  TextEditingController? textEditingController;
+
+  // ---> FIX: Estas dos variables DEBEN ser final <---
+  final TextEditingController? textEditingController;
+  final Function(String)? onChanged;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +40,9 @@ class InputWidget extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
+              focusNode: focusNode,
               textAlignVertical: TextAlignVertical.center,
-              controller: textEditingController,
+              controller: textEditingController, // <-- Usa el controller
               decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: const TextStyle(
@@ -42,6 +51,7 @@ class InputWidget extends StatelessWidget {
                     fontWeight: FontWeight.w500),
                 border: InputBorder.none,
               ),
+              onChanged: onChanged,
             ),
           ),
           withIcon

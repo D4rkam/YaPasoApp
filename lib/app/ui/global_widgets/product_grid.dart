@@ -1,9 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/home_controller.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:prueba_buffet/utils/helpers/image_helper.dart';
 
 class ProductGrid extends StatelessWidget with ResponsiveMixin {
   const ProductGrid({super.key});
@@ -96,11 +97,15 @@ class ProductCard extends StatelessWidget with ResponsiveMixin {
                     child: ClipRRect(
                       child: Image(
                         image: CachedNetworkImageProvider(
-                            scale: 1,
-                            product
-                                .imagePath), // Reemplaza con la URL de tu imagen
+                          ImageHelper.getOptimizedUrl(
+                            product.imagePath,
+                            width: 300,
+                            height: 300,
+                          ),
+                          scale: 1,
+                        ),
                         height: setHeight(90),
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return Image.asset(
                             'assets/images/not_load.png', // Tu imagen de respaldo
@@ -112,14 +117,14 @@ class ProductCard extends StatelessWidget with ResponsiveMixin {
                     ),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    icon: const Icon(Icons.favorite_border),
-                    onPressed: () {},
-                    color: Colors.yellow,
-                  ),
-                ),
+                // Align(
+                //   alignment: Alignment.topRight,
+                //   child: IconButton(
+                //     icon: const Icon(Icons.favorite_border),
+                //     onPressed: () {},
+                //     color: Colors.yellow,
+                //   ),
+                // ),
                 Positioned(
                   bottom: setHeight(45),
                   left: setHeight(12),
@@ -140,48 +145,48 @@ class ProductCard extends StatelessWidget with ResponsiveMixin {
                         fontWeight: FontWeight.w500),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: Obx(
-                    () => product.quantity.value > 0
-                        ? IconButton(
-                            icon: Icon(
-                              controller.isInCart(product.id)
-                                  ? Icons.check
-                                  : Icons.add_shopping_cart,
-                              color: Colors.black,
-                            ),
-                            onPressed: () {
-                              if (controller.isInCart(product.id)) {
-                                controller.removeItemFromCart(product.id);
-                              } else {
-                                controller.addItemToCart(product);
-                              }
-                            },
-                            style: IconButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(setHeight(10)),
-                              ),
-                              backgroundColor: const Color(0xFFFFE500),
-                            ),
-                          )
-                        : IconButton(
-                            icon: const Icon(
-                              Icons.remove_shopping_cart,
-                              color: Colors.grey,
-                            ),
-                            onPressed: null,
-                            style: IconButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(setHeight(10)),
-                              ),
-                              backgroundColor: const Color(0xFFD7D7D7),
-                            ),
-                          ),
-                  ),
-                )
+                // Align(
+                //   alignment: Alignment.bottomRight,
+                //   child: Obx(
+                //     () => product.quantity.value > 0
+                //         ? IconButton(
+                //             icon: Icon(
+                //               controller.isInCart(product.id)
+                //                   ? Icons.check
+                //                   : Icons.add_shopping_cart,
+                //               color: Colors.black,
+                //             ),
+                //             onPressed: () {
+                //               if (controller.isInCart(product.id)) {
+                //                 controller.removeItemFromCart(product.id);
+                //               } else if (product.maxQuantity > 0) {
+                //                 controller.addItemToCart(product);
+                //               }
+                //             },
+                //             style: IconButton.styleFrom(
+                //               shape: RoundedRectangleBorder(
+                //                 borderRadius:
+                //                     BorderRadius.circular(setHeight(10)),
+                //               ),
+                //               backgroundColor: const Color(0xFFFFE500),
+                //             ),
+                //           )
+                //         : IconButton(
+                //             icon: const Icon(
+                //               Icons.remove_shopping_cart,
+                //               color: Colors.grey,
+                //             ),
+                //             onPressed: null,
+                //             style: IconButton.styleFrom(
+                //               shape: RoundedRectangleBorder(
+                //                 borderRadius:
+                //                     BorderRadius.circular(setHeight(10)),
+                //               ),
+                //               backgroundColor: const Color(0xFFD7D7D7),
+                //             ),
+                //           ),
+                //   ),
+                // )
               ],
             ),
           ),

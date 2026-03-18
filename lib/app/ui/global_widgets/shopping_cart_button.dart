@@ -30,7 +30,7 @@ class ShoppingCartButton extends StatelessWidget with ResponsiveMixin {
                 () => Text(
                   "${controller.cartItems.length}",
                   style: TextStyle(
-                      fontWeight: FontWeight.w600, fontSize: setSp(24)),
+                      fontWeight: FontWeight.normal, fontSize: setSp(24)),
                 ),
               ),
               Icon(

@@ -1,119 +1,142 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/login_controller.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/custom_input.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/toggle_button.dart';
 
 class LoginScreen extends GetView<LoginController> with ResponsiveMixin {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // final colors = Theme.of(context).colorScheme;
-    return GetBuilder<LoginController>(
-      builder: (controller) => Scaffold(
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: setWidth(30)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: setHeight(20)),
-                Padding(
-                  padding: EdgeInsets.only(top: setHeight(20)),
-                  child: Container(
-                    height: setHeight(142),
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage("assets/images/logo-sin.png"),
-                        fit: BoxFit.fitHeight,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: GetBuilder<LoginController>(
+        builder: (controller) => Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
+                    child: IntrinsicHeight(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: setWidth(30)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(height: setHeight(40)),
+                            RichText(
+                                text: TextSpan(children: [
+                              TextSpan(
+                                text: "¡Bienvenido a ",
+                                style: TextStyle(
+                                  fontSize: setSp(28),
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "Ya Paso",
+                                style: TextStyle(
+                                  fontFamily: "Lobster",
+                                  fontSize: setSp(28),
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "!",
+                                style: TextStyle(
+                                  fontSize: setSp(28),
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ])),
+                            SizedBox(height: setHeight(8)),
+                            Text(
+                              "Ingresa tus credenciales\npara continuar",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: setSp(16),
+                                color: const Color(0xFFB3B3B3),
+                                height: 1.2,
+                              ),
+                            ),
+                            SizedBox(height: setHeight(50)),
+                            Obx(() => CustomInput(
+                                controller: controller.usernameController,
+                                label: "Nombre de usuario",
+                                errorText: controller.usernameError.value,
+                                onChanged: (_) =>
+                                    controller.usernameError.value = null)),
+                            SizedBox(height: setHeight(20)),
+                            Obx(() => CustomInput(
+                                  controller: controller.passwordController,
+                                  label: "Contraseña",
+                                  isPassword: true,
+                                  errorText: controller.passwordError.value,
+                                  onChanged: (_) =>
+                                      controller.passwordError.value = null,
+                                )),
+                            SizedBox(height: setHeight(40)),
+                            ElevatedButton(
+                              onPressed: () => controller.login(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFFE500),
+                                foregroundColor: Colors.black,
+                                elevation: 0,
+                                minimumSize:
+                                    Size(double.infinity, setHeight(55)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(setWidth(15)),
+                                ),
+                                textStyle: TextStyle(
+                                  fontSize: setSp(18),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              child: const Text('Iniciar Sesión'),
+                            ),
+                            SizedBox(height: setHeight(30)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "¿No tienes cuenta? ",
+                                  style: TextStyle(
+                                    fontSize: setSp(14),
+                                    color: const Color(0xFFB3B3B3),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () => controller.goToRegisterPage(),
+                                  child: Text(
+                                    "Regístrate",
+                                    style: TextStyle(
+                                      fontSize: setSp(14),
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: setHeight(30)),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: setHeight(40)),
-                SizedBox(
-                  height: setHeight(40),
-                  child: CustomToggleButton(
-                    labels: const ['Registrarse', 'Iniciar Sesión'],
-                    initialSelectedIndex: 1,
-                    onToggle: (index) {
-                      return controller.goToRegisterPage();
-                    },
-                  ),
-                ),
-                SizedBox(height: setHeight(20)),
-                inputField(
-                    label: "Username",
-                    icon: Icons.person,
-                    controllerTextField: controller.usernameController),
-                SizedBox(height: setHeight(20)),
-                inputField(
-                    label: "Contraseña",
-                    icon: Icons.lock,
-                    isPassword: true,
-                    controllerTextField: controller.passwordController),
-                SizedBox(height: setHeight(20)),
-                SizedBox(
-                  width: double.infinity,
-                  height: setHeight(60),
-                  child: ElevatedButton(
-                    onPressed: () => controller.login(),
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all<Color>(
-                          const Color(0xFFFFE500)),
-                      foregroundColor:
-                          WidgetStateProperty.all<Color>(Colors.black),
-                      textStyle: WidgetStateProperty.all<TextStyle>(
-                        TextStyle(
-                          fontSize: setSp(20),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(setHeight(10)),
-                        ),
-                      ),
-                    ),
-                    child: const Text('Iniciar Sesión'),
-                  ),
-                ),
-              ],
+                );
+              },
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget inputField({
-    required String label,
-    required IconData icon,
-    TextInputType typeField = TextInputType.text,
-    bool isPassword = false,
-    required TextEditingController controllerTextField,
-  }) {
-    return SizedBox(
-      width: double.infinity,
-      height: setHeight(58),
-      child: TextField(
-        keyboardType: typeField,
-        controller: controllerTextField,
-        obscureText: isPassword,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon, size: setSp(24)),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(setHeight(10)),
-            borderSide: BorderSide(
-                color: const Color(0xFFC5C5C5), width: setWidth(3.0)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(setHeight(10)),
-            borderSide: BorderSide(
-                color: const Color(0xFFFFE500), width: setWidth(3.0)),
           ),
         ),
       ),

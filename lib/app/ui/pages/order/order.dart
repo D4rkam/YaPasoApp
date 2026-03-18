@@ -4,127 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:prueba_buffet/app/controllers/order_controller.dart';
 import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
-class Order extends StatelessWidget with ResponsiveMixin {
-  final ScrollController scrollController = ScrollController();
-  final OrderController controller = Get.find();
-
-  Order({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFFFE500),
-        elevation: 0,
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: setSp(30),
-            color: Colors.black,
-          ),
-          onPressed: () {
-            Get.back();
-          },
-        ),
-        title: Text(
-          'Mis pedidos',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: setSp(22),
-            fontWeight: FontWeight.normal,
-          ),
-        ),
-      ),
-      body: Column(
-        children: [
-          // Tabs
-          Container(
-            color: const Color(0xFFFFE500),
-            height: setHeight(80),
-            width: double.infinity,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: setWidth(24), vertical: setHeight(8)),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2D303E),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    "Activos",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: setSp(18),
-                    ),
-                  ),
-                ),
-                SizedBox(width: setWidth(20)),
-                GestureDetector(
-                  onTap: () {},
-                  child: Text(
-                    "Vencidos",
-                    style: TextStyle(
-                      color: const Color(0xFF414141),
-                      fontWeight: FontWeight.w500,
-                      fontSize: setSp(18),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Lista de pedidos
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoading.value) {
-                return const Center(
-                  child: CircularProgressIndicator(color: Color(0xFFFFE500)),
-                );
-              }
-              if (controller.allOrders.isEmpty) {
-                return Center(
-                  child: Text(
-                    'No tenés pedidos aún',
-                    style: TextStyle(
-                      color: const Color(0xFF999999),
-                      fontSize: setSp(18),
-                    ),
-                  ),
-                );
-              }
-              return ListView.separated(
-                padding: EdgeInsets.only(
-                  top: setHeight(20),
-                  bottom: setHeight(100),
-                  left: setWidth(20),
-                  right: setWidth(20),
-                ),
-                itemCount: controller.allOrders.length,
-                separatorBuilder: (_, __) => SizedBox(height: setHeight(16)),
-                itemBuilder: (_, i) {
-                  final order = controller.allOrders[i] as Map<String, dynamic>;
-
-                  return RepaintBoundary(
-                    child: ExpandableTicketCard(order: order),
-                  );
-                },
-              );
-            }),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Contenido interno del Ticket
 class TicketContent extends StatelessWidget with ResponsiveMixin {
   final Map<String, dynamic> order;
   const TicketContent({super.key, required this.order});
@@ -152,7 +33,6 @@ class TicketContent extends StatelessWidget with ResponsiveMixin {
   @override
   Widget build(BuildContext context) {
     final products = (order['products'] as List?) ?? [];
-    final productNames = products.map((p) => p['name'] as String).join(', ');
     final total = order['total'];
     final datetime = order['datetime_order'] as String?;
     final mpPaymentId = order['mp_payment_id'];
@@ -183,16 +63,53 @@ class TicketContent extends StatelessWidget with ResponsiveMixin {
                   _buildValue('\$$total', setSp(20)),
                 ],
               ),
-              SizedBox(height: setHeight(16)),
+              SizedBox(height: setHeight(20)),
+
               _buildLabel('Productos'),
-              SizedBox(height: setHeight(4)),
-              _buildValue(
-                  productNames.isNotEmpty ? productNames : '-', setSp(16)),
+              SizedBox(height: setHeight(8)),
+
+              // Lista de productos organizada verticalmente (Cant y Nombre)
+              if (products.isEmpty)
+                _buildValue('-', setSp(16))
+              else
+                Column(
+                  children: products.map((p) {
+                    final qty = p['quantity'] ?? 1;
+                    final name = p['name'] ?? 'Producto';
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: setHeight(8)),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${qty}x',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: setSp(16),
+                              color: const Color(0xFF111111),
+                            ),
+                          ),
+                          SizedBox(width: setWidth(12)),
+                          Expanded(
+                            child: Text(
+                              name.toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: setSp(16),
+                                color: const Color(0xFF111111),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
             ],
           ),
         ),
 
-        // Línea punteada
+        // Línea punteada única
         Padding(
           padding: EdgeInsets.symmetric(horizontal: setWidth(24)),
           child: CustomPaint(
@@ -203,7 +120,7 @@ class TicketContent extends StatelessWidget with ResponsiveMixin {
           ),
         ),
 
-        // Parte inferior del ticket
+        // Parte inferior del ticket (Fechas y N° Pedido gigante)
         Padding(
           padding: EdgeInsets.fromLTRB(
               setWidth(24), setHeight(16), setWidth(24), setHeight(24)),
@@ -224,27 +141,54 @@ class TicketContent extends StatelessWidget with ResponsiveMixin {
                   _buildValue(_formatTime(datetime), setSp(14)),
                 ],
               ),
-              SizedBox(height: setHeight(24)),
+              SizedBox(height: setHeight(28)),
+
+              // ---> CORRECCIÓN: N° de Pedido como protagonista absoluto
               Column(
                 children: [
-                  SizedBox(
-                    height: setHeight(25),
-                    child: Text(
-                      mpPaymentId != null ? 'N° de pago' : 'ID Pedido',
-                      style: TextStyle(
-                          fontSize: setSp(19), fontWeight: FontWeight.bold),
-                    ),
+                  Text(
+                    'N° de Pedido',
+                    style: TextStyle(
+                        fontSize: setSp(14),
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF7A7878)),
                   ),
                   SizedBox(height: setHeight(4)),
                   Text(
-                    mpPaymentId?.toString() ?? '#${order['id']}',
+                    '#${order['id']}',
                     style: TextStyle(
-                      fontSize: setSp(15),
-                      fontWeight: FontWeight.w500,
+                      fontSize: setSp(18), // Bien grande
+                      fontWeight: FontWeight.w900,
                       letterSpacing: 2.0,
+                      color: const Color(0xFF111111),
                     ),
                   ),
                 ],
+              ),
+
+              SizedBox(height: setHeight(28)),
+
+              // ---> CORRECCIÓN: Detalle sutil al final
+              Text(
+                mpPaymentId != null
+                    ? "Pagado vía Mercado Pago (Ref: $mpPaymentId)"
+                    : "Pagado con Saldo Virtual",
+                style: TextStyle(
+                  fontSize: setSp(11), // Letra muy chiquita, como letra chica
+                  color:
+                      const Color(0xFF999999), // Gris claro para que no compita
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              SizedBox(height: setHeight(4)),
+              Text(
+                "¡Gracias por usar Ya Paso!",
+                style: TextStyle(
+                  fontSize: setSp(12),
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF7A7878),
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ],
           ),
@@ -276,8 +220,6 @@ class TicketContent extends StatelessWidget with ResponsiveMixin {
 }
 
 // --- UTILIDADES GRÁFICAS ---
-
-// Crea los recortes semicirculares a los lados del ticket
 class TicketClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
@@ -288,17 +230,13 @@ class TicketClipper extends CustomClipper<Path> {
     path.lineTo(0, 0);
 
     const double holeRadius = 12.0;
-    // Posición aproximada de la línea punteada
     final double holePosition = size.height * 0.52;
 
-    // Recorte izquierdo
     path.addOval(
         Rect.fromCircle(center: Offset(0, holePosition), radius: holeRadius));
-    // Recorte derecho
     path.addOval(Rect.fromCircle(
         center: Offset(size.width, holePosition), radius: holeRadius));
 
-    // FillType.evenOdd permite que los óvalos "corten" el rectángulo principal
     path.fillType = PathFillType.evenOdd;
     return path;
   }
@@ -307,7 +245,6 @@ class TicketClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
-// Dibuja la línea horizontal punteada
 class DashedLinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -341,6 +278,16 @@ class _ExpandableTicketCardState extends State<ExpandableTicketCard>
     with SingleTickerProviderStateMixin, ResponsiveMixin {
   bool isExpanded = false;
 
+  bool _isNewOrder(String? createdAtString) {
+    if (createdAtString == null) return false;
+    try {
+      final createdAt = DateTime.parse(createdAtString);
+      return DateTime.now().difference(createdAt).inMinutes < 5;
+    } catch (e) {
+      return false;
+    }
+  }
+
   String _formatDate(String? raw) {
     if (raw == null) return '-';
     try {
@@ -351,11 +298,24 @@ class _ExpandableTicketCardState extends State<ExpandableTicketCard>
     }
   }
 
+  String _formatTime(String? raw) {
+    if (raw == null) return '-';
+    try {
+      final dt = DateTime.parse(raw);
+      return DateFormat("HH:mm").format(dt);
+    } catch (_) {
+      return '-';
+    }
+  }
+
   Color _statusColor(String? status) {
     switch (status) {
-      case 'PAGADO':
+      case 'LISTO':
         return const Color(0xFF67FF5E);
+      case 'ENTREGADO':
+        return const Color(0xFFE0E0E0);
       case 'PENDIENTE_PAGO':
+      case 'ENCARGADO':
         return const Color(0xFFFFE500);
       case 'CANCELADO':
         return const Color(0xFFFF5252);
@@ -368,8 +328,14 @@ class _ExpandableTicketCardState extends State<ExpandableTicketCard>
     switch (status) {
       case 'PAGADO':
         return 'Pagado';
+      case 'ENTREGADO':
+        return 'Retirado';
+      case 'LISTO':
+        return '¡Listo!';
       case 'PENDIENTE_PAGO':
         return 'Pendiente';
+      case 'ENCARGADO':
+        return 'En preparación';
       case 'CANCELADO':
         return 'Cancelado';
       default:
@@ -383,12 +349,18 @@ class _ExpandableTicketCardState extends State<ExpandableTicketCard>
       padding: EdgeInsets.symmetric(horizontal: setWidth(20)),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFFFAFAFA), // Fondo del contenedor exterior
+          color: const Color(0xFFFAFAFA),
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ],
         ),
         child: Column(
           children: [
-            // Cabecera (Siempre visible y clickeable)
             GestureDetector(
               onTap: () {
                 setState(() {
@@ -396,41 +368,102 @@ class _ExpandableTicketCardState extends State<ExpandableTicketCard>
                 });
               },
               child: Container(
-                // Color transparente para que todo el área sea clickeable
                 color: Colors.transparent,
                 padding: EdgeInsets.all(setWidth(20)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      _formatDate(widget.order['datetime_order'] as String?),
-                      style: TextStyle(
-                        fontSize: setSp(20),
-                        fontWeight: FontWeight.bold,
+                    // LADO IZQUIERDO: Información del pedido
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Pedido #${widget.order['id']}",
+                            style: TextStyle(
+                              fontSize: setSp(18),
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          SizedBox(height: setHeight(4)),
+                          Text(
+                            "${_formatDate(widget.order['datetime_order'])}  •  ${_formatTime(widget.order['datetime_order'])}",
+                            style: TextStyle(
+                              fontSize: setSp(14),
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF888888),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: setWidth(16), vertical: setHeight(6)),
-                      decoration: BoxDecoration(
-                        color: _statusColor(widget.order['status'] as String?),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        _statusLabel(widget.order['status'] as String?),
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: setSp(16),
+                    SizedBox(width: setWidth(8)),
+
+                    // LADO DERECHO: Estado y Etiqueta Nuevo
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: setWidth(12), vertical: setHeight(6)),
+                          decoration: BoxDecoration(
+                            color:
+                                _statusColor(widget.order['status'] as String?),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          constraints: BoxConstraints(maxWidth: setWidth(110)),
+                          child: Text(
+                            _statusLabel(widget.order['status'] as String?),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: setSp(13),
+                            ),
+                          ),
                         ),
-                      ),
+
+                        // ---> FIX: Etiqueta NUEVO debajo del estado
+                        if (_isNewOrder(
+                            widget.order['created_at'] as String?)) ...[
+                          SizedBox(height: setHeight(6)),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFF4D4D),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Text(
+                              "NUEVO",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          )
+                              .animate(
+                                  onPlay: (controller) =>
+                                      controller.repeat(reverse: true))
+                              .scale(
+                                  begin: const Offset(1, 1),
+                                  end: const Offset(1.08, 1.08),
+                                  duration: 800.ms,
+                                  curve: Curves.easeInOut)
+                              .tint(color: Colors.white24, duration: 800.ms),
+                        ],
+                      ],
                     ),
                   ],
                 ),
               ),
             ),
-
-            // Cuerpo del ticket (Colapsable)
             AnimatedSize(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
@@ -442,8 +475,7 @@ class _ExpandableTicketCardState extends State<ExpandableTicketCard>
                       ),
                       child: TicketContent(order: widget.order),
                     )
-                  : const SizedBox
-                      .shrink(), // Oculta el contenido si no está expandido
+                  : const SizedBox.shrink(),
             ),
           ],
         ),
@@ -452,18 +484,12 @@ class _ExpandableTicketCardState extends State<ExpandableTicketCard>
   }
 }
 
-/// Versión embebida en el MainShell (sin Scaffold/AppBar propio).
+/// Versión embebida en el MainShell
 class OrderContent extends StatelessWidget with ResponsiveMixin {
   final ScrollController scrollController = ScrollController();
   final OrderController controller = Get.find();
-  OrderContent({super.key}) {
-    scrollController.addListener(() {
-      if (scrollController.position.pixels >=
-          scrollController.position.maxScrollExtent - 200) {
-        controller.fetchMoreOrders();
-      }
-    });
-  }
+
+  OrderContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -475,7 +501,6 @@ class OrderContent extends StatelessWidget with ResponsiveMixin {
       },
       child: Column(
         children: [
-          // Header amarillo (reemplaza AppBar)
           Container(
             color: const Color(0xFFFFE500),
             width: double.infinity,
@@ -498,46 +523,30 @@ class OrderContent extends StatelessWidget with ResponsiveMixin {
               ),
             ),
           ),
-          // Tabs
           Container(
             color: const Color(0xFFFFE500),
-            height: setHeight(80),
+            height: setHeight(
+                70), // Un poquito más ajustado para que quede elegante
             width: double.infinity,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: setWidth(24), vertical: setHeight(8)),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2D303E),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    "Activos",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: setSp(18),
-                    ),
-                  ),
-                ),
-                SizedBox(width: setWidth(20)),
-                GestureDetector(
-                  onTap: () {},
-                  child: Text(
-                    "Vencidos",
-                    style: TextStyle(
-                      color: const Color(0xFF414141),
-                      fontWeight: FontWeight.w500,
-                      fontSize: setSp(18),
-                    ),
-                  ),
-                ),
-              ],
+            // Usamos un SingleChildScrollView para que los botones mantengan su tamaño real
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(), // Efecto rebote nativo
+              padding: EdgeInsets.symmetric(
+                  horizontal: setWidth(20)), // Margen inicial
+              child: Obx(() => Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _buildTab('En fila', 'ENCARGADO'),
+                      SizedBox(
+                          width: setWidth(12)), // Espaciado fijo entre píldoras
+                      _buildTab('Listos', 'LISTO'),
+                      SizedBox(width: setWidth(12)),
+                      _buildTab('Retirados', 'ENTREGADO'),
+                    ],
+                  )),
             ),
           ),
-          // Lista de pedidos
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
@@ -545,10 +554,13 @@ class OrderContent extends StatelessWidget with ResponsiveMixin {
                   child: CircularProgressIndicator(color: Color(0xFFFFE500)),
                 );
               }
-              if (controller.allOrders.isEmpty) {
+              // ---> NUEVO: Leemos currentOrders que ya sabe qué pestaña estamos viendo
+              if (controller.currentOrders.isEmpty) {
                 return Center(
                   child: Text(
-                    'No tenés pedidos aún',
+                    controller.activeTab.value == 'ENCARGADO'
+                        ? 'No tenés pedidos en fila'
+                        : 'No tenés pedidos retirados',
                     style: TextStyle(
                       color: const Color(0xFF999999),
                       fontSize: setSp(18),
@@ -564,33 +576,89 @@ class OrderContent extends StatelessWidget with ResponsiveMixin {
                   left: setWidth(20),
                   right: setWidth(20),
                 ),
-                itemCount: controller.ordersEncargadas.length,
+                itemCount: controller.currentOrders.length + 1,
                 separatorBuilder: (_, __) => SizedBox(height: setHeight(16)),
                 itemBuilder: (_, i) {
-                  if (i == controller.ordersEncargadas.length) {
+                  // ---> NUEVO: Paginación usando las variables maestras
+                  if (i == controller.currentOrders.length) {
                     if (controller.isFetchingMore.value) {
                       return const Padding(
                         padding: EdgeInsets.all(20.0),
-                        child: Center(child: CircularProgressIndicator()),
+                        child: Center(
+                            child: CircularProgressIndicator(
+                                color: Color(0xFFFFE500))),
                       );
                     }
-
-                    if (controller.nextCursor == null &&
-                        controller.ordersEncargadas.isNotEmpty) {
-                      return const Center(
-                          child: Text("No hay más transacciones"));
+                    if (controller.currentCursor != null) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(vertical: setHeight(20)),
+                        child: Center(
+                          child: TextButton(
+                            onPressed: () => controller.fetchMoreOrders(),
+                            style: TextButton.styleFrom(
+                              backgroundColor: const Color(0xFFF0F0F0),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: setWidth(24),
+                                  vertical: setHeight(12)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                            ),
+                            child: const Text(
+                              "Buscar pedidos más antiguos",
+                              style: TextStyle(
+                                  color: Color(0xFF414141),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      );
                     }
                     return const SizedBox.shrink();
                   }
-                  final order = controller.ordersEncargadas[i];
+
+                  final order = controller.currentOrders[i];
                   return RepaintBoundary(
                     child: ExpandableTicketCard(order: order),
-                  );
+                  )
+                      .animate()
+                      .fade(duration: 300.ms)
+                      .slideY(begin: 0.1, end: 0, duration: 250.ms);
                 },
               );
             }),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTab(String title, String status) {
+    final isActive = controller.activeTab.value == status;
+
+    return GestureDetector(
+      onTap: () => controller.switchTab(status),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+        // Recuperamos el padding generoso original de tu diseño
+        padding: EdgeInsets.symmetric(
+            horizontal: setWidth(24), vertical: setHeight(10)),
+        decoration: BoxDecoration(
+          color: isActive ? const Color(0xFF2D303E) : Colors.transparent,
+          borderRadius: BorderRadius.circular(25), // Bordes bien redondeados
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: isActive
+                ? Colors.white
+                : const Color(
+                    0xFF5E5400), // El mismo tono oscuro que usas en el AppBar
+            fontWeight: isActive ? FontWeight.bold : FontWeight.w600,
+            fontSize: setSp(16), // Tamaño de fuente equilibrado
+            letterSpacing: 0.3, // Un pequeñísimo espaciado para mejor lectura
+          ),
+        ),
       ),
     );
   }
