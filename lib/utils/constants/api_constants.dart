@@ -3,6 +3,7 @@ import 'package:prueba_buffet/environment/enviroment.dart';
 class ApiUrl {
   static const String _hostServer =
       "http://${Enviroment.HOST_API_SERVER}:${Enviroment.PORT_API_SERVER}";
+  // static const String _hostServer = "https://28gm4cfb-8000.brs.devtunnels.ms";
 
   static const String ROOT = "$_hostServer/";
 
@@ -15,6 +16,12 @@ class ApiUrl {
 
   // ----- User
   static const String USER = "$_hostServer/api/users/"; // GET
+  static const String USER_UPDATE = "$_hostServer/api/users/me"; // PUT
+  static const String USER_DELETE = "$_hostServer/api/users/me"; // DELETE
+  static const String UPDATE_EMAIL = "$_hostServer/api/users/me/email"; // PUT
+  static const String UPDATE_PASSWORD =
+      "$_hostServer/api/users/me/password"; // PUT
+  static const String REPORT = "$_hostServer/api/users/report-issue"; // POST
 
   // ----- Orders
   static const String ORDER = "$_hostServer/api/order/"; // GET - POST
@@ -25,6 +32,10 @@ class ApiUrl {
   static const String PRODUCTS_GET = "$_hostServer/api/product/"; // GET
   static const String PRODUCTS_CATEGORY_GET =
       "$_hostServer/api/product/"; // GET
+  static const String PRODUCT_SEARCH =
+      "$_hostServer/api/product/search/"; // GET
+  static const String PRODUCT_TOP_SELLING =
+      "$_hostServer/api/product/top-selling"; // GET
 
   static const String PAY = "$_hostServer/api/pay/"; // POST
   static const String PAY_BALANCE =

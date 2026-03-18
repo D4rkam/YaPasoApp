@@ -50,8 +50,12 @@ class User {
   String lastName;
   String username;
   String password;
+  int age;
   String fileNum;
   int? schoolId;
+  int? curse_year;
+  String? curse_division;
+  String? turn;
   List? orders;
   double? balance;
   Map<String, dynamic>? token;
@@ -64,7 +68,11 @@ class User {
       this.username = "",
       this.password = "",
       this.fileNum = "0",
+      this.age = 14,
       this.schoolId,
+      this.curse_year,
+      this.curse_division,
+      this.turn,
       this.orders,
       this.balance,
       this.token});
@@ -84,7 +92,11 @@ class User {
         username: _safeString(json["username"]),
         password: _safeString(json["password"]),
         fileNum: _safeString(json["file_num"], "0"),
+        age: _safeInt(json["age"]) ?? 14,
         schoolId: _safeInt(json["school_id"]),
+        curse_year: _safeInt(json["curse_year"]),
+        curse_division: _safeString(json["curse_division"]),
+        turn: _safeString(json["turn"], "SIN SELECCIONAR"),
         orders: _safeList(json["orders"]),
         balance: _safeDouble(json["balance"]),
         token: _safeMap(json["token"]),
@@ -119,8 +131,12 @@ class User {
         "last_name": lastName,
         "username": username,
         "password": password,
+        "age": age,
         "file_num": fileNum,
         "school_id": schoolId,
+        "curse_year": curse_year,
+        "curse_division": curse_division,
+        "turn": turn,
         "orders": orders,
         "balance": balance,
         "token": token is Map ? Map<String, dynamic>.from(token!) : null,

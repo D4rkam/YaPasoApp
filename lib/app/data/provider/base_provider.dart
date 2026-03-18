@@ -1,161 +1,188 @@
-import 'package:get/get.dart';
+import 'package:dio/dio.dart'
+    show Dio, BaseOptions, InterceptorsWrapper, DioException, Response;
+import 'package:dio/browser.dart' if (dart.library.io) 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/utils/constants/api_constants.dart';
 
-class BaseProvider extends GetConnect {
+class BaseProvider {
   final GetStorage _storage = GetStorage();
+  late Dio dio;
 
   BaseProvider() {
-    print("--- Inicializando BaseProvider ---");
+    print("--- Inicializando BaseProvider (DIO) ---");
 
-    // Configuración básica
-    timeout = const Duration(seconds: 30);
+    dio = Dio(BaseOptions(
+      // baseUrl: 'http://192.168.1.39:8000',
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+    ));
 
-    // 1. INTERCEPTOR DE PETICIÓN (Request Modifier)
-    // Se ejecuta ANTES de que cualquier petición salga al servidor
-    httpClient.addRequestModifier<dynamic>((request) {
-      final requestPath = request.url.path;
-      final loginPath = Uri.parse(ApiUrl.LOGIN).path;
-      final registerPath = Uri.parse(ApiUrl.REGISTER).path;
+    // INYECCIÓN PARA LA WEB
+    if (kIsWeb) {
+      try {
+        final adapter = dio.httpClientAdapter as dynamic;
+        adapter.withCredentials = true;
+      } catch (_) {}
+    }
 
-      // Si es Login o Registro, NO enviamos cookies (flujo limpio)
-      if (requestPath.contains(loginPath) ||
-          requestPath.contains(registerPath)) {
-        print("HTTP [REQ] -> ${request.url} (Sin cookies por ser Auth)");
-        return request;
-      }
+    dio.interceptors.add(InterceptorsWrapper(
+      // 1. INYECTAR COOKIES DESDE GETSTORAGE (Sobrevive al Hot Restart)
+      onRequest: (options, handler) {
+        if (kIsWeb ||
+            options.path.contains(ApiUrl.LOGIN) ||
+            options.path.contains(ApiUrl.REGISTER)) {
+          return handler.next(options);
+        }
 
-      final cookies = _storage.read("session_cookies");
+        final accessToken = _storage.read("access_token_user");
+        final refreshToken = _storage.read("refresh_token");
 
-      if (cookies != null) {
-        request.headers['Cookie'] = cookies;
-        print("HTTP [REQ] -> Enviando Cookie: $cookies");
-      } else {
-        print("HTTP [REQ] -> No hay cookies para enviar");
-      }
-      return request;
-    });
+        List<String> cookies = [];
+        if (accessToken != null && accessToken.toString().isNotEmpty)
+          cookies.add(accessToken);
+        if (refreshToken != null && refreshToken.toString().isNotEmpty)
+          cookies.add(refreshToken);
 
-    // 2. INTERCEPTOR DE RESPUESTA (Response Modifier)
-    // Se ejecuta APENAS el servidor responde
-    httpClient.addResponseModifier((request, response) async {
-      print("HTTP [RES] -> Status: ${response.statusCode}");
-      print("HTTP [RES] -> URL: ${request.url}");
-      print("HTTP [RES] -> Body: ${response.bodyString}");
+        if (cookies.isNotEmpty) {
+          // Usamos 'cookie' en minúscula para evitar que el cliente nativo lo filtre
+          options.headers['cookie'] = cookies.join('; ');
+          print("🚀 ENVIANDO HEADERS: ${options.headers['cookie']}");
+        } else {
+          print("❌ NO HAY COOKIES PARA ENVIAR. EL REQUEST VA DESNUDO.");
+        }
 
-      if (response.statusCode == 404) {
-        print(
-            "HTTP [RES] -> Error 404: Recurso no encontrado en ${request.url}");
-        return response;
-      }
-      // Manejo de expiración de token (401 Unauthorized)
-      // Extraemos los paths para comparar sin depender del dominio/host
-      final requestPath = request.url.path;
-      final loginPath = Uri.parse(ApiUrl.LOGIN).path;
-      final refreshTokenPath = Uri.parse(ApiUrl.REFRESH_TOKEN).path;
+        return handler.next(options);
+      },
 
-      if (response.statusCode == 401 &&
-          !requestPath.contains(refreshTokenPath) &&
-          !requestPath.contains(loginPath)) {
-        print("HTTP [RES] -> Token expirado. Intentando refrescar...");
-        bool refreshed = await _refreshToken();
+      // 2. ATRAPAR COOKIES NUEVAS
+      onResponse: (response, handler) {
+        _guardarCookies(response);
+        return handler.next(response);
+      },
 
-        if (refreshed) {
-          print(
-              "HTTP [RES] -> Token refrescado con éxito. Reintentando la petición original...");
+      // 3. MANEJAR EL 401 Y EL REFRESH
+      onError: (DioException e, handler) async {
+        if (e.response != null) _guardarCookies(e.response!);
 
-          final newCookies = _storage.read("session_cookies");
-          final newHeaders = Map<String, String>.from(request.headers);
-          if (newCookies != null) {
-            newHeaders['Cookie'] = newCookies;
+        if (e.response?.statusCode == 401) {
+          // Freno de mano para evitar bucle infinito
+          if (e.requestOptions.extra['isRetry'] == true) {
+            logout();
+            return handler.next(e);
           }
 
-          // Leer el body de la request original si existe (consumiendo el Stream)
-          dynamic requestBody;
-          if (request.method.toUpperCase() != 'GET' &&
-              request.method.toUpperCase() != 'HEAD') {
-            try {
-              // bodyBytes es un Stream<List<int>>, lo leemos todo y lo aplanamos
-              final bytesList = await request.bodyBytes.toList();
-              if (bytesList.isNotEmpty) {
-                // Expandimos la lista de listas en una sola lista de bytes
-                requestBody = bytesList.expand((x) => x).toList();
+          if (!e.requestOptions.path.contains(ApiUrl.REFRESH_TOKEN) &&
+              !e.requestOptions.path.contains(ApiUrl.LOGIN)) {
+            bool refreshed = await _refreshToken();
+
+            if (refreshed) {
+              e.requestOptions.extra['isRetry'] =
+                  true; // Marcamos como reintento
+
+              if (!kIsWeb) {
+                // Cargamos los NUEVOS tokens recién horneados
+                final newAccess = _storage.read("access_token_user");
+                final newRefresh = _storage.read("refresh_token");
+                List<String> newCookies = [];
+                if (newAccess != null) newCookies.add(newAccess);
+                if (newRefresh != null) newCookies.add(newRefresh);
+                if (newCookies.isNotEmpty) {
+                  e.requestOptions.headers['Cookie'] = newCookies.join('; ');
+                }
               }
-            } catch (e) {
-              print("HTTP [RES] -> Error leyendo el body original: $e");
+
+              try {
+                final retryResponse = await dio.fetch(e.requestOptions);
+                return handler.resolve(retryResponse);
+              } catch (retryError) {
+                return handler.reject(retryError as DioException);
+              }
+            } else {
+              logout();
+              return handler.reject(e);
             }
           }
-
-          // Realizamos la misma petición nuevamente
-          var retryResponse = await requestConfig(
-            request.method.toUpperCase(),
-            request.url.toString(),
-            body: requestBody,
-            headers: newHeaders,
-          );
-
-          return retryResponse;
-        } else {
-          print(
-              "HTTP [RES] -> No se pudo refrescar el token. Cerrando sesión...");
-          logout();
-          // Get.offAllNamed(Routes.LOGIN); // Descomenta e importa tus rutas cuando estés listo
         }
-      }
+        return handler.next(e);
+      },
+    ));
+  }
 
-      // Buscar 'set-cookie' de forma segura
-      final rawCookie =
-          response.headers?['set-cookie'] ?? response.headers?['Set-Cookie'];
+  // --- EXTRACTOR AGRESIVO DE COOKIES ---
+  void _guardarCookies(Response response) {
+    List<String> setCookies = [];
 
-      if (rawCookie != null && rawCookie.isNotEmpty) {
-        List<String> cookieList = rawCookie.split(',');
-        List<String> cleanedCookies = [];
-
-        for (var cookie in cookieList) {
-          String pair = cookie.split(';').first.trim();
-          cleanedCookies.add(pair);
-        }
-
-        String cookieString = cleanedCookies.join('; ');
-        _storage.write("session_cookies", cookieString);
-        print("HTTP [RES] -> Cookies guardadas globalmente: $cookieString");
-      }
-      return response;
+    // Extraer de las cabeceras
+    response.headers.forEach((name, values) {
+      if (name.toLowerCase() == 'set-cookie') setCookies.addAll(values);
     });
-  }
 
-  // Método auxiliar para reintentos del interceptor
-  Future<Response> requestConfig(
-    String method,
-    String url, {
-    dynamic body,
-    Map<String, String>? headers,
-  }) async {
-    return await request(url, method, body: body, headers: headers);
-  }
-
-  // Lógica para refrescar el token (global)
-  Future<bool> _refreshToken() async {
-    print("Iniciando Refresh Token...");
-    Response response = await post(ApiUrl.REFRESH_TOKEN, {});
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return true;
-    }
-    if (response.statusCode == 401) {
-      print("Refresh Token también expirado o inválido.");
-      return false;
-    } else {
+    if (setCookies.isEmpty &&
+        response.requestOptions.path.contains(ApiUrl.LOGIN)) {
       print(
-          "Error inesperado al refrescar token: ${response.statusCode} - ${response.bodyString}");
+          "⚠️ ALERTA LOGIN: FastAPI respondió 200 pero NO envió cabeceras 'set-cookie'.");
+    }
+
+    for (var cookie in setCookies) {
+      String nameValue = cookie.split(';').first.trim();
+      if (nameValue.toLowerCase().startsWith('session_token_user=')) {
+        _storage.write("access_token_user", nameValue);
+      } else if (nameValue.toLowerCase().startsWith('refresh_token=')) {
+        _storage.write("refresh_token", nameValue);
+      }
+    }
+  }
+
+  // --- REFRESH TOKEN ---
+  Future<bool> _refreshToken() async {
+    try {
+      final refreshDio = Dio(BaseOptions(baseUrl: dio.options.baseUrl));
+
+      if (kIsWeb) {
+        try {
+          final adapter = refreshDio.httpClientAdapter as dynamic;
+          adapter.withCredentials = true;
+        } catch (_) {}
+      } else {
+        final accessToken = _storage.read("access_token_user");
+        final refreshToken = _storage.read("refresh_token");
+        List<String> cookies = [];
+        if (accessToken != null) cookies.add(accessToken);
+        if (refreshToken != null) cookies.add(refreshToken);
+        if (cookies.isNotEmpty) {
+          refreshDio.options.headers['Cookie'] = cookies.join('; ');
+        }
+      }
+
+      Response response = await refreshDio.post(ApiUrl.REFRESH_TOKEN);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _guardarCookies(response);
+
+        // Plan B: Si FastAPI devuelve los tokens en el cuerpo del JSON
+        if (response.data is Map) {
+          if (response.data['access_token'] != null) {
+            _storage.write("access_token_user",
+                "access_token_user=${response.data['access_token']}");
+          }
+          if (response.data['refresh_token'] != null) {
+            _storage.write("refresh_token",
+                "refresh_token=${response.data['refresh_token']}");
+          }
+        }
+        return true;
+      }
+      return false;
+    } catch (e) {
       return false;
     }
   }
 
-  // Cerrar sesión
   void logout() {
-    _storage.remove("session_cookies");
+    _storage.remove("access_token_user");
+    _storage.remove("refresh_token");
     _storage.remove("user");
-    print("SesiÃ³n cerrada y cookies eliminadas globalmente.");
+    print("Sesión cerrada y cookies destruidas.");
   }
 }

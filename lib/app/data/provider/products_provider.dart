@@ -1,5 +1,5 @@
 // ignore_for_file: non_constant_identifier_names
-import 'package:get/get.dart';
+import 'package:dio/dio.dart' show Response; // Importamos Dio
 import 'package:prueba_buffet/app/data/provider/base_provider.dart';
 import 'package:prueba_buffet/utils/constants/api_constants.dart';
 
@@ -8,18 +8,46 @@ class ProductsProvider extends BaseProvider {
     print("--- Inicializando ProductsProvider (Hereda de BaseProvider) ---");
   }
 
-  // --- MÉTODOS LIMPIOS ---
-
-  Future<Response> getProducts() async {
-    // Ya no necesitas pasar 'headers', el modifier de BaseProvider lo hace solo
-    return await get(ApiUrl.PRODUCTS_GET);
+  Future<Response> getProducts({int limit = 20, String? cursor}) async {
+    final queryMap = {
+      "limit": limit.toString(),
+      if (cursor != null) "cursor": cursor,
+    };
+    return await dio.get(
+      ApiUrl.PRODUCTS_GET,
+      queryParameters: queryMap,
+    );
   }
 
   Future<Response> getProductById(String id) async {
-    return await get("${ApiUrl.PRODUCT_GET}$id");
+    return await dio.get("${ApiUrl.PRODUCT_GET}$id");
   }
 
-  Future<Response> getProductsByCategory(String category) async {
-    return await get("${ApiUrl.PRODUCTS_GET}category/$category");
+  Future<Response> getProductsByCategory(String category,
+      {int limit = 20, String? cursor}) async {
+    final queryMap = {
+      "limit": limit.toString(),
+      if (cursor != null) "cursor": cursor,
+    };
+    return await dio.get(
+      "${ApiUrl.PRODUCTS_GET}category/$category",
+      queryParameters: queryMap,
+    );
+  }
+
+  Future<Response> searchProducts({required String query}) async {
+    Map<String, String> queryParams = {"query": query};
+    return await dio.get(ApiUrl.PRODUCT_SEARCH, queryParameters: queryParams);
+  }
+
+  Future<Response> getTopSellingProducts(
+      {int limit = 4, bool only_active = true}) async {
+    return await dio.get(
+      ApiUrl.PRODUCT_TOP_SELLING,
+      queryParameters: {
+        "limit": limit.toString(),
+        "only_active": only_active.toString(),
+      },
+    );
   }
 }
