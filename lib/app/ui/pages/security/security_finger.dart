@@ -4,6 +4,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:prueba_buffet/app/controllers/security_finger_controller.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/utils/logger.dart';
 
 class SecurityFinger extends StatefulWidget {
   const SecurityFinger({super.key});
@@ -46,7 +47,7 @@ class _SecurityFingerState extends State<SecurityFinger> with ResponsiveMixin {
         securityFingerController.checkToken();
       }
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      logger.e(e);
     }
   }
 
