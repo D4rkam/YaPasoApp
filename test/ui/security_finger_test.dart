@@ -34,14 +34,17 @@ void main() {
 
   tearDown(() => Get.reset());
 
-  test('checkToken reintenta si falla la primera vez', () async {
-    // Simulamos fallo inicial y éxito en reintento
+  test('checkToken llama a la API una vez y redirige si falla', () async {
+    // Simulamos que el interceptor de Dio se rindió y devuelve false
     when(() => mockUsersProvider.checkToken())
         .thenAnswer((_) async => ResponseApi(success: false));
 
     await controller.checkToken();
 
-    // Verificamos que se llamó 2 veces por la lógica de reintento
-    verify(() => mockUsersProvider.checkToken()).called(2);
+    // Verificamos que se llamó UNA sola vez (el interceptor maneja los reintentos ocultos)
+    verify(() => mockUsersProvider.checkToken()).called(1);
+
+    // Como falló, debería haber borrado el usuario del storage
+    expect(GetStorage().read("user"), isNull);
   });
 }
