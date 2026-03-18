@@ -1,4 +1,6 @@
-import 'package:get/get.dart';
+import 'package:dio/dio.dart' show Response;
+import 'package:get/get.dart'
+    hide Response; // Ocultamos Response de Get para usar el de Dio
 import 'package:prueba_buffet/app/data/models/product.dart';
 import 'package:prueba_buffet/app/data/provider/products_provider.dart';
 
@@ -11,7 +13,7 @@ class ProductController extends GetxController {
 
   void getProduct(String id) async {
     Response response = await productsProvider.getProductById(id);
-    product.value = Product.fromJson(response.body);
+    product.value = Product.fromJson(response.data);
     product.refresh();
   }
 

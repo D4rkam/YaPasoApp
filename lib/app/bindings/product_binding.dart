@@ -4,6 +4,7 @@ import 'package:prueba_buffet/app/controllers/product_controller.dart';
 class ProductBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<ProductController>(() => ProductController());
+    Get.delete<ProductController>(force: true);
+    Get.put<ProductController>(ProductController());
   }
 }

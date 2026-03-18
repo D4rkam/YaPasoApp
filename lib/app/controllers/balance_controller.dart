@@ -5,6 +5,8 @@ import 'package:prueba_buffet/app/data/models/payment_response.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
 import 'package:prueba_buffet/app/data/provider/wallet_provider.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
+import 'package:prueba_buffet/app/ui/pages/load_balance/load_balance.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BalanceController extends GetxController {
@@ -66,96 +68,32 @@ class BalanceController extends GetxController {
   /// Muestra un diálogo para que el usuario ingrese el monto a cargar
   /// y opcionalmente una descripción. Luego llama al endpoint y abre
   /// el link de Mercado Pago.
-  void showLoadBalanceDialog() {
-    final amountController = TextEditingController();
-    final descriptionController = TextEditingController();
-
-    Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'Cargar Saldo',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Ingresa el monto que deseas cargar en tu billetera.',
-              style: TextStyle(color: Colors.grey, fontSize: 14),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: amountController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              decoration: InputDecoration(
-                labelText: 'Monto (\$)',
-                prefixIcon: const Icon(Icons.attach_money),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: descriptionController,
-              decoration: InputDecoration(
-                labelText: 'Descripción (opcional)',
-                prefixIcon: const Icon(Icons.note_outlined),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
-          ),
-          Obx(() => ElevatedButton(
-                onPressed: isLoading.value
-                    ? null
-                    : () => _confirmLoadBalance(
-                          amountController.text.trim(),
-                          descriptionController.text.trim(),
-                        ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFE500),
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                child: isLoading.value
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.black))
-                    : const Text('Continuar',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-              )),
-        ],
-      ),
-    );
+  void goToLoadBalanceScreen() {
+    // Abrimos la nueva vista en lugar del modal viejo
+    Get.to(() => LoadBalanceScreen());
   }
 
-  Future<void> _confirmLoadBalance(
-      String amountText, String description) async {
+  Future<void> confirmLoadBalance(String amountText) async {
     final amount = double.tryParse(amountText.replaceAll(',', '.'));
     if (amount == null || amount <= 0) {
-      Get.snackbar('Error', 'Ingresa un monto válido',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      CustomToast.showError(
+          title: "Error", message: "Ingresa un monto válido para cargar");
+      return;
+    }
+    if (amount < 500) {
+      CustomToast.showError(
+          title: "Error", message: "La carga mínima es de \$500");
       return;
     }
 
     isLoading.value = true;
     try {
       final response = await _walletProvider.loadBalance(
-          amount: amount, description: description);
+          amount: amount,
+          description: "Carga de saldo desde la app - ${userSession.name}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final paymentResponse = PaymentResponse.fromJson(response.body);
+        final paymentResponse = PaymentResponse.fromJson(response.data);
         final initPoint = paymentResponse.preference.initPoint;
         // final sandboxInitPoint = paymentResponse.preference.sandoxInitPoint;
 
@@ -167,17 +105,18 @@ class BalanceController extends GetxController {
         if (initPoint.isNotEmpty) {
           await _launchMercadoPago(initPoint);
         } else {
-          Get.snackbar('Error', 'No se recibió el link de pago',
-              backgroundColor: Colors.redAccent, colorText: Colors.white);
+          CustomToast.showError(
+              title: 'Error',
+              message: "No se pudo obtener el link de Mercado Pago");
         }
       } else {
-        final msg = response.body?['detail'] ?? 'Error al iniciar la carga';
-        Get.snackbar('Error', msg,
-            backgroundColor: Colors.redAccent, colorText: Colors.white);
+        final msg = response.data?['detail'] ?? 'Error al iniciar la carga';
+        CustomToast.showError(
+            title: 'Error', message: "Error al iniciar Mercado Pago");
       }
     } catch (e) {
-      Get.snackbar('Error', 'No se pudo conectar con el servidor',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      CustomToast.showError(
+          title: 'Error', message: "No se pudo conectar con el servidor");
     } finally {
       isLoading.value = false;
     }
@@ -188,8 +127,8 @@ class BalanceController extends GetxController {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      Get.snackbar('Error', 'No se pudo abrir Mercado Pago',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      CustomToast.showError(
+          title: 'Error', message: "No se pudo abrir el link de Mercado Pago");
     }
   }
 
@@ -201,12 +140,12 @@ class BalanceController extends GetxController {
 
       if (response.statusCode == 200) {
         transactions.assignAll(
-            List<Map<String, dynamic>>.from(response.body['transactions']));
-        nextCursor = response.body['next_cursor'];
+            List<Map<String, dynamic>>.from(response.data['transactions']));
+        nextCursor = response.data['next_cursor'];
       }
     } catch (e) {
-      Get.snackbar('Error', e.toString(),
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      CustomToast.showError(
+          title: 'Error', message: "No se pudieron cargar las transacciones");
     }
     isLoading.value = false;
   }
@@ -220,13 +159,13 @@ class BalanceController extends GetxController {
           await _walletProvider.getTransactions(cursor: nextCursor!);
       if (response.statusCode == 200) {
         final newTransactions =
-            List<Map<String, dynamic>>.from(response.body['transactions']);
+            List<Map<String, dynamic>>.from(response.data['transactions']);
         transactions.addAll(newTransactions);
-        nextCursor = response.body['next_cursor'];
+        nextCursor = response.data['next_cursor'];
       }
     } catch (e) {
-      Get.snackbar('Error', 'No se pudieron obtener más transacciones',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      CustomToast.showError(
+          title: 'Error', message: "No se pudieron cargar más transacciones");
     }
     isFetchingMore.value = false;
   }

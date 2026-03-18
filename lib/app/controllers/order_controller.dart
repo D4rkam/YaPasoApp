@@ -1,18 +1,32 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
 
 class OrderController extends GetxController {
   final UsersProvider usersProvider = Get.find();
-  RxList<Map<String, dynamic>> allOrders = <Map<String, dynamic>>[].obs;
-  final formattedDateTime = "".obs;
+
+  RxString activeTab = 'ENCARGADO'.obs;
+
+  // ---> MAGIA AQUÍ: Un solo mapa reactivo para todas las pestañas. NO hay listas nuevas.
+  RxMap<String, List<Map<String, dynamic>>> ordersData = {
+    'ENCARGADO': <Map<String, dynamic>>[],
+    'LISTO': <Map<String, dynamic>>[],
+    'ENTREGADO': <Map<String, dynamic>>[],
+  }.obs;
+
+  Map<String, String?> cursors = {
+    'ENCARGADO': null,
+    'LISTO': null,
+    'ENTREGADO': null,
+  };
+
+  Map<String, bool> hasFetched = {
+    'ENCARGADO': false,
+    'LISTO': false,
+    'ENTREGADO': false,
+  };
+
   RxBool isLoading = false.obs;
   RxBool isFetchingMore = false.obs;
-  String? nextCursor;
-
-  /// Orden pendiente de inyectar localmente.
-  /// Se usa cuando el pago ocurre antes de que carguen las órdenes.
-  Map<String, dynamic>? _pendingLocalOrder;
 
   @override
   void onInit() {
@@ -20,88 +34,132 @@ class OrderController extends GetxController {
     fetchInitialOrders();
   }
 
-  /// Inserta o actualiza una orden localmente.
-  /// Si las órdenes aún están cargando, la guarda como pendiente
-  /// y se aplicará al terminar la carga.
-  void addOrUpdateOrderLocally(Map<String, dynamic> order) {
-    if (isLoading.value) {
-      _pendingLocalOrder = order;
-      return;
-    }
-    _applyLocalOrder(order);
-  }
-
-  void _applyLocalOrder(Map<String, dynamic> order) {
-    final int? orderId = order['id'];
-    final idx =
-        orderId != null ? allOrders.indexWhere((o) => o['id'] == orderId) : -1;
-    if (idx != -1) {
-      allOrders[idx] = order;
-    } else {
-      allOrders.insert(0, order);
+  void switchTab(String tab) {
+    if (activeTab.value == tab) return;
+    activeTab.value = tab;
+    if (!hasFetched[tab]!) {
+      fetchOrders(tab, isInitial: true);
     }
   }
 
-  List<Map<String, dynamic>> get ordersEncargadas =>
-      allOrders.where((order) => order['status'] == 'ENCARGADO').toList();
+  // La UI siempre lee esta variable unificada. No le importa en qué pestaña estás.
+  List<Map<String, dynamic>> get currentOrders =>
+      ordersData[activeTab.value] ?? [];
+  String? get currentCursor => cursors[activeTab.value];
 
-  List<Map<String, dynamic>> get ordersEntregadas =>
-      allOrders.where((order) => order['status'] == 'ENTREGADO').toList();
+  void _sortOrders(List<Map<String, dynamic>> list) {
+    list.sort((a, b) {
+      final idA = a['id'] as int? ?? 0;
+      final idB = b['id'] as int? ?? 0;
+      return idB.compareTo(idA);
+    });
+  }
+
+  void _mergeOrders(List<Map<String, dynamic>> incoming, String currentTab) {
+    // 1. Creamos copias locales de todas las listas para no mutar el estado directamente
+    final Map<String, List<Map<String, dynamic>>> tempMap = {};
+    ordersData.forEach((key, list) {
+      tempMap[key] = List<Map<String, dynamic>>.from(list);
+    });
+
+    // 2. Procesamos cada pedido que acaba de llegar del servidor
+    for (var newOrder in incoming) {
+      final int? orderId = newOrder['id'];
+
+      // BARRIDO: Lo eliminamos de CUALQUIER pestaña donde pudiera estar guardado
+      tempMap.forEach((key, list) {
+        list.removeWhere((o) => o['id'] == orderId);
+      });
+
+      // INSERCIÓN: Lo agregamos exclusivamente a la pestaña a la que pertenece ahora
+      tempMap[currentTab]!.add(newOrder);
+    }
+
+    // 3. Ordenamos la pestaña actual
+    _sortOrders(tempMap[currentTab]!);
+
+    // 4. Sobrescribimos el mapa reactivo de GetX para que actualice toda la UI de golpe
+    ordersData.value = tempMap;
+  }
 
   Future<void> fetchInitialOrders() async {
-    try {
+    hasFetched.updateAll((key, value) => false);
+    cursors.updateAll((key, value) => null);
+    ordersData.updateAll((key, value) => []);
+    await fetchOrders(activeTab.value, isInitial: true);
+  }
+
+  Future<void> fetchOrders(String status, {bool isInitial = false}) async {
+    if (isInitial) {
       isLoading.value = true;
+    } else {
+      if (cursors[status] == null || isFetchingMore.value) return;
+      isFetchingMore.value = true;
+    }
 
-      final response = await usersProvider.getOrders();
+    try {
+      final String? cursorToUse = isInitial ? null : cursors[status];
+      final response = await usersProvider.getOrders(
+        cursor: cursorToUse,
+        status: status,
+      );
 
-      if (response.isOk &&
-          response.body != null &&
-          response.body["orders"] is List) {
-        nextCursor = response.body["next_cursor"];
-        allOrders.assignAll(
-            List<Map<String, dynamic>>.from(response.body["orders"]));
-        // Aplicar orden pendiente si llegó antes de que cargara la lista
-        if (_pendingLocalOrder != null) {
-          _applyLocalOrder(_pendingLocalOrder!);
-          _pendingLocalOrder = null;
+      if (response.statusCode == 200 &&
+          response.data != null &&
+          response.data["orders"] is List) {
+        final rawOrders =
+            List<Map<String, dynamic>>.from(response.data["orders"]);
+
+        // ---> LA MAGIA: Traducimos el JSON nuevo al formato que espera la UI <---
+        final incomingOrders = rawOrders.map((order) {
+          // Hacemos una copia para poder modificarla
+          final mappedOrder = Map<String, dynamic>.from(order);
+
+          if (mappedOrder['items'] != null) {
+            // Transformamos 'items' en 'products' para que la tarjeta no se rompa
+            mappedOrder['products'] =
+                (mappedOrder['items'] as List).map((item) {
+              final productData = item['product'] ?? {};
+              return {
+                'id': item['product_id'],
+                'name': productData['name'] ?? 'Producto',
+                'price': item['unit_price'],
+                'quantity': item[
+                    'quantity'], // Usamos la cantidad comprada, no el stock!
+              };
+            }).toList();
+          } else {
+            mappedOrder['products'] = [];
+          }
+
+          return mappedOrder;
+        }).toList();
+
+        final String? newCursor = response.data["next_cursor"];
+
+        if (isInitial) {
+          ordersData[status] = [];
+          hasFetched[status] = true;
         }
+
+        // Le pasamos las órdenes ya traducidas a la función de merge
+        _mergeOrders(incomingOrders, status);
+        cursors[status] = newCursor == cursors[status] ? null : newCursor;
       } else {
-        allOrders.clear();
+        if (isInitial) hasFetched[status] = true;
       }
     } catch (e) {
-      print("Error fetching orders: $e");
-      Get.snackbar('Error', 'No se pudieron obtener las órdenes',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      print("Error fetching orders for $status: $e");
     } finally {
-      isLoading.value = false;
+      if (isInitial) {
+        isLoading.value = false;
+      } else {
+        isFetchingMore.value = false;
+      }
     }
   }
 
   Future<void> fetchMoreOrders() async {
-    if (nextCursor == null || isFetchingMore.value) return;
-
-    try {
-      isFetchingMore.value = true;
-
-      final response = await usersProvider.getOrders(cursor: nextCursor);
-
-      if (response.isOk &&
-          response.body != null &&
-          response.body["orders"] is List) {
-        nextCursor = response.body["next_cursor"];
-        final newOrders =
-            List<Map<String, dynamic>>.from(response.body["orders"]);
-        allOrders.addAll(newOrders);
-      } else {
-        Get.snackbar('Error', 'No se pudieron obtener más órdenes',
-            backgroundColor: Colors.redAccent, colorText: Colors.white);
-      }
-    } catch (e) {
-      print("Error fetching more orders: $e");
-      Get.snackbar('Error', 'No se pudieron obtener más órdenes',
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
-    } finally {
-      isFetchingMore.value = false;
-    }
+    await fetchOrders(activeTab.value, isInitial: false);
   }
 }

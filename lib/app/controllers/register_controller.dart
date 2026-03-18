@@ -1,14 +1,14 @@
+import 'package:dio/dio.dart' show Response;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart'
+    hide Response; // Ocultamos Response de Get para usar el de Dio
 import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
-import 'package:sn_progress_dialog/sn_progress_dialog.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
 
 class RegisterController extends GetxController {
-  void goToLoginPage() {
-    Get.toNamed("/login");
-  }
-
+  var acceptedTerms = false.obs;
+  final Rx<String?> termsError = Rx<String?>(null);
   // final UsersProvider usersProvider = Get.find();
   final UsersProvider usersProvider = Get.put(UsersProvider());
 
@@ -20,6 +20,10 @@ class RegisterController extends GetxController {
 
   // Controlador para el selector de edad
   late final FixedExtentScrollController scrollController;
+
+  void goToLoginPage() {
+    Get.toNamed("/login");
+  }
 
   @override
   void onInit() async {
@@ -147,6 +151,10 @@ class RegisterController extends GetxController {
           confirmPasswordError.value = "Las contraseñas no coinciden";
           isValid = false;
         }
+        if (!acceptedTerms.value) {
+          termsError.value = "Debes aceptar los términos y condiciones";
+          isValid = false;
+        }
         break;
     }
     return isValid;
@@ -199,7 +207,8 @@ class RegisterController extends GetxController {
         schools.firstWhereOrNull((s) => s['name'] == selectedEscuela.value);
 
     if (school == null) {
-      Get.snackbar("Error", "Escuela no válida");
+      CustomToast.showError(
+          title: "Error", message: "Escuela seleccionada no válida");
       return;
     }
 
@@ -212,22 +221,20 @@ class RegisterController extends GetxController {
       lastName: lastNameController.text.trim(),
       password: passwordController.text.trim(),
       fileNum: fileNumberController.text.trim(),
+      age: age.value,
       email: emailController.text.trim(),
       schoolId: int.tryParse(schoolId),
     );
 
-    print("Usuario a registrar: ${user.toJson()}");
-
-    ProgressDialog progressDialog = ProgressDialog(context: Get.context!);
-    progressDialog.show(max: 100, msg: "Registrando Usuario");
-
     Response response = await usersProvider.create(user);
-    progressDialog.close();
 
     if (response.statusCode == 201) {
+      CustomToast.showSuccess(
+          title: "Registro exitoso",
+          message: "Tu cuenta ha sido creada correctamente.");
       Get.offAllNamed('/login');
     } else {
-      Get.snackbar("Error", response.body['detail'] ?? "Error al registrar");
+      CustomToast.showError(title: "Error", message: "Error al registrar");
     }
   }
 

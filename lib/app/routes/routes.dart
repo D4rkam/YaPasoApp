@@ -15,4 +15,9 @@ abstract class Routes {
   static const SUCCESS_PAY = '/success';
   static const FAILURE_PAY = '/failure';
   static const PENDING_PAY = '/pending';
+  static const PERFIL = '/perfil';
+  static const CONFIGURATION = '/configuration';
+  static const HELP = '/help';
+  static const LOGOUT = '/logout';
+  static const PRODUCTS = '/products';
 }

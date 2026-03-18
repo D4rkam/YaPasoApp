@@ -13,15 +13,10 @@ class SecurityFingerController extends GetxController {
 
   /// Flujo normal: el usuario desbloqueó biometría → validar sesión
   Future<void> checkToken() async {
+    // 1. Hacemos la llamada. El BaseProvider se encarga de refrescar si hace falta.
     ResponseApi response = await usersProvider.checkToken();
 
-    // Reintentar una vez si falló (común al volver de background)
-    if (!response.success) {
-      print("checkToken falló, reintentando...");
-      await Future.delayed(const Duration(milliseconds: 800));
-      response = await usersProvider.checkToken();
-    }
-
+    // 2. Si fue un éxito, avanzamos.
     if (response.success) {
       if (response.data != null) {
         try {
@@ -32,13 +27,17 @@ class SecurityFingerController extends GetxController {
           _storage.write("user", response.data);
         }
       }
-      // Refrescar saldo desde el endpoint liviano (sin traer todo el usuario)
+
+      // Refrescar saldo
       if (Get.isRegistered<BalanceController>()) {
         Get.find<BalanceController>().fetchBalance();
       }
       goToHomeScreen();
     } else {
-      print("checkToken falló definitivamente → Login");
+      // 3. Si falló, es porque el interceptor dijo "basta" (ej: Refresh Token expirado).
+      // El BaseProvider ya limpió el CookieJar y el Storage interno.
+      // Solo aseguramos la limpieza local y mandamos al Login.
+      print("checkToken falló definitivamente → Redirigiendo a Login");
       _storage.remove("user");
       Get.offNamedUntil('/login', (route) => false);
     }

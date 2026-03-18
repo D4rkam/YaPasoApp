@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -35,11 +36,11 @@ class ProductForCart {
   // Método para crear una instancia desde JSON
   factory ProductForCart.fromJson(Map<String, dynamic> json) {
     return ProductForCart(
-      id: json['id'],
+      id: json['id'].toString(),
       name: json['name'],
       quantity: RxInt(json['quantity']),
-      imagePath: json["imagePath"],
-      price: json["price"],
+      imagePath: json["imagePath"] ?? json["image_url"],
+      price: double.tryParse(json["price"].toString())?.toInt() ?? 0,
       maxQuantity: json["maxQuantity"] ?? 99,
     );
   }
@@ -55,6 +56,11 @@ class ShoppingCartController extends GetxController {
 
   // Añadir producto al carrito
   void addItemToCart(ProductForCart product) {
+    // Validación: no duplicar y verificar stock
+    if (isInCart(product.id)) return;
+    if (product.maxQuantity <= 0) return;
+    if (product.quantity.value <= 0) return;
+
     cartItems.add(product);
     cartItems.refresh();
   }
@@ -73,23 +79,22 @@ class ShoppingCartController extends GetxController {
 
   // Eliminar producto del carrito
   void removeItemFromCart(String productId) {
-    final product = cartItems.firstWhereOrNull((item) => item.id == productId);
-    if (product != null) {
-      cartItems.remove(product);
-      product.quantity.value = 1;
-      cartItems.refresh();
-    }
+    cartItems.removeWhere((item) => item.id == productId);
+    cartItems.refresh();
   }
 
   void clearCart() {
-    cartItems.clear();
-    cartItems.refresh();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      cartItems.clear();
+      cartItems.refresh();
+      GetStorage().remove("cart_items");
+    });
   }
 
   // Actualizar la cantidad de un producto en el carrito
   void updateQuantity(String productId, int quantity) {
     var product = cartItems.firstWhereOrNull((item) => item.id == productId);
-    if (product != null && quantity > 0) {
+    if (product != null && quantity > 0 && quantity <= product.maxQuantity) {
       product.quantity.value = quantity;
       cartItems.refresh();
     }
