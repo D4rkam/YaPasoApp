@@ -1,11 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/counter_product.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/utils/helpers/image_helper.dart';
 
-class ShoppingCartScreen extends StatelessWidget {
+class ShoppingCartScreen extends StatelessWidget with ResponsiveMixin {
   ShoppingCartScreen({super.key});
-  final ShoppingCartController controller = Get.put(ShoppingCartController());
+  final ShoppingCartController controller = Get.find<ShoppingCartController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,31 +17,32 @@ class ShoppingCartScreen extends StatelessWidget {
           backgroundColor: Colors.white,
           titleSpacing: 0,
           leading: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back_ios_new_rounded,
-              size: 30,
+              size: setSp(30),
             ),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
-          title: const Text(
+          title: Text(
             'Carrito',
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style:
+                TextStyle(fontSize: setSp(25), fontWeight: FontWeight.normal),
           ),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.search_rounded),
-              iconSize: 32,
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.filter_alt_rounded),
-              iconSize: 32,
-            ),
-            const SizedBox(width: 20)
-          ],
+          // actions: [
+          //   IconButton(
+          //     onPressed: () {},
+          //     icon: const Icon(Icons.search_rounded),
+          //     iconSize: setSp(32),
+          //   ),
+          //   IconButton(
+          //     onPressed: () {},
+          //     icon: const Icon(Icons.filter_alt_rounded),
+          //     iconSize: setSp(32),
+          //   ),
+          //   SizedBox(width: setWidth(20))
+          // ],
         ),
         body: Obx(() => (controller.cartItems.isEmpty)
             ? Center(
@@ -47,16 +51,17 @@ class ShoppingCartScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset("assets/images/cart_empty.png"),
-                      const Text("¡Tu carrito esta vacio!",
+                      Text("¡Tu carrito esta vacio!",
                           style: TextStyle(
-                              fontSize: 30, fontWeight: FontWeight.bold)),
+                              fontSize: setSp(30),
+                              fontWeight: FontWeight.bold)),
                     ]),
               )
             : ScreenWithItems(controller: controller)));
   }
 }
 
-class ScreenWithItems extends StatelessWidget {
+class ScreenWithItems extends StatelessWidget with ResponsiveMixin {
   const ScreenWithItems({
     super.key,
     required this.controller,
@@ -66,8 +71,8 @@ class ScreenWithItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
+    return LayoutBuilder(builder: (context, constraints) {
+      return Column(children: [
         // Lista de productos con scroll
         Expanded(
           child: ListView.builder(
@@ -83,11 +88,11 @@ class ScreenWithItems extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     color: const Color(0xFFFDB9B9),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: const Icon(
+                  padding: EdgeInsets.symmetric(horizontal: setWidth(20)),
+                  child: Icon(
                     Icons.delete,
                     color: Colors.redAccent,
-                    size: 35,
+                    size: setSp(35),
                   ),
                 ),
                 onDismissed: (direction) {
@@ -103,39 +108,43 @@ class ScreenWithItems extends StatelessWidget {
 
         // Contenedor con el total y el botón de compra (fijo)
         Container(
-          height: 200, // Tamaño fijo
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+          padding: EdgeInsets.all(setWidth(20)),
           color: Colors.white,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Total a Pagar",
-                    style: TextStyle(
-                        color: Color(0xFF4D4D4D),
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Obx(
-                    () => Text("\$${controller.totalPrice}",
-                        style: const TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              ),
-              BuyButton(controller: controller) // Botón de compra
-            ],
+          child: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Total a Pagar",
+                      style: TextStyle(
+                          color: const Color(0xFF4D4D4D),
+                          fontSize: setSp(22),
+                          fontWeight: FontWeight.normal),
+                    ),
+                    Obx(
+                      () => Text("\$${controller.totalPrice}",
+                          style: TextStyle(
+                              fontSize: setSp(22),
+                              fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                SizedBox(height: setHeight(20)),
+                BuyButton(controller: controller) // Botón de compra
+              ],
+            ),
           ),
         ),
-      ],
-    );
+      ]);
+    });
   }
 }
 
-class ListOfProducts extends StatelessWidget {
+class ListOfProducts extends StatelessWidget with ResponsiveMixin {
   const ListOfProducts({
     super.key,
     required this.controller,
@@ -157,7 +166,7 @@ class ListOfProducts extends StatelessWidget {
               background: Container(
                 color: Colors.redAccent,
                 alignment: Alignment.centerRight,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: setWidth(20)),
                 child: const Icon(
                   Icons.delete,
                   color: Colors.white,
@@ -177,89 +186,87 @@ class ListOfProducts extends StatelessWidget {
   }
 }
 
-class ProductCardCart extends StatelessWidget {
+class ProductCardCart extends StatelessWidget with ResponsiveMixin {
   ProductCardCart({super.key, required this.product});
 
   final ProductForCart product;
-  final ShoppingCartController controller = Get.put(ShoppingCartController());
+  final ShoppingCartController controller = Get.find<ShoppingCartController>();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10, left: 5, right: 5),
-      child: Container(
-        height: 135,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                offset: const Offset(0, 1),
-                blurRadius: 1,
-                spreadRadius: 1)
-          ],
-        ),
-        padding: const EdgeInsets.all(10),
+    return Container(
+      margin: EdgeInsets.symmetric(
+          vertical: setHeight(5), horizontal: setWidth(10)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              offset: const Offset(0, 1),
+              blurRadius: 1,
+              spreadRadius: 1)
+        ],
+      ),
+      padding: const EdgeInsets.all(12),
+      child: IntrinsicHeight(
         child: Row(
           children: [
             // Product Image
             Container(
-              width: 90,
-              height: 90,
+              width: setWidth(80),
+              height: setHeight(80),
               decoration: BoxDecoration(
                 color: Colors.amber,
                 borderRadius: BorderRadius.circular(8),
                 image: DecorationImage(
-                  image: NetworkImage(product.imagePath),
-                  fit: BoxFit.fitWidth,
+                  image: CachedNetworkImageProvider(ImageHelper.getOptimizedUrl(
+                    product.imagePath,
+                    width: 200,
+                    height: 200,
+                  )),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-            const SizedBox(width: 40),
+            SizedBox(width: setWidth(15)),
 
             // Product Details
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 200,
-                  child: Text(
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
                     product.name,
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
+                    maxLines: 2,
+                    style: TextStyle(
+                        fontSize: setSp(18), fontWeight: FontWeight.normal),
                   ),
-                ),
-                const Text(
-                  'Descripción',
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.grey),
-                ),
-                const SizedBox(height: 5),
-                Row(
-                  children: [
-                    Text(
-                      '\$${product.price}',
-                      style: const TextStyle(
-                          color: Color(0xFF98C21F),
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(width: 90),
-                    SizedBox(
-                      width: 90,
-                      child: Counter(
-                        heightButton: 30,
-                        widthButton: 30,
-                        product: product,
+                  const SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '\$${product.price}',
+                        style: TextStyle(
+                            color: const Color(0xFF98C21F),
+                            fontSize: setSp(18),
+                            fontWeight: FontWeight.bold),
                       ),
-                    )
-                  ],
-                ),
-              ],
+                      SizedBox(
+                        width: setWidth(100),
+                        child: Counter(
+                          heightButton: setHeight(27),
+                          widthButton: setWidth(27),
+                          product: product,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -268,27 +275,27 @@ class ProductCardCart extends StatelessWidget {
   }
 }
 
-class BuyButton extends StatelessWidget {
+class BuyButton extends StatelessWidget with ResponsiveMixin {
   const BuyButton({super.key, required this.controller});
   final ShoppingCartController controller;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.7,
-      height: 70,
+      width: MediaQuery.of(context).size.width * 0.8,
+      height: setHeight(70),
       child: ElevatedButton(
         style: const ButtonStyle(
             backgroundColor: WidgetStatePropertyAll<Color>(Color(0xFFFFE500)),
             foregroundColor: WidgetStatePropertyAll<Color>(Colors.black),
             shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20))))),
+                borderRadius: BorderRadius.all(Radius.circular(10))))),
         onPressed: () {
           controller.goPayScreen();
         },
-        child: const Text(
+        child: Text(
           "Comprar",
-          style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: setSp(30), fontWeight: FontWeight.normal),
         ),
       ),
     );

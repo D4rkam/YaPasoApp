@@ -13,7 +13,7 @@ class ResponseApi {
 
   factory ResponseApi.fromJson(Map<String, dynamic> json, bool success) =>
       ResponseApi(
-        data: json["user"],
+        data: json,
         success: success,
       );
 

@@ -1,70 +1,91 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/category_controller.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/container_input.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/list_of_products.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/shopping_cart_button.dart';
 
-class CategoryScreen extends GetView<CategoryController> {
+class CategoryScreen extends GetView<CategoryController> with ResponsiveMixin {
   const CategoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Obtenemos el título de los argumentos de la ruta
     final String categoryTitle =
-        ModalRoute.of(context)?.settings.arguments as String;
+        ModalRoute.of(context)?.settings.arguments as String? ?? "Categoría";
 
-    return GetBuilder<CategoryController>(
-      builder: (controller) => Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            toolbarHeight: 100,
-            backgroundColor: const Color(0xFFFFE500),
-            titleSpacing: 0,
-            actions: const [
-              Padding(
-                padding: EdgeInsets.only(right: 30),
-                child: ShoppingCartButton(),
-              )
-            ],
-            leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 30,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            title: Text(
-              categoryTitle,
-              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-            ),
-          ),
-          body: CustomScrollView(
-            slivers: [
-              const ContainerInputSearch(),
-              const SliverToBoxAdapter(child: SizedBox(height: 30)),
-              ListOfProducts(controller: controller),
-            ],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        toolbarHeight: setHeight(100),
+        backgroundColor: const Color(0xFFFFE500),
+        titleSpacing: 0,
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: setWidth(30)),
+            child: const ShoppingCartButton(),
           )
-
-          // bottomNavigationBar: BottomNavigationBar(
-          //   items: const [
-          //     BottomNavigationBarItem(
-          //       icon: Icon(Icons.notifications),
-          //       label: 'Notificaciones',
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: Icon(Icons.home),
-          //       label: 'Inicio',
-          //     ),
-          //     BottomNavigationBarItem(
-          //       icon: Icon(Icons.more_horiz),
-          //       label: 'Más',
-          //     ),
-          //   ],
-          // ),
+        ],
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: setSp(30),
+            color: Colors.black,
           ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          categoryTitle,
+          style: TextStyle(
+            fontSize: setSp(25),
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+        ),
+      ),
+      body: SafeArea(
+        bottom: false,
+        child: GetBuilder<CategoryController>(
+          builder: (controller) {
+            // Manejo de estado de carga y lista vacía para evitar errores visuales
+            if (controller.isLoading.value) {
+              return const Center(
+                child: CircularProgressIndicator(color: Color(0xFFFFE500)),
+              );
+            }
+
+            if (controller.products.isEmpty) {
+              return Center(
+                child: Text(
+                  'No hay productos en esta categoría',
+                  style: TextStyle(
+                    fontSize: setSp(18),
+                    color: Colors.grey,
+                  ),
+                ),
+              );
+            }
+
+            return CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: SizedBox(height: setHeight(30)),
+                ),
+                // Asumiendo que ListOfProducts devuelve un SliverList o SliverGrid
+                ListOfProducts(controller: controller),
+
+                // Espacio extra al final para que el último producto no quede pegado al borde
+                SliverToBoxAdapter(
+                  child: SizedBox(height: setHeight(40)),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 }

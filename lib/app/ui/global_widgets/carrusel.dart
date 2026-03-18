@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/banner.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/banner.dart'; // Asegurate de que la ruta sea correcta
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
 class CarruselWidget extends StatefulWidget {
   const CarruselWidget({super.key});
@@ -9,23 +10,32 @@ class CarruselWidget extends StatefulWidget {
   State<CarruselWidget> createState() => _CarruselWidgetState();
 }
 
-class _CarruselWidgetState extends State<CarruselWidget> {
+class _CarruselWidgetState extends State<CarruselWidget> with ResponsiveMixin {
   int _currentIndex = 0;
-  final List<dynamic> itemList = [
+
+  // Usamos íconos nativos y colores en lugar de imágenes pesadas
+  final List<Map<String, dynamic>> itemList = [
     {
-      'title': "Empanadas",
-      'subtitle': "Pollo Y Carne",
-      'img': "assets/images/empanadas_ad.png",
+      'title': "¡Chau a las filas!",
+      'subtitle': "Pedí anticipado y retirá en el recreo sin esperar.",
+      'icon': Icons.timer_outlined,
+      'iconColor': const Color(0xFFFFE500), // Tu amarillo
       'isNew': true,
     },
     {
-      'title': "Churros",
-      'subtitle': "Rellenos de dulce de leche",
-      'img': "assets/images/churros.png",
+      'title': "Cargá Saldo",
+      'subtitle': "Transferí desde Mercado Pago rápido y seguro.",
+      'icon': Icons.account_balance_wallet_outlined,
+      'iconColor': const Color(0xFF00B1EA), // Un celeste onda MP
       'isNew': false,
     },
-
-    // Agrega más URLs de imágenes si es necesario
+    {
+      'title': "¿Buscás algo?",
+      'subtitle': "Usá la lupa para encontrar tus snacks favoritos.",
+      'icon': Icons.search_rounded,
+      'iconColor': const Color(0xFFFF7A00), // Un naranja vibrante
+      'isNew': false,
+    },
   ];
 
   @override
@@ -34,9 +44,12 @@ class _CarruselWidgetState extends State<CarruselWidget> {
       children: [
         CarouselSlider(
           options: CarouselOptions(
-            height: 180,
-            autoPlay: false,
+            height: setHeight(170), // Un poquito más compacto
+            autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 5),
             enlargeCenterPage: true,
+            viewportFraction:
+                0.88, // Deja asomar un poquito la siguiente tarjeta
             onPageChanged: (index, reason) {
               setState(() {
                 _currentIndex = index;
@@ -45,24 +58,35 @@ class _CarruselWidgetState extends State<CarruselWidget> {
           ),
           items: itemList
               .map((item) => BannerCard(
-                  item["title"], item["subtitle"], item["img"], item["isNew"]))
+                    title: item["title"],
+                    subtitle: item["subtitle"],
+                    icon: item["icon"],
+                    iconColor: item["iconColor"],
+                    isNew: item["isNew"],
+                  ))
               .toList(),
         ),
+        SizedBox(height: setHeight(12)),
+        // Indicadores (Puntitos) mejorados
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: itemList.map((url) {
-            int index = itemList.indexOf(url);
-            return Container(
-              width: 40.0,
-              height: 6.0,
-              margin:
-                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+          children: itemList.asMap().entries.map((entry) {
+            int index = entry.key;
+            bool isActive = _currentIndex == index;
+
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
+              width: isActive
+                  ? setWidth(24.0)
+                  : setWidth(8.0), // Se estira el activo
+              height: setHeight(8.0),
+              margin: const EdgeInsets.symmetric(horizontal: 4.0),
               decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(10),
-                color: _currentIndex == index
-                    ? const Color(0xFFFFE500)
-                    : const Color(0xFFC8C4A2),
+                color: isActive
+                    ? const Color(0xFFFFE500) // Amarillo activo
+                    : const Color(0xFFE0E0E0), // Gris inactivo
               ),
             );
           }).toList(),

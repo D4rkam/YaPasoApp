@@ -1,43 +1,53 @@
-import 'dart:developer';
-
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:prueba_buffet/app/data/models/user.dart';
+// ignore_for_file: non_constant_identifier_names
+import 'package:dio/dio.dart' show Response; // Importamos Dio
+import 'package:prueba_buffet/app/data/provider/base_provider.dart';
 import 'package:prueba_buffet/utils/constants/api_constants.dart';
 
-class ProductsProvider extends GetConnect {
-  User userSession = User.fromJson(GetStorage().read("user") ?? {});
-
-  Future<Response> getProducts() async {
-    String url = ApiUrl.PRODUCTS_GET;
-    Response response = await get(
-      url,
-      headers: {
-        "Authorization": "Bearer ${userSession.token?["access_token"]}"
-      },
-    );
-    return response;
+class ProductsProvider extends BaseProvider {
+  ProductsProvider() {
+    print("--- Inicializando ProductsProvider (Hereda de BaseProvider) ---");
   }
 
-  Future<Response> getProductById(int id) async {
-    String url = "${ApiUrl.PRODUCT_GET}$id";
-    Response response = await get(
-      url,
-      headers: {
-        "Authorization": "Bearer ${userSession.token?["access_token"]}"
-      },
+  Future<Response> getProducts({int limit = 20, String? cursor}) async {
+    final queryMap = {
+      "limit": limit.toString(),
+      if (cursor != null) "cursor": cursor,
+    };
+    return await dio.get(
+      ApiUrl.PRODUCTS_GET,
+      queryParameters: queryMap,
     );
-    return response;
   }
 
-  Future<Response> getProductsByCategory(String category) async {
-    String url = "${ApiUrl.PRODUCTS_GET}category/$category";
-    Response response = await get(
-      url,
-      headers: {
-        "Authorization": "Bearer ${userSession.token?["access_token"]}"
+  Future<Response> getProductById(String id) async {
+    return await dio.get("${ApiUrl.PRODUCT_GET}$id");
+  }
+
+  Future<Response> getProductsByCategory(String category,
+      {int limit = 20, String? cursor}) async {
+    final queryMap = {
+      "limit": limit.toString(),
+      if (cursor != null) "cursor": cursor,
+    };
+    return await dio.get(
+      "${ApiUrl.PRODUCTS_GET}category/$category",
+      queryParameters: queryMap,
+    );
+  }
+
+  Future<Response> searchProducts({required String query}) async {
+    Map<String, String> queryParams = {"query": query};
+    return await dio.get(ApiUrl.PRODUCT_SEARCH, queryParameters: queryParams);
+  }
+
+  Future<Response> getTopSellingProducts(
+      {int limit = 4, bool only_active = true}) async {
+    return await dio.get(
+      ApiUrl.PRODUCT_TOP_SELLING,
+      queryParameters: {
+        "limit": limit.toString(),
+        "only_active": only_active.toString(),
       },
     );
-    return response;
   }
 }

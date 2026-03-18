@@ -13,7 +13,7 @@ class CategoryController extends GetxController {
       final response =
           await productsProvider.getProductsByCategory(category.toLowerCase());
       if (response.statusCode == 200) {
-        products.assignAll(productFromJson(response.body));
+        products.assignAll(productFromJson(response.data["products"]));
       } else {
         // Handle error
       }
@@ -24,8 +24,10 @@ class CategoryController extends GetxController {
 
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
-    getProducts(Get.arguments);
+    // Solo auto-fetch si se navega como ruta independiente con arguments
+    if (Get.arguments != null) {
+      getProducts(Get.arguments);
+    }
   }
 }
