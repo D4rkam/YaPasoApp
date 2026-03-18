@@ -52,11 +52,17 @@ jobs:
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "build/web" # Built app content directory - optional
+          app_location: "build/web" 
+          
+          api_location: "" 
+          
+          # 👇 2. Dejamos el output vacío porque app_location ya tiene los archivos finales
+          output_location: "" 
+          
           github_id_token: ${{ steps.idtoken.outputs.result }}
-          ###### End of Repository/Build Configurations ######
+          
+          # 👇 3. Apagamos el robot de Microsoft por completo
+          skip_app_build: true
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
