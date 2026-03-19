@@ -59,6 +59,14 @@ class ShellDrawer extends StatelessWidget with ResponsiveMixin {
   final MainShellController shellController = Get.find();
   final HomeController homeController = Get.find();
 
+  String _getInitials(String name, String lastName) {
+    String firstInitial =
+        name.trim().isNotEmpty ? name.trim()[0].toUpperCase() : '';
+    String lastInitial =
+        lastName.trim().isNotEmpty ? lastName.trim()[0].toUpperCase() : '';
+    return '$firstInitial$lastInitial';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -73,10 +81,20 @@ class ShellDrawer extends StatelessWidget with ResponsiveMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CircleAvatar(
-                    radius: setHeight(32),
-                    backgroundColor: Colors.white,
-                    backgroundImage: CachedNetworkImageProvider(
-                        "https://ui-avatars.com/api/?name=${homeController.userSession.name}+${homeController.userSession.lastName}&background=000&color=fff")),
+                  radius: setHeight(32),
+                  backgroundColor:
+                      Colors.black, // El fondo oscuro que usabas en la API
+                  child: Text(
+                    _getInitials(homeController.userSession.name,
+                        homeController.userSession.lastName),
+                    style: TextStyle(
+                      color: Colors
+                          .white, // El color de texto que usabas en la API
+                      fontSize: setSp(22),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
                 SizedBox(height: setHeight(10)),
                 Flexible(
                   child: Text(

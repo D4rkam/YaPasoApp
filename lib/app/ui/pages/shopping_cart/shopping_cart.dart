@@ -50,7 +50,7 @@ class ShoppingCartScreen extends StatelessWidget with ResponsiveMixin {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset("assets/images/cart_empty.png"),
+                      Image.asset("assets/images/cart_empty.webp"),
                       Text("¡Tu carrito esta vacio!",
                           style: TextStyle(
                               fontSize: setSp(30),

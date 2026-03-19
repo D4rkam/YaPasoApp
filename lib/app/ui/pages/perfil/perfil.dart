@@ -13,6 +13,14 @@ class PerfilContent extends StatelessWidget with ResponsiveMixin {
     final MainShellController shellController = Get.find<MainShellController>();
     final HomeController homeController = Get.find<HomeController>();
 
+    String _getInitials(String name, String lastName) {
+      String firstInitial =
+          name.trim().isNotEmpty ? name.trim()[0].toUpperCase() : '';
+      String lastInitial =
+          lastName.trim().isNotEmpty ? lastName.trim()[0].toUpperCase() : '';
+      return '$firstInitial$lastInitial';
+    }
+
     return Container(
       color: const Color(0xFFF9F9F9),
       child: NotificationListener<UserScrollNotification>(
@@ -70,11 +78,19 @@ class PerfilContent extends StatelessWidget with ResponsiveMixin {
                                     )
                                   ],
                                 ),
-                                child: ClipOval(
-                                  child: Image(
-                                    fit: BoxFit.cover,
-                                    image: CachedNetworkImageProvider(
-                                      'https://ui-avatars.com/api/?name=${homeController.userSession.name}+${homeController.userSession.lastName}&background=000&color=fff',
+                                child: CircleAvatar(
+                                  radius: setHeight(32),
+                                  backgroundColor: Colors
+                                      .black, // El fondo oscuro que usabas en la API
+                                  child: Text(
+                                    _getInitials(
+                                        homeController.userSession.name,
+                                        homeController.userSession.lastName),
+                                    style: TextStyle(
+                                      color: Colors
+                                          .white, // El color de texto que usabas en la API
+                                      fontSize: setSp(22),
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
@@ -212,7 +228,7 @@ class PerfilContent extends StatelessWidget with ResponsiveMixin {
         text: controller.userSession.curse_year?.toString() ?? '');
     final divCtrl = TextEditingController(
         text: controller.userSession.curse_division ?? '');
-    String selectedTurn = controller.userSession.turn ?? 'MAÑANA';
+    String selectedTurn = controller.userSession.turn ?? 'Sin Seleccionar';
 
     Get.bottomSheet(
       Container(

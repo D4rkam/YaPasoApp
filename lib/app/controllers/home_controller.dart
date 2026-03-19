@@ -109,12 +109,11 @@ class HomeController extends GetxController {
   // Para mostrar un circulito de carga mientras el servidor busca (opcional)
   RxBool isSearchingApi = false.obs;
 
+  RxBool hasConnectionError = false.obs;
+
   @override
   void onInit() {
     super.onInit();
-    _checkTokenBackground();
-    getTopSellingProducts(); // Trae los productos más vendidos
-    balanceController.fetchBalance();
 
     searchFocusNode.addListener(() {
       isSearchFocused.value = searchFocusNode.hasFocus;
@@ -130,6 +129,14 @@ class HomeController extends GetxController {
         searchResultsFromApi.clear(); // Si borró todo, vaciamos la lista
       }
     }, time: const Duration(milliseconds: 500));
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    _checkTokenBackground();
+    getTopSellingProducts(); // Trae los productos más vendidos
+    balanceController.fetchBalance();
   }
 
   Future<void> _checkTokenBackground() async {
@@ -150,15 +157,23 @@ class HomeController extends GetxController {
   // ---> NUEVA FUNCIÓN: Busca en la base de datos real <---
   Future<void> searchProductsInBackend(String query) async {
     isSearchingApi.value = true;
+    hasConnectionError.value = false; // Reiniciamos el error antes de buscar
 
-    // Llama al Provider pasándole la palabra escrita
-    var response = await productsProvider.searchProducts(query: query);
+    try {
+      var response = await productsProvider.searchProducts(query: query);
 
-    if (response.statusCode == 200) {
-      searchResultsFromApi.assignAll(productFromJson(response.data));
+      if (response.statusCode == 200) {
+        searchResultsFromApi.assignAll(productFromJson(response.data));
+      } else {
+        // Si el backend tiró error 500, 404, etc.
+        hasConnectionError.value = true;
+      }
+    } catch (e) {
+      // Si falló por Timeout o no hay internet
+      hasConnectionError.value = true;
+    } finally {
+      isSearchingApi.value = false;
     }
-
-    isSearchingApi.value = false;
   }
 
   // ---> LOS GETTERS PARA LA VISTA <---
@@ -310,8 +325,8 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
-    // searchController.dispose();
-    // searchFocusNode.dispose();
+    searchController.dispose();
+    searchFocusNode.dispose();
     super.onClose();
   }
 }

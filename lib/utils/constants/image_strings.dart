@@ -12,16 +12,13 @@ class ProjectImages {
 
   // ------- Category Icons
   static const String bebidaIcon =
-      "assets/images/categorias/bebidas_categoria.png";
+      "assets/images/categorias/bebidas_categoria.webp";
   static const String golosinasIcon =
-      "assets/images/categorias/golosinas_categoria.png";
+      "assets/images/categorias/golosinas_categoria.webp";
   static const String snacksIcon =
-      "assets/images/categorias/snacks_categoria.png";
+      "assets/images/categorias/snacks_categoria.webp";
   static const String galletitasIcon =
-      "assets/images/categorias/galletitas_categoria.png";
+      "assets/images/categorias/galletitas_categoria.webp";
   static const String sandwichIcon =
-      "assets/images/categorias/galletitas_categoria.png";
-  static const String pagoEfectivoIcon = "assets/images/pago_efect.png";
-  static const String pagoTransferenciaIcon = "assets/images/pago_transf.png";
-  static const String yaPasoIcon = "assets/images/y_yapaso.png";
+      "assets/images/categorias/galletitas_categoria.webp";
 }

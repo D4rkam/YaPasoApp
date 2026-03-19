@@ -3,6 +3,7 @@ import 'package:dio/dio.dart'
     show Response, Options; // Importamos Response de Dio
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/data/provider/base_provider.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
 import 'package:prueba_buffet/utils/constants/api_constants.dart';
 
 class PayProvider extends BaseProvider {
@@ -33,7 +34,9 @@ class PayProvider extends BaseProvider {
       );
       return response;
     } catch (e) {
-      Get.snackbar("Error", "No se pudo ejecutar la petición de pago");
+      CustomToast.showError(
+          title: "Error",
+          message: "No se pudo procesar el pago, intente nuevamente");
       return null;
     }
   }
@@ -52,7 +55,9 @@ class PayProvider extends BaseProvider {
       );
       return response;
     } catch (e) {
-      Get.snackbar("Error", "No se pudo ejecutar el pago con saldo");
+      CustomToast.showError(
+          title: "Error",
+          message: "No se pudo procesar el pago con saldo, intente nuevamente");
       return null;
     }
   }

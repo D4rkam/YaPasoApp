@@ -73,7 +73,7 @@ class UsersProvider extends BaseProvider {
         response.statusCode == 200,
       );
     } catch (e) {
-      Get.snackbar("Error", "No se pudo conectar con el servidor");
+      logger.e("UsersProvider login: Error durante el login: $e");
       return ResponseApi(success: false);
     }
   }

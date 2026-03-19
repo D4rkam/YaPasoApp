@@ -59,32 +59,32 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/empanadas_ad.png
-    - assets/images/churros.png
-    - assets/images/steve_person.png
-    - assets/images/categorias/bebidas_categoria.png
-    - assets/images/categorias/snacks_categoria.png
-    - assets/images/categorias/golosinas_categoria.png
-    - assets/images/categorias/galletitas_categoria.png
-    - assets/images/logo-sin.png
-    - assets/images/cart_empty.png
-    - assets/images/intro/img_intro_screen.png
-    - assets/images/pago_efect.png
-    - assets/images/pago_transf.png
-    - assets/images/y_yapaso.png
-    - assets/images/bloqueo.png
-    - assets/images/icono_carga.png
-    - assets/images/icono_trans.png
-    - assets/images/not_load.png
-    - assets/images/order_confirm.png
-    - assets/images/codigo_barra.png
-    - assets/images/Profile.png
-    - assets/images/COMPRA_EXITOSA.png
-    - assets/images/CARGA_SALDO_EXITOSO.png
-    - assets/images/error_pago.png
-    - assets/images/ylogo.png
-    - assets/images/logo-negativo.png
-    - assets/images/mercado_pago.png
+    - assets/images/
+    - assets/images/categorias/
+    - assets/images/intro/
+    # - assets/images/categorias/bebidas_categoria.png
+    # - assets/images/categorias/snacks_categoria.png
+    # - assets/images/categorias/golosinas_categoria.png
+    # - assets/images/categorias/galletitas_categoria.png
+    # - assets/images/logo-sin.png
+    # - assets/images/cart_empty.png
+    # - assets/images/intro/img_intro_screen.png
+    # - assets/images/pago_efect.png
+    # - assets/images/pago_transf.png
+    # - assets/images/y_yapaso.png
+    # - assets/images/bloqueo.png
+    # - assets/images/icono_carga.png
+    # - assets/images/icono_trans.png
+    # - assets/images/not_load.png
+    # - assets/images/order_confirm.png
+    # - assets/images/codigo_barra.png
+    # - assets/images/Profile.png
+    # - assets/images/COMPRA_EXITOSA.png
+    # - assets/images/CARGA_SALDO_EXITOSO.png
+    # - assets/images/error_pago.png
+    # - assets/images/ylogo.png
+    # - assets/images/logo-negativo.png
+    # - assets/images/mercado_pago.png
 
   fonts:
     - family: Lobster

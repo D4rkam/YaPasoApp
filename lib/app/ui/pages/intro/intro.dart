@@ -64,7 +64,7 @@ class IntroScreen extends StatelessWidget with ResponsiveMixin {
                         decoration: const BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage(
-                                "assets/images/intro/img_intro_screen.png"),
+                                "assets/images/intro/img_intro_screen.webp"),
                             fit: BoxFit
                                 .contain, // 👈 'contain' es mejor para que no se corte la imagen
                           ),

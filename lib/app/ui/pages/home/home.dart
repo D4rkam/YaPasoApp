@@ -1,31 +1,18 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-
 import 'package:flutter_animate/flutter_animate.dart';
-
 import 'package:get/get.dart';
-
 import 'package:intl/intl.dart';
 
 import 'package:prueba_buffet/app/controllers/balance_controller.dart';
-
 import 'package:prueba_buffet/app/controllers/home_controller.dart';
-
 import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
-
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
-
 import 'package:prueba_buffet/app/ui/global_widgets/carrusel.dart';
-
 import 'package:prueba_buffet/app/ui/global_widgets/category_item.dart';
-
 import 'package:prueba_buffet/app/ui/global_widgets/container_input.dart';
-
 import 'package:prueba_buffet/app/ui/global_widgets/product_grid.dart';
-
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
-
 import 'package:prueba_buffet/app/ui/global_widgets/shopping_cart_button.dart';
 
 class HomeContent extends StatelessWidget with ResponsiveMixin {
@@ -37,9 +24,8 @@ class HomeContent extends StatelessWidget with ResponsiveMixin {
   Widget build(BuildContext context) {
     final MainShellController shellController = Get.find();
 
-    // ---> MEJORA UX: Tocar el fondo blanco cierra el teclado y oculta la lista
-
     return GestureDetector(
+      // ---> MEJORA UX: Tocar el fondo blanco cierra el teclado y oculta la lista
       onTap: () {
         if (controller.searchFocusNode.hasFocus) {
           controller.searchFocusNode.unfocus();
@@ -48,28 +34,19 @@ class HomeContent extends StatelessWidget with ResponsiveMixin {
       child: NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
           // ---> MEJORA UX: Hacer scroll también cierra el teclado automáticamente
-
           if (controller.searchFocusNode.hasFocus) {
             controller.searchFocusNode.unfocus();
           }
-
           shellController.updateScrollDirection(notification.direction);
-
           return true;
         },
         child: RefreshIndicator(
           onRefresh: controller.refreshHome,
-
           color: Colors.black,
-
           backgroundColor: const Color(0xFFFFE500),
-
-          // ---> ENVOLVEMOS LA PANTALLA EN UN STACK Y UN OBX <---
-
           child: Obx(() => Stack(
                 children: [
                   // 1. LA PANTALLA NORMAL DE FONDO
-
                   CustomScrollView(
                     physics: const AlwaysScrollableScrollPhysics(
                       parent: ClampingScrollPhysics(),
@@ -77,15 +54,11 @@ class HomeContent extends StatelessWidget with ResponsiveMixin {
                     slivers: [
                       CustomAppBar(),
 
-                      // El Input conectado
-
                       ContainerInputSearch(
                         textController: controller.searchController,
                         focusNode: controller.searchFocusNode,
                         onChanged: controller.onSearchChanged,
                       ),
-
-                      // Todo tu contenido vuelve a mostrarse siempre, sin "if"
 
                       SliverToBoxAdapter(
                         child: Padding(
@@ -150,7 +123,40 @@ class HomeContent extends StatelessWidget with ResponsiveMixin {
                         ),
                       ),
 
-                      const ProductGrid(),
+                      // ---> LÓGICA DE ESTADOS: CARGANDO, ERROR, VACÍO o PRODUCTOS <---
+                      if (controller.isSearchingApi.value)
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: setHeight(40)),
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                  color: Colors.black),
+                            ),
+                          ),
+                        )
+                      else if (controller.hasConnectionError.value)
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: setHeight(30)),
+                            child: ErrorServerState(
+                              onRetry: () => controller.searchProductsInBackend(
+                                  controller.searchQuery.value),
+                            ),
+                          ),
+                        )
+                      else if (controller.filteredProducts.isEmpty)
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: setHeight(30)),
+                            child: EmptyProductsState(
+                              message: controller.searchQuery.value.isNotEmpty
+                                  ? "No hay productos para '${controller.searchQuery.value}'"
+                                  : "Aún no hay productos disponibles",
+                            ),
+                          ),
+                        )
+                      else
+                        const ProductGrid(),
 
                       SliverToBoxAdapter(
                         child: SizedBox(height: setHeight(100)),
@@ -158,37 +164,22 @@ class HomeContent extends StatelessWidget with ResponsiveMixin {
                     ],
                   ),
 
-                  // 2. LA CAPA SUPERIOR: LISTA FLOTANTE (Solo se pinta si tiene foco y hay sugerencias)
-
+                  // 2. LA CAPA SUPERIOR: LISTA FLOTANTE DE SUGERENCIAS
                   if (controller.isSearchFocused.value &&
                       controller.searchSuggestions.isNotEmpty)
                     Positioned(
-                      // 215px es la matemática exacta: AppBar(150) + InputAmarillo(40) + InputBlanco sobresaliendo(20) + 5 de margen
-
                       top: setHeight(215),
-
                       left: setWidth(35),
-
                       right: setWidth(35),
-
                       child: Material(
-                        elevation:
-                            8, // Da la sombra para que parezca que flota por encima del carrusel
-
+                        elevation: 8,
                         shadowColor: Colors.black26,
-
                         borderRadius: BorderRadius.circular(15),
-
                         clipBehavior: Clip.antiAlias,
-
                         child: Container(
                           color: Colors.white,
-
-                          // Límite de altura por si la lista es muy larga
-
                           constraints:
                               BoxConstraints(maxHeight: setHeight(300)),
-
                           child: ListView.separated(
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
@@ -211,12 +202,7 @@ class HomeContent extends StatelessWidget with ResponsiveMixin {
                                     size: 12,
                                     color: Colors.grey),
                                 onTap: () {
-                                  // Al tocar, quitamos foco (cierra teclado y oculta lista flotante)
-
                                   controller.searchFocusNode.unfocus();
-
-                                  // Viajamos a la vista
-
                                   controller.goToProductDetail(product);
                                 },
                               );
@@ -245,12 +231,11 @@ class CustomAppBar extends StatelessWidget with ResponsiveMixin {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Container(
-        // Cambiamos setHeight(150) por un valor que se adapte al contenido o usamos constraints
         constraints: BoxConstraints(
             minHeight: setHeight(130), maxHeight: setHeight(160)),
         color: const Color(0xFFFFE500),
         child: SafeArea(
-          bottom: false, // Importante para no dejar huecos blancos abajo
+          bottom: false,
           child: Padding(
             padding: EdgeInsets.symmetric(
                 horizontal: setWidth(25), vertical: setHeight(10)),
@@ -258,7 +243,6 @@ class CustomAppBar extends StatelessWidget with ResponsiveMixin {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
-                  // 👈 Agregamos Expanded para que el texto no empuje el botón de carrito fuera de la pantalla
                   child: GestureDetector(
                     onTap: () => homeController.goToMyBalance(),
                     child: Column(
@@ -266,7 +250,6 @@ class CustomAppBar extends StatelessWidget with ResponsiveMixin {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         FittedBox(
-                          // 👈 Hace que el texto se achique si no entra en el ancho
                           fit: BoxFit.scaleDown,
                           child: Row(
                             children: [
@@ -291,8 +274,7 @@ class CustomAppBar extends StatelessWidget with ResponsiveMixin {
                               return Text(
                                 "\$${NumberFormat.decimalPatternDigits(locale: "es-AR", decimalDigits: 2).format(animValue)}",
                                 style: TextStyle(
-                                    fontSize: setSp(
-                                        28), // Un poquito más chico por seguridad
+                                    fontSize: setSp(28),
                                     fontWeight: FontWeight.w500,
                                     color: Colors.black),
                               );
@@ -349,20 +331,134 @@ class ListCategory extends StatelessWidget {
 }
 
 class NoOverscrollBehavior extends ScrollBehavior {
-  Widget buildViewportChrome(
-      BuildContext context, Widget child, AxisDirection axisDirection) {
-    // Disable the glow effect on Android
-
+  @override
+  Widget buildOverscrollIndicator(
+      BuildContext context, Widget child, ScrollableDetails details) {
     if (Platform.isAndroid) {
-      return GlowingOverscrollIndicator(
-        showLeading: false,
-        showTrailing: false,
-        axisDirection: axisDirection,
-        color: Colors.transparent,
-        child: child,
-      );
+      return child; // Desactiva el efecto glow nativo
     }
+    return super.buildOverscrollIndicator(context, child, details);
+  }
+}
 
-    return child;
+// ---------------------------------------------------------
+// NUEVOS COMPONENTES DE ESTADO VACÍO Y ERROR
+// ---------------------------------------------------------
+
+class EmptyProductsState extends StatelessWidget with ResponsiveMixin {
+  final String message;
+
+  EmptyProductsState({super.key, this.message = "No encontramos productos"});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off_rounded,
+            size: setSp(80),
+            color: Colors.grey.shade400,
+          )
+              .animate(onPlay: (controller) => controller.repeat())
+              .shimmer(duration: 2000.ms, color: Colors.grey.shade200)
+              .moveY(
+                  begin: -5, end: 5, duration: 1500.ms, curve: Curves.easeInOut)
+              .then()
+              .moveY(
+                  begin: 5,
+                  end: -5,
+                  duration: 1500.ms,
+                  curve: Curves.easeInOut),
+          SizedBox(height: setHeight(20)),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: setSp(20),
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          SizedBox(height: setHeight(10)),
+          Text(
+            "Intentá con otra palabra clave.",
+            style: TextStyle(
+              fontSize: setSp(16),
+              color: Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ).animate().fadeIn(duration: 400.ms).scale(begin: const Offset(0.9, 0.9)),
+    );
+  }
+}
+
+class ErrorServerState extends StatelessWidget with ResponsiveMixin {
+  final VoidCallback onRetry;
+
+  ErrorServerState({super.key, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.wifi_off_rounded,
+            size: setSp(80),
+            color: Colors.red.shade300,
+          )
+              .animate()
+              .shake(hz: 4, curve: Curves.easeInOutCubic, duration: 600.ms),
+          SizedBox(height: setHeight(20)),
+          Text(
+            "¡Ups! Problemas de conexión",
+            style: TextStyle(
+              fontSize: setSp(22),
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          SizedBox(height: setHeight(10)),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: setWidth(40)),
+            child: Text(
+              "No pudimos conectar con el buffet. Revisá tu internet e intentá de nuevo.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: setSp(16),
+                color: Colors.grey.shade600,
+              ),
+            ),
+          ),
+          SizedBox(height: setHeight(30)),
+          ElevatedButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh_rounded, color: Colors.black),
+            label: Text(
+              "Reintentar",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: setSp(18),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFFE500),
+              padding: EdgeInsets.symmetric(
+                  horizontal: setWidth(30), vertical: setHeight(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+          )
+              .animate()
+              .slideY(begin: 0.5, duration: 400.ms, curve: Curves.easeOutBack),
+        ],
+      ),
+    );
   }
 }

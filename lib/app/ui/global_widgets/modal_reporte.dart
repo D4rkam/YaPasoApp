@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
 
 class ModalReporte extends StatefulWidget {
   const ModalReporte({super.key});
@@ -26,8 +27,8 @@ class _ModalReporteState extends State<ModalReporte> {
 
   void _enviarReporte() async {
     if (_temaSeleccionado == null || _reporteController.text.trim().isEmpty) {
-      Get.snackbar("Atención", "Por favor, completá todos los campos.",
-          backgroundColor: Colors.redAccent, colorText: Colors.white);
+      CustomToast.showError(
+          title: "Atencion", message: "Por favor, completá todos los campos.");
       return;
     }
 
@@ -41,8 +42,9 @@ class _ModalReporteState extends State<ModalReporte> {
     setState(() => _isLoading = false);
 
     Get.back();
-    Get.snackbar("¡Enviado!", "Gracias por tu reporte, Thomas.",
-        backgroundColor: const Color(0xFF6BBA4A), colorText: Colors.white);
+    CustomToast.showSuccess(
+        title: "Reporte enviado",
+        message: "Gracias por tu feedback, lo revisaremos pronto.");
   }
 
   @override
