@@ -67,7 +67,7 @@ class _SecurityFingerState extends State<SecurityFinger> with ResponsiveMixin {
                 child: Column(
                   children: <Widget>[
                     const Spacer(flex: 2),
-                    Image.asset("assets/images/bloqueo.png",
+                    Image.asset("assets/images/bloqueo.webp",
                         width: setWidth(250), height: setHeight(250)),
                     SizedBox(height: setHeight(20)),
                     Text(
@@ -102,21 +102,38 @@ class _SecurityFingerState extends State<SecurityFinger> with ResponsiveMixin {
                       child: SizedBox(
                         height: setHeight(60),
                         width: MediaQuery.of(context).size.width * 0.8,
-                        child: ElevatedButton(
-                          onPressed: _authenticate,
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFFFE500),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              )),
-                          child: Text(
-                            'Desbloquear',
-                            style: TextStyle(
-                                fontSize: setSp(30),
-                                fontWeight: FontWeight.normal,
-                                color: Colors.black),
-                          ),
-                        ),
+                        child: Obx(() => ElevatedButton(
+                              // Si está cargando, el onPressed en null desactiva el botón
+                              onPressed:
+                                  securityFingerController.isLoading.value
+                                      ? null
+                                      : _authenticate,
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFFFE500),
+                                  disabledBackgroundColor:
+                                      const Color(0xFFFFE500).withOpacity(
+                                          0.7), // Color al estar inactivo
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  )),
+                              child: securityFingerController.isLoading.value
+                                  ? SizedBox(
+                                      height: setHeight(25),
+                                      width: setHeight(25),
+                                      // Un spinner negro queda perfecto con el amarillo de Ya Paso
+                                      child: const CircularProgressIndicator(
+                                        color: Colors.black,
+                                        strokeWidth: 3,
+                                      ),
+                                    )
+                                  : Text(
+                                      'Desbloquear',
+                                      style: TextStyle(
+                                          fontSize: setSp(30),
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.black),
+                                    ),
+                            )),
                       ),
                     ),
                   ],

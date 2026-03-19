@@ -78,12 +78,15 @@ class BannerCard extends StatelessWidget with ResponsiveMixin {
                       color: const Color(0xFFFFE500),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text(
-                      'TIP', // Cambié "Nuevo" por "TIP" que tiene más sentido aquí
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: setSp(10),
-                        fontWeight: FontWeight.bold,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        'TIP', // Cambié "Nuevo" por "TIP" que tiene más sentido aquí
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: setSp(10),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

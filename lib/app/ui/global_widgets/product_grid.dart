@@ -22,7 +22,7 @@ class ProductGrid extends StatelessWidget with ResponsiveMixin {
                 child: Column(
               children: [
                 Image.asset(
-                  "assets/images/not_load.png",
+                  "assets/images/not_load.webp",
                   width: MediaQuery.of(context).size.width * 0.5,
                 ),
                 Text(
@@ -108,7 +108,7 @@ class ProductCard extends StatelessWidget with ResponsiveMixin {
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return Image.asset(
-                            'assets/images/not_load.png', // Tu imagen de respaldo
+                            'assets/images/not_load.webp', // Tu imagen de respaldo
                             height: setHeight(90),
                             fit: BoxFit.cover,
                           );

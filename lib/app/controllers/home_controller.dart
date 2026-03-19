@@ -112,9 +112,6 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _checkTokenBackground();
-    getTopSellingProducts(); // Trae los productos más vendidos
-    balanceController.fetchBalance();
 
     searchFocusNode.addListener(() {
       isSearchFocused.value = searchFocusNode.hasFocus;
@@ -130,6 +127,14 @@ class HomeController extends GetxController {
         searchResultsFromApi.clear(); // Si borró todo, vaciamos la lista
       }
     }, time: const Duration(milliseconds: 500));
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    _checkTokenBackground();
+    getTopSellingProducts(); // Trae los productos más vendidos
+    balanceController.fetchBalance();
   }
 
   Future<void> _checkTokenBackground() async {
@@ -310,8 +315,8 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
-    // searchController.dispose();
-    // searchFocusNode.dispose();
+    searchController.dispose();
+    searchFocusNode.dispose();
     super.onClose();
   }
 }

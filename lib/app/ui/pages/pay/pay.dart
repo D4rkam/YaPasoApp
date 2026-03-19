@@ -171,17 +171,17 @@ class _PayScreenState extends State<PayScreen> with ResponsiveMixin {
                               fontSize: setSp(28))),
                       SizedBox(height: setHeight(25)),
                       PaymentMethodTile(
-                        imageUrl: "assets/images/y_yapaso.png",
+                        imageUrl: "assets/images/y_yapaso.webp",
                         title: 'Tu saldo',
                         value: 'saldo',
                         groupValue: selectedMethod,
                         isEnabled: payController.balanceSufficient,
-                        isEnabledImage: "assets/images/logo-negativo.png",
+                        isEnabledImage: "assets/images/logo-negativo.webp",
                         onChanged: (value) =>
                             setState(() => selectedMethod = value),
                       ),
                       PaymentMethodTile(
-                        imageUrl: "assets/images/mercado_pago.png",
+                        imageUrl: "assets/images/mercado_pago.webp",
                         title: 'Mercado Pago',
                         value: 'mercado_pago',
                         groupValue: selectedMethod,

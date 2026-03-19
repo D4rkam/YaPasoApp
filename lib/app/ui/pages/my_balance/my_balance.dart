@@ -189,7 +189,7 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
           top: setHeight(10),
           right: setWidth(10),
           child: Image.asset(
-            "assets/images/y_yapaso.png",
+            "assets/images/y_yapaso.webp",
             width: setWidth(68),
           ),
         ),
@@ -215,7 +215,7 @@ class TarjetaYaPaso extends StatelessWidget with ResponsiveMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Image.asset(
-                    "assets/images/icono_carga.png",
+                    "assets/images/icono_carga.webp",
                     width: setWidth(30),
                   ),
                   Text(

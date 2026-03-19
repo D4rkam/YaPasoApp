@@ -10,37 +10,50 @@ class SecurityFingerController extends GetxController {
   UsersProvider usersProvider = UsersProvider();
   final GetStorage _storage = GetStorage();
 
-  void goToHomeScreen() => Get.offAllNamed('/home');
+  // 1. Agregamos la variable reactiva
+  var isLoading = false.obs;
 
-  /// Flujo normal: el usuario desbloqueó biometría → validar sesión
+  void goToHomeScreen() =>
+      Future.delayed(const Duration(milliseconds: 100), () {
+        Get.offAllNamed('/home');
+      });
+
   Future<void> checkToken() async {
-    // 1. Hacemos la llamada. El BaseProvider se encarga de refrescar si hace falta.
-    ResponseApi response = await usersProvider.checkToken();
+    isLoading.value = true;
 
-    // 2. Si fue un éxito, avanzamos.
-    if (response.success) {
-      if (response.data != null) {
-        try {
-          final user = User.fromJson(response.data);
-          _storage.write("user", user.toJson());
-        } catch (e) {
-          logger.e("SecurityFinger: Error sanitizando user data: $e");
-          _storage.write("user", response.data);
+    try {
+      ResponseApi response = await usersProvider.checkToken();
+
+      if (response.success) {
+        if (response.data != null) {
+          try {
+            final user = User.fromJson(response.data);
+            _storage.write("user", user.toJson());
+          } catch (e) {
+            logger.e("SecurityFinger: Error sanitizando user data: $e");
+            _storage.write("user", response.data);
+          }
         }
-      }
 
-      // Refrescar saldo
-      if (Get.isRegistered<BalanceController>()) {
-        Get.find<BalanceController>().fetchBalance();
+        if (Get.isRegistered<BalanceController>()) {
+          Get.find<BalanceController>().fetchBalance();
+        }
+
+        // NO APAGAMOS EL SPINNER ACÁ.
+        // Dejamos que siga girando mientras el Future.delayed hace su cuenta regresiva.
+        goToHomeScreen();
+      } else {
+        // SI FALLA, ACÁ SÍ LO APAGAMOS
+        isLoading.value = false;
+
+        logger.i("checkToken falló definitivamente → Redirigiendo a Login");
+        _storage.remove("user");
+        Get.offNamedUntil('/login', (route) => false);
       }
-      goToHomeScreen();
-    } else {
-      // 3. Si falló, es porque el interceptor dijo "basta" (ej: Refresh Token expirado).
-      // El BaseProvider ya limpió el CookieJar y el Storage interno.
-      // Solo aseguramos la limpieza local y mandamos al Login.
-      logger.i("checkToken falló definitivamente → Redirigiendo a Login");
-      _storage.remove("user");
-      Get.offNamedUntil('/login', (route) => false);
+    } catch (e) {
+      // SI HAY ERROR (Ej: sin internet), TAMBIÉN LO APAGAMOS
+      isLoading.value = false;
+      logger.e("Error en checkToken: $e");
     }
   }
 }

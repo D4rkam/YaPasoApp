@@ -31,7 +31,7 @@ class FailureScreen extends StatelessWidget with ResponsiveMixin {
                           decoration: const BoxDecoration(
                               image: DecorationImage(
                                   image: AssetImage(
-                                    "assets/images/error_pago.png",
+                                    "assets/images/error_pago.webp",
                                   ),
                                   fit: BoxFit
                                       .contain)), // contain evita que se corte

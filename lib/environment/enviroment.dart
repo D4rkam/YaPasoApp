@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:prueba_buffet/utils/logger.dart';
 
 class Environment {
   Environment._();
@@ -10,6 +11,7 @@ class Environment {
 
   // 3. El Getter inteligente que decide qué URL usar
   static String get apiUrl {
+    logger.i("🌐 URL ACTUAL: ${kReleaseMode ? "PRODUCCIÓN" : "DESARROLLO"}");
     if (kReleaseMode) {
       return _prodUrl; // Usa esta cuando compiles para Azure o la Play Store
     } else {
