@@ -22,6 +22,10 @@ class HomeController extends GetxController {
   BalanceController get balanceController => Get.find<BalanceController>();
   Rx<double> get balanceUser => balanceController.balance;
 
+  RxBool isSearchingApi = false.obs;
+  RxBool hasConnectionError = false.obs;
+  RxBool isInitialLoading = true.obs;
+
   var productsFromApi = <Product>[].obs;
   List<String> listaCategorias = [
     "Snacks",
@@ -81,11 +85,22 @@ class HomeController extends GetxController {
   }
 
   Future<void> getTopSellingProducts() async {
-    var response = await productsProvider.getTopSellingProducts();
+    isInitialLoading.value = true;
+    hasConnectionError.value = false;
 
-    if (response.statusCode == 200) {
-      productsFromApi.assignAll(productFromJson(response.data));
-      productsFromApi.refresh();
+    try {
+      var response = await productsProvider.getTopSellingProducts();
+
+      if (response.statusCode == 200) {
+        productsFromApi.assignAll(productFromJson(response.data));
+      } else {
+        hasConnectionError.value = true;
+      }
+    } catch (e) {
+      hasConnectionError.value = true;
+      logger.e("Error cargando top selling: $e");
+    } finally {
+      isInitialLoading.value = false;
     }
   }
 
@@ -103,13 +118,7 @@ class HomeController extends GetxController {
 
   var searchQuery = ''.obs;
 
-  // ---> NUEVO: Lista separada que guarda los resultados que manda la API
   var searchResultsFromApi = <Product>[].obs;
-
-  // Para mostrar un circulito de carga mientras el servidor busca (opcional)
-  RxBool isSearchingApi = false.obs;
-
-  RxBool hasConnectionError = false.obs;
 
   @override
   void onInit() {
@@ -157,7 +166,7 @@ class HomeController extends GetxController {
   // ---> NUEVA FUNCIÓN: Busca en la base de datos real <---
   Future<void> searchProductsInBackend(String query) async {
     isSearchingApi.value = true;
-    hasConnectionError.value = false; // Reiniciamos el error antes de buscar
+    hasConnectionError.value = false;
 
     try {
       var response = await productsProvider.searchProducts(query: query);
@@ -165,14 +174,23 @@ class HomeController extends GetxController {
       if (response.statusCode == 200) {
         searchResultsFromApi.assignAll(productFromJson(response.data));
       } else {
-        // Si el backend tiró error 500, 404, etc.
         hasConnectionError.value = true;
       }
     } catch (e) {
-      // Si falló por Timeout o no hay internet
       hasConnectionError.value = true;
+      logger.e("Error buscando productos: $e");
     } finally {
       isSearchingApi.value = false;
+    }
+  }
+
+  void retryFetch() {
+    // Si estaba buscando algo, reintenta la búsqueda.
+    // Si el input está vacío, reintenta cargar el Home inicial.
+    if (searchQuery.value.trim().isNotEmpty) {
+      searchProductsInBackend(searchQuery.value);
+    } else {
+      getTopSellingProducts();
     }
   }
 

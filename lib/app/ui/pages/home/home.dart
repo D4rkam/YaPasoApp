@@ -124,13 +124,14 @@ class HomeContent extends StatelessWidget with ResponsiveMixin {
                       ),
 
                       // ---> LÓGICA DE ESTADOS: CARGANDO, ERROR, VACÍO o PRODUCTOS <---
-                      if (controller.isSearchingApi.value)
+                      if (controller.isInitialLoading.value ||
+                          controller.isSearchingApi.value)
                         SliverToBoxAdapter(
                           child: Padding(
                             padding: EdgeInsets.only(top: setHeight(40)),
                             child: const Center(
                               child: CircularProgressIndicator(
-                                  color: Colors.black),
+                                  color: Color(0xFFFFE500)),
                             ),
                           ),
                         )
@@ -138,9 +139,9 @@ class HomeContent extends StatelessWidget with ResponsiveMixin {
                         SliverToBoxAdapter(
                           child: Padding(
                             padding: EdgeInsets.only(top: setHeight(30)),
+                            // Le pasamos la función inteligente de reintento
                             child: ErrorServerState(
-                              onRetry: () => controller.searchProductsInBackend(
-                                  controller.searchQuery.value),
+                              onRetry: controller.retryFetch,
                             ),
                           ),
                         )
