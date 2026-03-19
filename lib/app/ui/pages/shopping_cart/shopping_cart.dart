@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/counter_product.dart';
@@ -9,6 +10,7 @@ import 'package:prueba_buffet/utils/helpers/image_helper.dart';
 class ShoppingCartScreen extends StatelessWidget with ResponsiveMixin {
   ShoppingCartScreen({super.key});
   final ShoppingCartController controller = Get.find<ShoppingCartController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,34 +32,109 @@ class ShoppingCartScreen extends StatelessWidget with ResponsiveMixin {
             style:
                 TextStyle(fontSize: setSp(25), fontWeight: FontWeight.normal),
           ),
-          // actions: [
-          //   IconButton(
-          //     onPressed: () {},
-          //     icon: const Icon(Icons.search_rounded),
-          //     iconSize: setSp(32),
-          //   ),
-          //   IconButton(
-          //     onPressed: () {},
-          //     icon: const Icon(Icons.filter_alt_rounded),
-          //     iconSize: setSp(32),
-          //   ),
-          //   SizedBox(width: setWidth(20))
-          // ],
         ),
         body: Obx(() => (controller.cartItems.isEmpty)
-            ? Center(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset("assets/images/cart_empty.webp"),
-                      Text("¡Tu carrito esta vacio!",
-                          style: TextStyle(
-                              fontSize: setSp(30),
-                              fontWeight: FontWeight.bold)),
-                    ]),
-              )
+            ? EmptyCartState()
             : ScreenWithItems(controller: controller)));
+  }
+}
+
+// ---------------------------------------------------------
+// NUEVO: ESTADO DE CARRITO VACÍO ANIMADO Y ESTÉTICO
+// ---------------------------------------------------------
+class EmptyCartState extends StatelessWidget with ResponsiveMixin {
+  EmptyCartState({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(setWidth(30)),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFE500)
+                  .withOpacity(0.15), // Fondo circular suave
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.shopping_cart_outlined,
+              size: setSp(80),
+              color: const Color(0xFFD4BE00),
+            ),
+          )
+              .animate(onPlay: (controller) => controller.repeat(reverse: true))
+              .moveY(
+                  begin: -5, end: 5, duration: 2000.ms, curve: Curves.easeInOut)
+              .scale(
+                  begin: const Offset(0.95, 0.95),
+                  end: const Offset(1.05, 1.05),
+                  duration: 2000.ms),
+
+          SizedBox(height: setHeight(30)),
+
+          // 2. Texto Principal
+          Text(
+            "¡Tu carrito está vacío!",
+            style: TextStyle(
+              fontSize: setSp(28),
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0),
+
+          SizedBox(height: setHeight(10)),
+
+          // 3. Subtítulo amigable
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: setWidth(40)),
+            child: Text(
+              "¿No sabés qué comer hoy? Mirá los productos del buffet y sumalos acá.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: setSp(16),
+                color: Colors.grey.shade600,
+                height: 1.3,
+              ),
+            ),
+          ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+
+          SizedBox(height: setHeight(40)),
+
+          // 4. Botón de acción
+          ElevatedButton.icon(
+            onPressed: () {
+              Get.toNamed(
+                "/products",
+              );
+            },
+            icon:
+                const Icon(Icons.restaurant_menu_rounded, color: Colors.black),
+            label: Text(
+              "Ver productos",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: setSp(18),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFFE500),
+              padding: EdgeInsets.symmetric(
+                  horizontal: setWidth(40), vertical: setHeight(15)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              elevation: 0, // Más plano, moderno
+            ),
+          )
+              .animate()
+              .fadeIn(delay: 400.ms)
+              .scale(begin: const Offset(0.8, 0.8)),
+        ],
+      ),
+    );
   }
 }
 
