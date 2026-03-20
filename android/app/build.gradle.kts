@@ -1,3 +1,10 @@
+import java.util.Properties
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(keystorePropertiesFile.inputStream())
+}
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -9,6 +16,18 @@ android {
     namespace = "com.example.prueba_buffet"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+
+    signingConfigs {
+        create("release") {
+            // Prioridad: key.properties (local) -> Variables de Entorno (GitHub) -> Fallback
+            val keystorePath = keystoreProperties.getProperty("storeFile") ?: "../../release-keystore.jks"
+            storeFile = file(keystorePath)
+            storePassword = keystoreProperties.getProperty("storePassword") ?: System.getenv("KEYSTORE_PASSWORD")
+            keyAlias = keystoreProperties.getProperty("keyAlias") ?: System.getenv("KEY_ALIAS")
+            keyPassword = keystoreProperties.getProperty("keyPassword") ?: System.getenv("KEY_PASSWORD")
+        }
+    }
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -36,7 +55,6 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         
-        // 👇 ACÁ ESTÁ EL CAMBIO CLAVE PARA QUE NO EXPLOTEN LOS PAQUETES
         minSdk = 24 
         
         targetSdk = flutter.targetSdkVersion
@@ -45,12 +63,10 @@ android {
     }
 
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+        getByName("release") {
             
-            // Traducción de tus reglas de ofuscación
+            signingConfig = signingConfigs.getByName("release")
+            
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
