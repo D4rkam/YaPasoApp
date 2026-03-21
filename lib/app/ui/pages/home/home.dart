@@ -112,7 +112,7 @@ class HomeContent extends StatelessWidget with ResponsiveMixin {
                                   controller.goToAllProducts();
                                 },
                                 child: Text(
-                                  "Ver más",
+                                  "Ver productos",
                                   style: TextStyle(
                                       fontSize: setSp(17),
                                       color: const Color(0xFFB3B3B3)),
@@ -150,10 +150,9 @@ class HomeContent extends StatelessWidget with ResponsiveMixin {
                           child: Padding(
                             padding: EdgeInsets.only(top: setHeight(30)),
                             child: EmptyProductsState(
-                              message: controller.searchQuery.value.isNotEmpty
-                                  ? "No hay productos para '${controller.searchQuery.value}'"
-                                  : "Aún no hay productos disponibles",
-                            ),
+                                message: controller.filteredProducts.isEmpty
+                                    ? "No se vendío ningún producto aún"
+                                    : "No se encontraron los productos más vendidos"),
                           ),
                         )
                       else
