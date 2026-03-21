@@ -10,7 +10,7 @@ class ProductsProvider extends BaseProvider {
     logger.i("--- Inicializando ProductsProvider (Hereda de BaseProvider) ---");
   }
 
-  Future<Response> getProducts({int limit = 20, String? cursor}) async {
+  Future<Response> getProducts({int limit = 10, String? cursor}) async {
     final queryMap = {
       "limit": limit.toString(),
       if (cursor != null) "cursor": cursor,

@@ -66,7 +66,12 @@ class AllProductsController extends GetxController {
 
     if (result.statusCode == 200 && result.data != null) {
       final data = result.data;
-      products.addAll(data['products'] ?? []);
+      final newProducts = data['products']
+              ?.map<ProductForCart>((p) => ProductForCart.fromJson(p))
+              .toList() ??
+          <ProductForCart>[];
+
+      products.addAll(newProducts);
       nextCursor = data['next_cursor'];
       hasMore.value = data['has_more'] ?? false;
     }

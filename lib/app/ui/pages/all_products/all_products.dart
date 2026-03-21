@@ -129,81 +129,92 @@ class AllProductsScreen extends StatelessWidget with ResponsiveMixin {
                                   }
 
                                   // 3. Grilla de productos
-                                  return Column(
-                                    children: [
-                                      Expanded(
-                                        // 👈 Deja que la grilla scrollee internamente
-                                        child: GridView.builder(
-                                          padding: EdgeInsets.only(
-                                            top: setHeight(25),
-                                            left: setWidth(20),
-                                            right: setWidth(20),
-                                            bottom: setHeight(20),
-                                          ),
-                                          physics:
-                                              const BouncingScrollPhysics(),
+                                  return CustomScrollView(
+                                    physics: const BouncingScrollPhysics(),
+                                    slivers: [
+                                      // La grilla convertida a Sliver
+                                      SliverPadding(
+                                        padding: EdgeInsets.only(
+                                          top: setHeight(25),
+                                          left: setWidth(20),
+                                          right: setWidth(20),
+                                          bottom: setHeight(20),
+                                        ),
+                                        sliver: SliverGrid(
                                           gridDelegate:
                                               SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount:
-                                                2, // Podrías cambiar esto según constraints.maxWidth si quisieras en el futuro
+                                            crossAxisCount: 2,
                                             childAspectRatio: 0.84,
                                             crossAxisSpacing: setWidth(15),
                                             mainAxisSpacing: setHeight(15),
                                           ),
-                                          itemCount: controller.products.length,
-                                          itemBuilder: (context, index) {
-                                            var product =
-                                                controller.products[index];
-                                            return ProductCard(
-                                                product: product);
-                                          },
+                                          delegate: SliverChildBuilderDelegate(
+                                            (context, index) {
+                                              var product =
+                                                  controller.products[index];
+                                              return ProductCard(
+                                                  product: product);
+                                            },
+                                            childCount:
+                                                controller.products.length,
+                                          ),
                                         ),
                                       ),
 
-                                      // 4. Botón "Cargar Más"
+                                      // El botón "Cargar más" como elemento final del scroll
                                       if (controller.hasMore.value)
-                                        SafeArea(
-                                          // SafeArea para evitar tapar el botón con el home indicator en iOS
-                                          top: false,
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
+                                        SliverToBoxAdapter(
+                                          child: SafeArea(
+                                            top: false,
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
                                                 bottom: setHeight(30),
-                                                top: setHeight(10)),
-                                            child: controller
-                                                    .isFetchingMore.value
-                                                ? const CircularProgressIndicator(
-                                                    color: Color(0xFFFFE500))
-                                                : TextButton(
-                                                    onPressed: controller
-                                                        .fetchMoreProducts,
-                                                    style: TextButton.styleFrom(
-                                                      backgroundColor:
-                                                          const Color(
-                                                              0xFFF5F5F5),
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  setWidth(30),
-                                                              vertical:
-                                                                  setHeight(
-                                                                      12)),
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10)),
-                                                    ),
-                                                    child: Text(
-                                                      "Cargar más",
-                                                      style: TextStyle(
-                                                        color: Colors.black87,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: setSp(16),
+                                                top: setHeight(10),
+                                              ),
+                                              child: Center(
+                                                // Centramos el botón/indicador
+                                                child: controller
+                                                        .isFetchingMore.value
+                                                    ? const CircularProgressIndicator(
+                                                        color:
+                                                            Color(0xFFFFE500))
+                                                    : TextButton(
+                                                        onPressed: controller
+                                                            .fetchMoreProducts,
+                                                        style: TextButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                              const Color(
+                                                                  0xFFF5F5F5),
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      setWidth(
+                                                                          30),
+                                                                  vertical:
+                                                                      setHeight(
+                                                                          12)),
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                        ),
+                                                        child: Text(
+                                                          "Cargar más",
+                                                          style: TextStyle(
+                                                            color:
+                                                                Colors.black87,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            fontSize: setSp(16),
+                                                          ),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                     ],
