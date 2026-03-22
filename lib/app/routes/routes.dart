@@ -20,4 +20,5 @@ abstract class Routes {
   static const HELP = '/help';
   static const LOGOUT = '/logout';
   static const PRODUCTS = '/products';
+  static const UPDATE_REQUIRED = '/update_required';
 }
