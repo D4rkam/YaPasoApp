@@ -25,6 +25,10 @@ class ProductsProvider extends BaseProvider {
     return await dio.get("${ApiUrl.PRODUCT_GET}$id");
   }
 
+  Future<Response> getCategoriesWithStock() async {
+    return await dio.get(ApiUrl.CATEGORIES_WITH_STOCK);
+  }
+
   Future<Response> getProductsByCategory(String category,
       {int limit = 20, String? cursor}) async {
     final queryMap = {

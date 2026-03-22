@@ -32,6 +32,8 @@ class ApiUrl {
   static final String PRODUCTS_GET = "$_hostServer/api/product/"; // GET
   static final String PRODUCTS_CATEGORY_GET =
       "$_hostServer/api/product/"; // GET
+  static final String CATEGORIES_WITH_STOCK =
+      "$_hostServer/api/categories/"; // GET
   static final String PRODUCT_SEARCH =
       "$_hostServer/api/product/search/"; // GET
   static final String PRODUCT_TOP_SELLING =

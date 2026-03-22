@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/app/controllers/balance_controller.dart';
 import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
+import 'package:prueba_buffet/app/data/models/category.dart';
 import 'package:prueba_buffet/app/data/models/product.dart';
 import 'package:prueba_buffet/app/data/models/response_api.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
@@ -27,12 +28,22 @@ class HomeController extends GetxController {
   RxBool isInitialLoading = true.obs;
 
   var productsFromApi = <Product>[].obs;
-  List<String> listaCategorias = [
-    "Snacks",
-    "Galletitas",
-    "Bebidas",
-    "Golosinas"
-  ];
+  RxList<Category> listaCategorias = <Category>[].obs;
+  RxBool isLoadingCategories = true.obs;
+
+  Future<void> fetchCategorias() async {
+    isLoadingCategories.value = true;
+    try {
+      var response = await productsProvider.getCategoriesWithStock();
+      if (response.statusCode == 200) {
+        listaCategorias.assignAll(categoryFromJson(response.data));
+      }
+    } catch (e) {
+      logger.e("Error cargando categorias: $e");
+    } finally {
+      isLoadingCategories.value = false;
+    }
+  }
 
   void signOut() {
     if (Get.isRegistered<ShoppingCartController>()) {
@@ -65,8 +76,10 @@ class HomeController extends GetxController {
     );
   }
 
-  void goToCategory(String category) {
-    Get.find<MainShellController>().goToCategory(category);
+  void goToCategory(Category category) {
+    if (category.tieneStock) {
+      Get.find<MainShellController>().goToCategory(category.nombre);
+    }
   }
 
   void goToPay() {
@@ -109,6 +122,7 @@ class HomeController extends GetxController {
     await Future.wait([
       getTopSellingProducts(),
       balanceController.fetchBalance(),
+      fetchCategorias(),
     ]);
   }
 
@@ -146,6 +160,7 @@ class HomeController extends GetxController {
     _checkTokenBackground();
     getTopSellingProducts(); // Trae los productos más vendidos
     balanceController.fetchBalance();
+    fetchCategorias();
   }
 
   Future<void> _checkTokenBackground() async {

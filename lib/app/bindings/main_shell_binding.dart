@@ -16,7 +16,7 @@ class MainShellBinding implements Bindings {
 
     // 3. Controladores de las Pestañas (TABS)
     // Usamos lazyPut para que NO llamen a sus onInit() hasta que el usuario abra la pestaña
-    Get.lazyPut<HomeController>(() => HomeController());
+    Get.put<HomeController>(HomeController(), permanent: true);
     Get.lazyPut<CategoryController>(() => CategoryController(), fenix: true);
     Get.lazyPut<OrderController>(() => OrderController(), fenix: true);
 

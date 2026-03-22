@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:prueba_buffet/app/controllers/balance_controller.dart';
 import 'package:prueba_buffet/app/controllers/home_controller.dart';
 import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
+import 'package:prueba_buffet/app/data/models/category.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/carrusel.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/category_item.dart';
@@ -85,7 +87,7 @@ class HomeContent extends StatelessWidget with ResponsiveMixin {
                           child: SizedBox(
                             height: setHeight(100),
                             child: ListCategory(
-                              categorys: controller.listaCategorias,
+                              categories: controller.listaCategorias,
                             ),
                           ),
                         ),
@@ -298,35 +300,71 @@ class CustomAppBar extends StatelessWidget with ResponsiveMixin {
 class ListCategory extends StatelessWidget {
   ListCategory({
     super.key,
-    required this.categorys,
+    required this.categories,
   });
 
-  final List categorys;
-
-  final List categorysIcon = [
-    ProjectImages.snacksIcon,
-    ProjectImages.galletitasIcon,
-    ProjectImages.bebidaIcon,
-    ProjectImages.golosinasIcon
-  ];
-
+  // Ahora recibe la lista observable de Objetos Category
+  final RxList<Category> categories;
   final HomeController controller = Get.find();
+
+  // Función auxiliar para asignar íconos estáticos basados en el nombre que viene de la BD
+  String _getIconForCategory(String nombreCategoria) {
+    switch (nombreCategoria.toLowerCase()) {
+      case 'snacks':
+        return ProjectImages.snacksIcon;
+      case 'galletitas':
+        return ProjectImages.galletitasIcon;
+      case 'bebidas':
+        return ProjectImages.bebidaIcon;
+      case 'golosinas':
+        return ProjectImages.golosinasIcon;
+      default:
+        return ProjectImages.snacksIcon; // Icono por defecto
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: categorys.length,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (_, index) {
-        return Row(children: [
-          CategoryItem(
-              title: categorys[index],
-              imageUrl: categorysIcon[index],
-              onTap: () => controller.goToCategory(categorys[index])),
-        ]);
-      },
-    );
+    // Envolvemos en Obx para que reaccione cuando el backend devuelva la lista
+    return Obx(() {
+      if (controller.isLoadingCategories.value) {
+        return const Center(
+            child: CircularProgressIndicator(color: Color(0xFFFFE500)));
+      }
+
+      return ListView.builder(
+        shrinkWrap: true,
+        itemCount: categories.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (_, index) {
+          final category = categories[index];
+
+          return Opacity(
+            // Magia UI: Si no tiene stock, le bajamos la opacidad (grisado)
+            opacity: category.tieneStock ? 1.0 : 0.4,
+            child: Row(
+              children: [
+                CategoryItem(
+                  title: category.nombre,
+                  imageUrl: _getIconForCategory(category.nombre),
+                  onTap: () {
+                    if (category.tieneStock) {
+                      controller.goToCategory(category);
+                    } else {
+                      // Opcional: Un tostado avisando que no hay
+                      CustomToast.showWarning(
+                          title: "Categoría vacía",
+                          message:
+                              "Aún no hay ${category.nombre} en el buffet.");
+                    }
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    });
   }
 }
 
