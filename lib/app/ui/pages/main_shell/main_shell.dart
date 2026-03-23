@@ -16,6 +16,8 @@ import 'package:prueba_buffet/app/ui/pages/my_balance/my_balance.dart';
 import 'package:prueba_buffet/app/ui/pages/order/order.dart';
 import 'package:prueba_buffet/app/ui/pages/perfil/perfil.dart';
 
+import 'package:package_info_plus/package_info_plus.dart';
+
 class MainShell extends StatelessWidget {
   MainShell({super.key});
 
@@ -72,110 +74,141 @@ class ShellDrawer extends StatelessWidget with ResponsiveMixin {
     return Drawer(
       width: setWidth(230),
       backgroundColor: Colors.white,
-      child: ListView(
-        padding: EdgeInsets.zero,
+      // Cambiamos el ListView directo por un Column
+      child: Column(
         children: [
-          DrawerHeader(
-            margin: const EdgeInsets.only(bottom: 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // Expanded hace que la lista ocupe todo el espacio disponible
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
               children: [
-                CircleAvatar(
-                  radius: setHeight(32),
-                  backgroundColor:
-                      Colors.black, // El fondo oscuro que usabas en la API
-                  child: Text(
-                    _getInitials(homeController.userSession.name,
-                        homeController.userSession.lastName),
-                    style: TextStyle(
-                      color: Colors
-                          .white, // El color de texto que usabas en la API
-                      fontSize: setSp(22),
-                      fontWeight: FontWeight.bold,
-                    ),
+                DrawerHeader(
+                  margin: const EdgeInsets.only(bottom: 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: setHeight(32),
+                        backgroundColor: Colors.black,
+                        child: Text(
+                          _getInitials(homeController.userSession.name,
+                              homeController.userSession.lastName),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: setSp(22),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: setHeight(10)),
+                      Flexible(
+                        child: Text(
+                          "${homeController.userSession.username}",
+                          style: TextStyle(
+                              fontSize: setSp(20), fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          "${homeController.userSession.name} ${homeController.userSession.lastName}",
+                          style: TextStyle(fontSize: setSp(16)),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: setHeight(10)),
-                Flexible(
-                  child: Text(
-                    "${homeController.userSession.username}",
-                    style: TextStyle(
-                        fontSize: setSp(20), fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.ellipsis,
+                Obx(() => ListTile(
+                      selected: shellController.tabIndex.value == 1,
+                      selectedTileColor: const Color(0xFFFFE500),
+                      leading: Icon(
+                        Icons.person,
+                        color: shellController.tabIndex.value == 1
+                            ? Colors.black
+                            : const Color(0xFFFFE500),
+                        size: setSp(30),
+                      ),
+                      title: const Text('Perfil',
+                          style: TextStyle(fontWeight: FontWeight.normal)),
+                      onTap: () {
+                        shellController.tabIndex.value = 1;
+                        shellController.goToPerfil();
+                      },
+                    )),
+                ListTile(
+                  selected: shellController.tabIndex.value == 2,
+                  selectedTileColor: const Color(0xFFFFE500),
+                  leading: Icon(
+                    Icons.settings,
+                    color: shellController.tabIndex.value == 2
+                        ? Colors.black
+                        : const Color(0xFFFFE500),
+                    size: setSp(30),
                   ),
+                  title: const Text('Configuración',
+                      style: TextStyle(fontWeight: FontWeight.normal)),
+                  onTap: () {
+                    shellController.tabIndex.value = 2;
+                    shellController.goToConfiguracion();
+                  },
                 ),
-                Flexible(
-                  child: Text(
-                    "${homeController.userSession.name} ${homeController.userSession.lastName}",
-                    style: TextStyle(fontSize: setSp(16)),
-                    overflow: TextOverflow.ellipsis,
+                ListTile(
+                  selected: shellController.tabIndex.value == 3,
+                  selectedTileColor: const Color(0xFFFFE500),
+                  leading: Icon(
+                    Icons.chat,
+                    color: shellController.tabIndex.value == 3
+                        ? Colors.black
+                        : const Color(0xFFFFE500),
+                    size: setSp(30),
                   ),
+                  title: const Text('Ayuda',
+                      style: TextStyle(fontWeight: FontWeight.normal)),
+                  onTap: () {
+                    shellController.tabIndex.value = 3;
+                    shellController.goToHelp();
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    Icons.logout,
+                    color: const Color(0xFFFFE500),
+                    size: setSp(30),
+                  ),
+                  title: const Text('Cerrar sesión',
+                      style: TextStyle(fontWeight: FontWeight.normal)),
+                  onTap: () {
+                    homeController.signOut();
+                  },
                 ),
               ],
             ),
           ),
-          Obx(() => ListTile(
-                selected: shellController.tabIndex.value == 1,
-                selectedTileColor: const Color(0xFFFFE500),
-                leading: Icon(
-                  Icons.person,
-                  color: shellController.tabIndex.value == 1
-                      ? Colors.black
-                      : const Color(0xFFFFE500),
-                  size: setSp(30),
-                ),
-                title: const Text('Perfil',
-                    style: TextStyle(fontWeight: FontWeight.normal)),
-                onTap: () {
-                  shellController.tabIndex.value = 1;
-                  shellController.goToPerfil();
+
+          // --- FOOTER DE VERSIÓN ---
+          SafeArea(
+            child: Padding(
+              padding:
+                  EdgeInsets.only(bottom: setHeight(15), top: setHeight(10)),
+              child: FutureBuilder<PackageInfo>(
+                future: PackageInfo.fromPlatform(),
+                builder: (context, snapshot) {
+                  // Mientras carga, no mostramos nada. Cuando tiene la data, pinta la versión.
+                  if (snapshot.hasData) {
+                    return Text(
+                      'Versión ${snapshot.data!.version}',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: setSp(14),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
                 },
-              )),
-          ListTile(
-            selected: shellController.tabIndex.value == 2,
-            selectedTileColor: const Color(0xFFFFE500),
-            leading: Icon(
-              Icons.settings,
-              color: shellController.tabIndex.value == 2
-                  ? Colors.black
-                  : const Color(0xFFFFE500),
-              size: setSp(30),
+              ),
             ),
-            title: const Text('Configuración',
-                style: TextStyle(fontWeight: FontWeight.normal)),
-            onTap: () {
-              shellController.tabIndex.value = 2;
-              shellController.goToConfiguracion();
-            },
-          ),
-          ListTile(
-            selected: shellController.tabIndex.value == 3,
-            selectedTileColor: const Color(0xFFFFE500),
-            leading: Icon(
-              Icons.chat,
-              color: shellController.tabIndex.value == 3
-                  ? Colors.black
-                  : const Color(0xFFFFE500),
-              size: setSp(30),
-            ),
-            title: const Text('Ayuda',
-                style: TextStyle(fontWeight: FontWeight.normal)),
-            onTap: () {
-              shellController.tabIndex.value = 3;
-              shellController.goToHelp();
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.logout,
-              color: const Color(0xFFFFE500),
-              size: setSp(30),
-            ),
-            title: const Text('Cerrar sesión',
-                style: TextStyle(fontWeight: FontWeight.normal)),
-            onTap: () {
-              homeController.signOut();
-            },
           ),
         ],
       ),
