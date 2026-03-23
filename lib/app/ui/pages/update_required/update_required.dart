@@ -6,7 +6,6 @@ import 'package:url_launcher/url_launcher.dart';
 class UpdateRequiredView extends StatelessWidget {
   const UpdateRequiredView({super.key});
 
-  // 👇 REEMPLAZÁ ESTO CON LA URL REAL DE TU APP EN LA PLAY STORE 👇
   static const String _landingPage = 'https://yapaso.app';
 
   Future<void> _launchStore() async {
@@ -24,8 +23,6 @@ class UpdateRequiredView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Usamos WillPopScope para bloquear el botón "Atrás" de Android
-    // En GetX 5.0+ se usa PopScope, pero WillPopScope sigue funcionando
     return WillPopScope(
       onWillPop: () async => false, // Bloquea el retroceso
       child: Scaffold(
@@ -36,90 +33,69 @@ class UpdateRequiredView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // 1. EL LOGO MINIMALISTA ARRIBA
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Ya Paso",
-                    style: TextStyle(
-                      fontFamily: 'Lobster', // Tu fuente de logo
-                      fontSize: 28.sp,
-                      color: const Color(0xFFFFE500), // Tu amarillo
-                    ),
-                  ),
-                ),
-                SizedBox(height: 40.h),
-
-                // 2. ILUSTRACIÓN SIMPÁTICA CENTRAL
-                // Como no tengo tu SVG, uso un ícono grande, pero acá iría
-                // un SvgPicture.asset('assets/images/update_robot.svg')
+                // 1. ILUSTRACIÓN SIMPÁTICA CENTRAL
                 Container(
-                  height: 220.h,
-                  width: 220.h,
+                  height: 200.h,
+                  width: 200.h,
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFE500).withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
                     child: Icon(
-                      Icons
-                          .system_update_alt_rounded, // O Icons.construction_rounded
-                      size: 130.h,
+                      Icons.system_update_alt_rounded,
+                      size: 100.h,
                       color: const Color(0xFFFFE500),
                     ),
                   ),
                 ),
                 SizedBox(height: 50.h),
 
-                // 3. TÍTULO CON ONDA
+                // 2. TÍTULO CON ONDA
                 Text(
-                  "¡Pausa en el Buffet!",
+                  "¡Es hora de actualizar!",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily:
-                        'Lobster', // Usamos Lobster para darle onda universitaria
+                    fontFamily: 'Lobster',
                     fontSize: 36.sp,
-                    color: const Color(0xFF3F3F3F), // Gris oscuro
+                    color: const Color(0xFF3F3F3F),
                     height: 1.1,
                   ),
                 ),
                 SizedBox(height: 20.h),
 
-                // 4. EXPLICACIÓN CORTA Y CLARA (Simulando la voz de un compañero)
+                // 3. EXPLICACIÓN CORTA Y CLARA
                 Text(
-                  "Metimos unos cambios re grosos en el sistema para que tus pedidos salgan volando.\n\nPara seguir pidiendo tus empanadas y cafés sin filas, necesitás actualizar la app a la última versión.",
+                  "Mejoramos la app de Ya Paso para que el sistema sea más rápido y seguro.\nDescargá la nueva versión ahora para poder seguir haciendo tus pedidos sin problemas.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w500,
                     color: Colors.grey[700],
                     height: 1.5,
-                    fontFamily: 'Poppins', // O tu sans-serif por defecto
                   ),
                 ),
                 const Spacer(), // Empuja el botón hacia abajo
 
-                // 5. BOTÓN GIGANTE LLAMATIVO (Única Acción)
+                // 4. BOTÓN GIGANTE LLAMATIVO
                 SizedBox(
                   width: double.infinity,
                   height: 60.h,
                   child: ElevatedButton(
                     onPressed: _launchStore,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color(0xFFFFE500), // Amarillo vibrante
-                      foregroundColor: const Color(
-                          0xFF3F3F3F), // Texto oscuro para contraste
+                      backgroundColor: const Color(0xFFFFE500),
+                      foregroundColor: const Color(0xFF3F3F3F),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.r),
                       ),
                     ),
                     child: Text(
-                      "ACTUALIZAR EN LA TIENDA",
+                      "IR A DESCARGAR",
                       style: TextStyle(
                         fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                         letterSpacing: 1.2,
                       ),
                     ),
