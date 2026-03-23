@@ -92,10 +92,10 @@ class UpdateRequiredView extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      "IR A DESCARGAR",
+                      "ACTUALIZAR AHORA",
                       style: TextStyle(
                         fontSize: 18.sp,
-                        fontWeight: FontWeight.normal,
+                        fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
                       ),
                     ),

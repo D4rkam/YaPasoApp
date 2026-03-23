@@ -195,4 +195,8 @@ class UsersProvider extends BaseProvider {
       "description": description,
     });
   }
+
+  Future<Response> checkVersion() async {
+    return await dio.get(ApiUrl.APP_CONFIG);
+  }
 }
