@@ -21,7 +21,7 @@ android {
     signingConfigs {
         create("release") {
             // Prioridad: key.properties (local) -> Variables de Entorno (GitHub) -> Fallback
-            val keystorePath = keystoreProperties.getProperty("storeFile") ?: "../../release-keystore.jks"
+            val keystorePath = keystoreProperties.getProperty("storeFile") ?: "release-keystore.jks"
             storeFile = file(keystorePath)
             storePassword = keystoreProperties.getProperty("storePassword") ?: System.getenv("KEYSTORE_PASSWORD")
             keyAlias = keystoreProperties.getProperty("keyAlias") ?: System.getenv("KEY_ALIAS")
