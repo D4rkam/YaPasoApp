@@ -79,6 +79,10 @@ class User {
       this.balance,
       this.token});
 
+  String get accessToken => token?['access_token'] ?? '';
+  String get refreshToken => token?['refresh_token'] ?? '';
+  bool get hasValidToken => accessToken.isNotEmpty;
+
   /// Parseo seguro desde un Map. Nunca lanza excepciones.
   factory User.fromJson(dynamic rawJson) {
     try {

@@ -1,6 +1,6 @@
 name: prueba_buffet
 description: "App móvil para realizar pedidos rápidos, gestionar pagos y evitar filas en el buffet escolar."
-version: 2.1.0+1
+version: 2.2.0+1
 
 environment:
   sdk: ">=3.3.4 <4.0.0"
@@ -29,6 +29,9 @@ dependencies:
   cookie_jar: ^4.0.9
   logger: ^2.4.0
   package_info_plus: ^9.0.0
+  firebase_core: ^4.6.0
+  firebase_messaging: ^16.1.3
+  flutter_local_notifications: ^20.1.0
   
 
 dev_dependencies:

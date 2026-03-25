@@ -51,5 +51,8 @@ class ApiUrl {
 
   static final String SCHOOLS = "$_hostServer/api/schools/"; // GET
 
-  static final String APP_CONFIG = "$_hostServer/api/app-config/"; // POST
+  static final String APP_CONFIG = "$_hostServer/api/app-config"; // POST
+
+  static final String NOTIFICATIONS_DEVICE_TOKEN =
+      "$_hostServer/api/notifications/device-token"; // POST
 }

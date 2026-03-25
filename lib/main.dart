@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/app/bindings/initial_binding.dart';
 import 'package:prueba_buffet/app/bindings/login_binding.dart';
+import 'package:prueba_buffet/app/data/services/push_notification_service.dart';
 import 'package:prueba_buffet/app/routes/app_pages.dart';
 import 'package:prueba_buffet/app/routes/routes.dart';
 import 'package:prueba_buffet/app/ui/theme/app_theme.dart';
@@ -17,6 +18,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   userSession = User.safeFromStorage();
+
+  if (userSession.token != null) {
+    PushNotificationService.initializeApp();
+  }
+
   runApp(const MyApp());
 }
 

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "668804665409",
+    "project_id": "yapaso-api-notifications",
+    "storage_bucket": "yapaso-api-notifications.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668804665409:android:18a48fab811135ef3136c0",
+        "android_client_info": {
+          "package_name": "com.example.prueba_buffet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_3v8BigaXnf3Ir1WoiJm4JIs-d83nHCk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
