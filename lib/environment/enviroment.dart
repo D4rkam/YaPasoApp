@@ -4,7 +4,7 @@ import 'package:prueba_buffet/utils/logger.dart';
 class Environment {
   Environment._();
   // 1. Tu servidor local para cuando estás programando
-  static const String _devUrl = "http://192.168.1.38:8000";
+  static const String _devUrl = "http://192.168.1.39:8000";
 
   // 2. Tu servidor real en producción (Reemplazá esto por la URL de tu FastAPI en la nube)
   static const String _prodUrl = "https://api.yapaso.app";
