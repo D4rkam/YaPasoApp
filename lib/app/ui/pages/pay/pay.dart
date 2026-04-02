@@ -71,23 +71,31 @@ class _PayScreenState extends State<PayScreen> with ResponsiveMixin {
                             color: const Color(0xFF999999))),
                     SizedBox(height: setHeight(10)),
                     ...turno.value.map((recreo) {
+                      final slotTime = DateTime(hoy.year, hoy.month, hoy.day,
+                          recreo["hour"], recreo["minute"]);
+                      final cutoffTime =
+                          slotTime.subtract(const Duration(minutes: 5));
+                      final isDisabled = hoy.isAfter(cutoffTime);
+
                       return ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.timer_outlined,
-                            color: Colors.black),
+                        leading: Icon(Icons.timer_outlined,
+                            color: isDisabled ? Colors.grey : Colors.black),
                         title: Text(recreo["label"],
                             style: TextStyle(
                                 fontSize: setSp(18),
+                                color: isDisabled ? Colors.grey : Colors.black,
                                 fontWeight: FontWeight.w500)),
-                        onTap: () {
-                          setState(() {
-                            selectedDateTime = DateTime(hoy.year, hoy.month,
-                                hoy.day, recreo["hour"], recreo["minute"]);
-                            displayRetiroText =
-                                "Hoy - ${turno.key} (${recreo['label']})";
-                          });
-                          Get.back();
-                        },
+                        onTap: isDisabled
+                            ? null
+                            : () {
+                                setState(() {
+                                  selectedDateTime = slotTime;
+                                  displayRetiroText =
+                                      "Hoy - ${turno.key} (${recreo['label']})";
+                                });
+                                Get.back();
+                              },
                       );
                     }),
                     SizedBox(height: setHeight(15)),
