@@ -15,7 +15,6 @@ import 'package:prueba_buffet/utils/logger.dart'; // Ajustá la ruta de tu BaseP
 class PushNotificationService {
   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
-  // 👇 Ya no hace falta pedir el JWT por parámetro
   static Future<void> initializeApp() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -83,7 +82,7 @@ class PushNotificationService {
       }
 
       if (fcmToken != null) {
-        print("📱 Token FCM obtenido: $fcmToken");
+        logger.i("📱 Token FCM obtenido: $fcmToken");
         await _sendTokenToBackend(fcmToken);
       }
 
@@ -91,7 +90,7 @@ class PushNotificationService {
         _sendTokenToBackend(newToken);
       });
     } catch (e) {
-      print("❌ Error al obtener el token: $e");
+      logger.e("❌ Error al obtener el token: $e");
     }
   }
 
@@ -115,16 +114,16 @@ class PushNotificationService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("✅ Celular/PC registrado en Ya Paso vía Dio.");
+        logger.i("✅ Celular/PC registrado en Ya Paso vía Dio.");
       } else {
-        print("⚠️ Error del backend al guardar token: ${response.data}");
+        logger.w("⚠️ Error del backend al guardar token: ${response.data}");
       }
     } on DioException catch (e) {
       // Manejo de errores específico de Dio
-      print(
+      logger.e(
           "❌ Error de red al enviar token (Dio): ${e.response?.data ?? e.message}");
     } catch (e) {
-      print("❌ Error inesperado: $e");
+      logger.e("❌ Error inesperado: $e");
     }
   }
 }
