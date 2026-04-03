@@ -145,4 +145,50 @@ class CustomToast {
       animationDuration: const Duration(milliseconds: 400),
     );
   }
+
+  static void showWarning({required String title, required String message}) {
+    Get.snackbar(
+      "",
+      "",
+      titleText: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+      ),
+      messageText: Text(
+        message,
+        style: const TextStyle(
+          fontSize: 14,
+          color: Color(0xFF666666),
+        ),
+      ),
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.white,
+      borderRadius: 16,
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      boxShadows: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 15,
+          offset: const Offset(0, 5),
+        )
+      ],
+      icon: const Icon(
+        Icons.warning_amber_rounded,
+        color: Color(0xFFFFC107), // Un amarillo más suave para advertencias
+        size: 30,
+      ),
+      shouldIconPulse:
+          true, // Un pequeño latido para llamar la atención de la advertencia
+      borderWidth: 1,
+      borderColor: const Color(0xFFF5F5F5),
+      leftBarIndicatorColor:
+          const Color(0xFFFFC107), // Una sutil línea amarilla a la izquierda
+      animationDuration: const Duration(milliseconds: 400),
+    );
+  }
 }

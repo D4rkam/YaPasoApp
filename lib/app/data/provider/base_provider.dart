@@ -2,14 +2,20 @@ import 'package:dio/dio.dart'
     show Dio, BaseOptions, InterceptorsWrapper, DioException, Response;
 import 'package:dio/browser.dart' if (dart.library.io) 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:get/get.dart' hide Response; // <--- AGREGADO PARA EL REDIRECT
 import 'package:get_storage/get_storage.dart';
+import 'package:package_info_plus/package_info_plus.dart'; // <--- AGREGADO PARA LA VERSIÓN
+import 'package:prueba_buffet/app/routes/app_pages.dart'; // <--- AGREGADO PARA LA RUTA (Ajustá el import si es distinto)
+import 'package:prueba_buffet/app/routes/routes.dart';
 import 'package:prueba_buffet/utils/constants/api_constants.dart';
-
 import 'package:prueba_buffet/utils/logger.dart';
 
 class BaseProvider {
   final GetStorage _storage = GetStorage();
   late Dio dio;
+
+  // 👇 VARIABLE CACHEADA PARA LA VERSIÓN 👇
+  static String? _cachedVersion;
 
   BaseProvider() {
     logger.i("--- Inicializando BaseProvider (DIO) ---");
@@ -29,8 +35,19 @@ class BaseProvider {
     }
 
     dio.interceptors.add(InterceptorsWrapper(
-      // 1. INYECTAR COOKIES DESDE GETSTORAGE (Sobrevive al Hot Restart)
-      onRequest: (options, handler) {
+      // 1. INYECTAR COOKIES Y VERSIONES
+      // 👇 Convertimos onRequest en async para poder leer packageInfo 👇
+      onRequest: (options, handler) async {
+        // --- MAGIA DE VERSIONES MULTIPLATAFORMA ---
+        if (_cachedVersion == null) {
+          PackageInfo packageInfo = await PackageInfo.fromPlatform();
+          _cachedVersion = packageInfo.version; // Ej: "2.0.0"
+        }
+
+        options.headers['x-client-type'] = kIsWeb ? 'web' : 'mobile';
+        options.headers['x-app-version'] = _cachedVersion!;
+        // ------------------------------------------
+
         if (kIsWeb ||
             options.path.contains(ApiUrl.LOGIN) ||
             options.path.contains(ApiUrl.REGISTER)) {
@@ -47,7 +64,6 @@ class BaseProvider {
           cookies.add(refreshToken);
 
         if (cookies.isNotEmpty) {
-          // Usamos 'cookie' en minúscula para evitar que el cliente nativo lo filtre
           options.headers['cookie'] = cookies.join('; ');
           logger.i("🚀 ENVIANDO HEADERS: ${options.headers['cookie']}");
         } else {
@@ -63,9 +79,18 @@ class BaseProvider {
         return handler.next(response);
       },
 
-      // 3. MANEJAR EL 401 Y EL REFRESH
+      // 3. MANEJAR EL 401, EL REFRESH Y EL 426
       onError: (DioException e, handler) async {
         if (e.response != null) _guardarCookies(e.response!);
+
+        // 👇 LA GUILLOTINA DEL 426 (UPGRADE REQUIRED) 👇
+        if (e.response?.statusCode == 426) {
+          logger.w("🚨 VERSIÓN OBSOLETA: Forzando actualización obligatoria.");
+          Get.offAllNamed(Routes.UPDATE_REQUIRED);
+          return handler.next(
+              e); // Dejamos que el error fluya pero ya cambiamos la pantalla
+        }
+        // 👆 ----------------------------------------- 👆
 
         if (e.response?.statusCode == 401) {
           // Freno de mano para evitar bucle infinito
@@ -79,11 +104,9 @@ class BaseProvider {
             bool refreshed = await _refreshToken();
 
             if (refreshed) {
-              e.requestOptions.extra['isRetry'] =
-                  true; // Marcamos como reintento
+              e.requestOptions.extra['isRetry'] = true;
 
               if (!kIsWeb) {
-                // Cargamos los NUEVOS tokens recién horneados
                 final newAccess = _storage.read("access_token_user");
                 final newRefresh = _storage.read("refresh_token");
                 List<String> newCookies = [];
@@ -115,7 +138,6 @@ class BaseProvider {
   void _guardarCookies(Response response) {
     List<String> setCookies = [];
 
-    // Extraer de las cabeceras
     response.headers.forEach((name, values) {
       if (name.toLowerCase() == 'set-cookie') setCookies.addAll(values);
     });
@@ -162,7 +184,6 @@ class BaseProvider {
       if (response.statusCode == 200 || response.statusCode == 201) {
         _guardarCookies(response);
 
-        // Plan B: Si FastAPI devuelve los tokens en el cuerpo del JSON
         if (response.data is Map) {
           if (response.data['access_token'] != null) {
             _storage.write("access_token_user",

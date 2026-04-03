@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/app/controllers/pay_controller.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/input.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
@@ -20,6 +21,8 @@ class _PayScreenState extends State<PayScreen> with ResponsiveMixin {
   String? selectedMethod;
   DateTime? selectedDateTime;
   String displayRetiroText = "";
+
+  bool isLoading = false; // Variable para controlar el estado de carga
 
   final Map<String, List<Map<String, dynamic>>> _horariosPorTurno = {
     "Mañana": [
@@ -71,23 +74,31 @@ class _PayScreenState extends State<PayScreen> with ResponsiveMixin {
                             color: const Color(0xFF999999))),
                     SizedBox(height: setHeight(10)),
                     ...turno.value.map((recreo) {
+                      final slotTime = DateTime(hoy.year, hoy.month, hoy.day,
+                          recreo["hour"], recreo["minute"]);
+                      final cutoffTime =
+                          slotTime.subtract(const Duration(minutes: 5));
+                      final isDisabled = hoy.isAfter(cutoffTime);
+
                       return ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.timer_outlined,
-                            color: Colors.black),
+                        leading: Icon(Icons.timer_outlined,
+                            color: isDisabled ? Colors.grey : Colors.black),
                         title: Text(recreo["label"],
                             style: TextStyle(
                                 fontSize: setSp(18),
+                                color: isDisabled ? Colors.grey : Colors.black,
                                 fontWeight: FontWeight.w500)),
-                        onTap: () {
-                          setState(() {
-                            selectedDateTime = DateTime(hoy.year, hoy.month,
-                                hoy.day, recreo["hour"], recreo["minute"]);
-                            displayRetiroText =
-                                "Hoy - ${turno.key} (${recreo['label']})";
-                          });
-                          Get.back();
-                        },
+                        onTap: isDisabled
+                            ? null
+                            : () {
+                                setState(() {
+                                  selectedDateTime = slotTime;
+                                  displayRetiroText =
+                                      "Hoy - ${turno.key} (${recreo['label']})";
+                                });
+                                Get.back();
+                              },
                       );
                     }),
                     SizedBox(height: setHeight(15)),
@@ -196,37 +207,48 @@ class _PayScreenState extends State<PayScreen> with ResponsiveMixin {
                     child: SizedBox(
                       height: setHeight(65),
                       child: ElevatedButton(
-                        onPressed: () async {
-                          if (selectedMethod != null &&
-                              selectedDateTime != null) {
-                            GetStorage().write("order_datetime",
-                                selectedDateTime!.toIso8601String());
-                            if (selectedMethod == "mercado_pago") {
-                              payController
-                                  .pay(shoppingCartController.cartItems);
-                            }
-                            if (selectedMethod == "saldo") {
-                              await payController.executePaymentFlow();
-                            }
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'Completá el recreo y el método de pago'),
-                                  backgroundColor: Colors.redAccent),
-                            );
-                          }
-                        },
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                if (selectedMethod != null &&
+                                    selectedDateTime != null) {
+                                  GetStorage().write("order_datetime",
+                                      selectedDateTime!.toIso8601String());
+                                  if (selectedMethod == "mercado_pago") {
+                                    payController
+                                        .pay(shoppingCartController.cartItems);
+                                  }
+                                  if (selectedMethod == "saldo") {
+                                    await payController.executePaymentFlow();
+                                  }
+                                } else {
+                                  CustomToast.showError(
+                                      title: "No seleccionaste método de pago",
+                                      message:
+                                          "Por favor, selecciona un método de pago y un horario de retiro para continuar.");
+                                }
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFFE500),
                           foregroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),
-                        child: Text('Pagar',
-                            style: TextStyle(
-                                fontSize: setSp(25),
-                                fontWeight: FontWeight.normal)),
+                        child: isLoading
+                            ? CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              )
+                            : Text('Pagar',
+                                style: TextStyle(
+                                    fontSize: setSp(25),
+                                    fontWeight: FontWeight.normal)),
                       ),
                     ),
                   ),

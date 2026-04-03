@@ -30,7 +30,7 @@ class SuccessScreen extends StatelessWidget with ResponsiveMixin {
                           Image.asset(
                             successController.isPaymentForBalance
                                 ? "assets/images/CARGA_SALDO_EXITOSO.webp"
-                                : "assets/images/COMPRA_EXITOSA.webp",
+                                : "assets/images/order_confirm.webp",
                             width: setWidth(350),
                             fit: BoxFit
                                 .contain, // Para que la imagen no rompa bordes

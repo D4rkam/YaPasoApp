@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/app/bindings/initial_binding.dart';
+import 'package:prueba_buffet/app/bindings/login_binding.dart';
+import 'package:prueba_buffet/app/data/services/push_notification_service.dart';
 import 'package:prueba_buffet/app/routes/app_pages.dart';
 import 'package:prueba_buffet/app/routes/routes.dart';
 import 'package:prueba_buffet/app/ui/theme/app_theme.dart';
@@ -16,6 +18,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   userSession = User.safeFromStorage();
+
+  if (userSession.token != null) {
+    PushNotificationService.initializeApp();
+  }
+
   runApp(const MyApp());
 }
 
@@ -37,6 +44,15 @@ String _resolveInitialRoute() {
   return Routes.INITIAL;
 }
 
+Bindings? _resolveInitialBinding() {
+  if (userSession.id != null) {
+    // Si hay sesión, inyectamos todas las dependencias principales (Home, Perfil, etc)
+    return InitialBinding();
+  }
+
+  return LoginBinding();
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -54,7 +70,7 @@ class MyApp extends StatelessWidget {
           title: 'Ya paso',
           initialRoute: _resolveInitialRoute(),
           getPages: AppPages.pages,
-          initialBinding: InitialBinding(),
+          initialBinding: _resolveInitialBinding(),
           navigatorKey: Get.key,
           theme: AppTheme(enableDarkMode: false).theme(),
           localizationsDelegates: const [

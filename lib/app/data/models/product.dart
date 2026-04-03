@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final product = productFromJson(jsonString);
-
 import 'dart:convert';
 
 List<Product> productFromJson(List<dynamic> jsonData) =>
@@ -31,16 +27,33 @@ class Product {
     required this.sellerId,
   });
 
-  factory Product.fromJson(Map<String, dynamic> json) => Product(
-        name: json["name"] ?? "",
-        description: json["description"] ?? "",
-        price: (json["price"] as num?)?.toInt() ?? 0,
-        imageUrl: json["image_url"] ?? "",
-        quantity: (json["quantity"] as num?)?.toInt() ?? 0,
-        category: json["category"] ?? "",
-        id: (json["id"] as num?)?.toInt() ?? 0,
-        sellerId: (json["seller_id"] as num?)?.toInt() ?? 0,
-      );
+  factory Product.fromJson(Map<String, dynamic> json) {
+    // ---> LÓGICA DE PARSEO DE CATEGORÍA <---
+    // El backend ahora manda un objeto {"id": 1, "nombre": "Snacks", ...}
+    // en lugar de un simple String. Lo desarmamos acá.
+    String categoryName = "Sin categoría";
+    if (json["category"] != null) {
+      if (json["category"] is Map) {
+        // Si es un objeto, sacamos el nombre
+        categoryName = json["category"]["nombre"] ?? "Sin categoría";
+      } else {
+        // Si por alguna razón sigue viniendo como String, lo tomamos directo
+        categoryName = json["category"].toString();
+      }
+    }
+
+    return Product(
+      name: json["name"] ?? "",
+      // Ponemos defaults seguros por si viene del endpoint TopSelling que no trae estos datos
+      description: json["description"] ?? "Sin descripción",
+      price: (json["price"] as num?)?.toInt() ?? 0,
+      imageUrl: json["image_url"] ?? "",
+      quantity: (json["quantity"] as num?)?.toInt() ?? 1,
+      category: categoryName, // Pasamos el nombre procesado
+      id: (json["id"] as num?)?.toInt() ?? 0,
+      sellerId: (json["seller_id"] as num?)?.toInt() ?? 0,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "name": name,
@@ -48,6 +61,7 @@ class Product {
         "price": price,
         "image_url": imageUrl,
         "quantity": quantity,
+        "category": category,
         "id": id,
         "seller_id": sellerId,
       };

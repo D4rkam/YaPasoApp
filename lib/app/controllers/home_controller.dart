@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:prueba_buffet/app/controllers/balance_controller.dart';
 import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
+import 'package:prueba_buffet/app/data/models/category.dart';
 import 'package:prueba_buffet/app/data/models/product.dart';
 import 'package:prueba_buffet/app/data/models/response_api.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:prueba_buffet/app/data/provider/products_provider.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/update_dialog.dart';
+import 'package:prueba_buffet/utils/helpers/version_herlper.dart';
 
 import 'package:prueba_buffet/utils/logger.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeController extends GetxController {
   ProductsProvider productsProvider = ProductsProvider();
@@ -27,12 +32,22 @@ class HomeController extends GetxController {
   RxBool isInitialLoading = true.obs;
 
   var productsFromApi = <Product>[].obs;
-  List<String> listaCategorias = [
-    "Snacks",
-    "Galletitas",
-    "Bebidas",
-    "Golosinas"
-  ];
+  RxList<Category> listaCategorias = <Category>[].obs;
+  RxBool isLoadingCategories = true.obs;
+
+  Future<void> fetchCategorias() async {
+    isLoadingCategories.value = true;
+    try {
+      var response = await productsProvider.getCategoriesWithStock();
+      if (response.statusCode == 200) {
+        listaCategorias.assignAll(categoryFromJson(response.data));
+      }
+    } catch (e) {
+      logger.e("Error cargando categorias: $e");
+    } finally {
+      isLoadingCategories.value = false;
+    }
+  }
 
   void signOut() {
     if (Get.isRegistered<ShoppingCartController>()) {
@@ -65,8 +80,10 @@ class HomeController extends GetxController {
     );
   }
 
-  void goToCategory(String category) {
-    Get.find<MainShellController>().goToCategory(category);
+  void goToCategory(Category category) {
+    if (category.tieneStock) {
+      Get.find<MainShellController>().goToCategory(category.nombre);
+    }
   }
 
   void goToPay() {
@@ -109,6 +126,7 @@ class HomeController extends GetxController {
     await Future.wait([
       getTopSellingProducts(),
       balanceController.fetchBalance(),
+      fetchCategorias(),
     ]);
   }
 
@@ -138,6 +156,7 @@ class HomeController extends GetxController {
         searchResultsFromApi.clear(); // Si borró todo, vaciamos la lista
       }
     }, time: const Duration(milliseconds: 500));
+    _checkSoftUpdate();
   }
 
   @override
@@ -146,6 +165,66 @@ class HomeController extends GetxController {
     _checkTokenBackground();
     getTopSellingProducts(); // Trae los productos más vendidos
     balanceController.fetchBalance();
+    fetchCategorias();
+  }
+
+  Future<void> _checkSoftUpdate() async {
+    try {
+      // 1. Obtenemos nuestra versión actual instalada
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      String currentVersion = packageInfo.version;
+
+      // 2. Le pegamos a la API (Reemplazá 'dio' por cómo llames a tu cliente HTTP)
+      // Nota: Esta petición NO debe tener el interceptor que tira error 426
+      final response = await usersProvider.checkVersion();
+
+      String latestVersion = response.data['latest_version'];
+      String updateMessage = response.data['update_message'];
+
+      // 3. Verificamos si la versión de la API es mayor
+      if (isUpdateAvailable(currentVersion, latestVersion)) {
+        // 4. Regla de UX: No ser pesados. Revisamos si ya le avisamos hoy.
+        final box = GetStorage();
+        String today =
+            DateTime.now().toString().substring(0, 10); // Ej: 2026-03-23
+        String lastPrompt = box.read('last_update_prompt') ?? '';
+
+        if (lastPrompt != today) {
+          // Si no le avisamos hoy, mostramos el cartelito
+          _showUpdateDialog(updateMessage);
+
+          // Anotamos en la libreta que ya lo fastidiamos por hoy
+          box.write('last_update_prompt', today);
+        }
+      }
+    } catch (e) {
+      // Si el servidor falla o no hay internet, ignoramos el error silenciosamente.
+      // El alumno vino a comprar comida, no a debuguear.
+      print("Error buscando actualizaciones opcionales: $e");
+    }
+  }
+
+  void _showUpdateDialog(String mensaje) {
+    Get.dialog(
+      UpdateDialogWidget(
+        mensaje: mensaje,
+        onConfirm: () {
+          Get.back(); // Cerramos el popup
+          _launchStore(); // Ejecutamos la función de abrir URL
+        },
+        onCancel: () {
+          Get.back(); // Solo cerramos
+        },
+      ),
+      // barrierDismissible: false, // Opcional: si querés evitar que lo cierren tocando afuera
+    );
+  }
+
+  Future<void> _launchStore() async {
+    final Uri url = Uri.parse('https://yapaso.app');
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      Get.snackbar('Error', 'No se pudo abrir el navegador');
+    }
   }
 
   Future<void> _checkTokenBackground() async {

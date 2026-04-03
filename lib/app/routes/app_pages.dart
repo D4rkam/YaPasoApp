@@ -21,6 +21,7 @@ import 'package:prueba_buffet/app/ui/pages/register/register.dart';
 import 'package:prueba_buffet/app/ui/pages/security/security_finger.dart';
 import 'package:prueba_buffet/app/ui/pages/shopping_cart/shopping_cart.dart';
 import 'package:prueba_buffet/app/routes/routes.dart';
+import 'package:prueba_buffet/app/ui/pages/update_required/update_required.dart';
 
 abstract class AppPages {
   static final pages = [
@@ -66,5 +67,7 @@ abstract class AppPages {
     GetPage(name: Routes.PENDING_PAY, page: () => PendingScreen()),
     GetPage(name: Routes.PERFIL, page: () => const PerfilContent()),
     GetPage(name: Routes.PRODUCTS, page: () => AllProductsScreen()),
+    GetPage(
+        name: Routes.UPDATE_REQUIRED, page: () => const UpdateRequiredView()),
   ];
 }

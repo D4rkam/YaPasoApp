@@ -5,6 +5,7 @@ import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/data/models/response_api.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
+import 'package:prueba_buffet/app/data/services/push_notification_service.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
 
 class LoginController extends GetxController {
@@ -31,6 +32,7 @@ class LoginController extends GetxController {
         try {
           final user = User.fromJson(response.data);
           GetStorage().write("user", user.toJson());
+          PushNotificationService.initializeApp();
         } catch (e) {
           GetStorage().write("user", response.data);
         }
