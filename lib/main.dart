@@ -7,6 +7,7 @@ import 'package:prueba_buffet/app/data/services/push_notification_service.dart';
 import 'package:prueba_buffet/app/routes/app_pages.dart';
 import 'package:prueba_buffet/app/routes/routes.dart';
 import 'package:prueba_buffet/app/ui/theme/app_theme.dart';
+import 'package:prueba_buffet/features/auth/presentation/bindings/auth_binding_v2.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -18,6 +19,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   userSession = User.safeFromStorage();
+  GetStorage().write("enable_auth_v2_login", true);
+  GetStorage().write("enable_auth_v2_register", true);
+  GetStorage().write("enable_auth_v2_security", true);
 
   if (userSession.token != null) {
     PushNotificationService.initializeApp();
@@ -33,7 +37,9 @@ String _resolveInitialRoute() {
 
     // 2. Si la tiene activada, vamos a la pantalla de huella
     if (useBiometrics) {
-      return Routes.SECURITY;
+      final enableAuthV2Security =
+          GetStorage().read<bool>('enable_auth_v2_security') ?? false;
+      return enableAuthV2Security ? Routes.SECURITY_V2 : Routes.SECURITY;
     }
     // 3. Si no la activó, entramos directo al Home
     else {
@@ -48,6 +54,12 @@ Bindings? _resolveInitialBinding() {
   if (userSession.id != null) {
     // Si hay sesión, inyectamos todas las dependencias principales (Home, Perfil, etc)
     return InitialBinding();
+  }
+
+  final enableAuthV2Login =
+      GetStorage().read<bool>('enable_auth_v2_login') ?? false;
+  if (enableAuthV2Login) {
+    return AuthBindingV2();
   }
 
   return LoginBinding();

@@ -22,6 +22,10 @@ import 'package:prueba_buffet/app/ui/pages/security/security_finger.dart';
 import 'package:prueba_buffet/app/ui/pages/shopping_cart/shopping_cart.dart';
 import 'package:prueba_buffet/app/routes/routes.dart';
 import 'package:prueba_buffet/app/ui/pages/update_required/update_required.dart';
+import 'package:prueba_buffet/features/auth/presentation/bindings/auth_binding_v2.dart';
+import 'package:prueba_buffet/features/auth/presentation/pages/login_v2_page.dart';
+import 'package:prueba_buffet/features/auth/presentation/pages/register_v2_page.dart';
+import 'package:prueba_buffet/features/auth/presentation/pages/security_finger_v2_page.dart';
 
 abstract class AppPages {
   static final pages = [
@@ -37,11 +41,26 @@ abstract class AppPages {
       page: () => const LoginScreen(),
       binding: LoginBinding(),
     ),
+    GetPage(
+      name: Routes.LOGIN_V2,
+      page: () => const LoginV2Page(),
+      binding: AuthBindingV2(),
+    ),
 
     GetPage(
       name: Routes.REGISTER,
       page: () => const RegisterPage(),
       binding: RegisterBinding(),
+    ),
+    GetPage(
+      name: Routes.REGISTER_V2,
+      page: () => const RegisterV2Page(),
+      binding: AuthBindingV2(),
+    ),
+    GetPage(
+      name: Routes.SECURITY_V2,
+      page: () => const SecurityFingerV2Page(),
+      binding: AuthBindingV2(),
     ),
     GetPage(
         name: Routes.PRODUCT,

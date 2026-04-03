@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:prueba_buffet/app/routes/routes.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
 class IntroScreen extends StatelessWidget with ResponsiveMixin {
   IntroScreen({super.key});
+
+  String _resolveLoginRoute() {
+    final enableAuthV2Login =
+        GetStorage().read<bool>('enable_auth_v2_login') ?? false;
+    return enableAuthV2Login ? Routes.LOGIN_V2 : Routes.LOGIN;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +86,7 @@ class IntroScreen extends StatelessWidget with ResponsiveMixin {
                           width: double.infinity,
                           height: setHeight(65),
                           child: ElevatedButton(
-                            onPressed: () => Get.toNamed('/login'),
+                            onPressed: () => Get.toNamed(_resolveLoginRoute()),
                             style: ElevatedButton.styleFrom(
                               // Usar styleFrom es más moderno que ButtonStyle
                               backgroundColor: const Color(0xFFFFE500),
