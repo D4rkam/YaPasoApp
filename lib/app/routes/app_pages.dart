@@ -38,6 +38,12 @@ import 'package:prueba_buffet/features/category/presentation/bindings/category_b
 import 'package:prueba_buffet/features/category/presentation/pages/category_v2_page.dart';
 import 'package:prueba_buffet/features/all_products/presentation/bindings/all_products_binding_v2.dart';
 import 'package:prueba_buffet/features/all_products/presentation/pages/all_products_v2_page.dart';
+import 'package:prueba_buffet/features/profile/presentation/bindings/profile_binding_v2.dart';
+import 'package:prueba_buffet/features/profile/presentation/pages/profile_v2_content.dart';
+import 'package:prueba_buffet/features/pay_state/presentation/bindings/pay_state_binding_v2.dart';
+import 'package:prueba_buffet/features/pay_state/presentation/pages/success_v2_screen.dart';
+import 'package:prueba_buffet/features/pay_state/presentation/pages/failure_v2_screen.dart';
+import 'package:prueba_buffet/features/pay_state/presentation/pages/pending_v2_screen.dart';
 
 abstract class AppPages {
   static final pages = [
@@ -127,6 +133,26 @@ abstract class AppPages {
       name: Routes.CATEGORY_V2,
       page: () => const CategoryV2Page(),
       binding: CategoryBindingV2(),
+    ),
+    GetPage(
+      name: Routes.SUCCESS_PAY_V2,
+      page: () => SuccessV2Screen(),
+      binding: PayStateBindingV2(),
+    ),
+    GetPage(
+      name: Routes.FAILURE_PAY_V2,
+      page: () => FailureV2Screen(),
+      binding: PayStateBindingV2(),
+    ),
+    GetPage(
+      name: Routes.PENDING_PAY_V2,
+      page: () => PendingV2Screen(),
+      binding: PayStateBindingV2(),
+    ),
+    GetPage(
+      name: Routes.PERFIL_V2,
+      page: () => const ProfileV2Content(),
+      binding: ProfileBindingV2(),
     ),
     GetPage(
         name: Routes.UPDATE_REQUIRED, page: () => const UpdateRequiredView()),

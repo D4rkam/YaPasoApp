@@ -15,6 +15,11 @@ import 'package:prueba_buffet/app/ui/pages/home/home.dart';
 import 'package:prueba_buffet/app/ui/pages/my_balance/my_balance.dart';
 import 'package:prueba_buffet/app/ui/pages/order/order.dart';
 import 'package:prueba_buffet/app/ui/pages/perfil/perfil.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:prueba_buffet/features/orders/presentation/bindings/order_binding_v2.dart';
+import 'package:prueba_buffet/features/orders/presentation/pages/order_v2_content.dart';
+import 'package:prueba_buffet/features/profile/presentation/bindings/profile_binding_v2.dart';
+import 'package:prueba_buffet/features/profile/presentation/pages/profile_v2_content.dart';
 
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -35,10 +40,10 @@ class MainShell extends StatelessWidget {
                 index: shellController.pageIndex.value,
                 children: [
                   HomeContent(),
-                  OrderContent(),
+                  _buildOrderContent(),
                   _MyBalanceContent(),
                   _CategoryContent(),
-                  const PerfilContent(),
+                  _buildProfileContent(),
                   const ConfiguracionContent(),
                   const AyudaContent(),
                 ],
@@ -52,6 +57,26 @@ class MainShell extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildOrderContent() {
+    final enableOrdersV2 =
+        GetStorage().read<bool>('enable_orders_v2') ?? false;
+    if (enableOrdersV2) {
+      OrderBindingV2().dependencies();
+      return OrderV2Content();
+    }
+    return OrderContent();
+  }
+
+  Widget _buildProfileContent() {
+    final enableProfileV2 =
+        GetStorage().read<bool>('enable_profile_v2') ?? false;
+    if (enableProfileV2) {
+      ProfileBindingV2().dependencies();
+      return const ProfileV2Content();
+    }
+    return const PerfilContent();
   }
 }
 

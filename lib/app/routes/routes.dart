@@ -29,5 +29,10 @@ abstract class Routes {
   static const CATEGORY_V2 = '/category_v2';
   static const PRODUCTS = '/products';
   static const PRODUCTS_V2 = '/products_v2';
+  static const ORDERS_V2 = '/orders_v2';
+  static const PERFIL_V2 = '/perfil_v2';
+  static const SUCCESS_PAY_V2 = '/success_v2';
+  static const FAILURE_PAY_V2 = '/failure_v2';
+  static const PENDING_PAY_V2 = '/pending_v2';
   static const UPDATE_REQUIRED = '/update_required';
 }

@@ -28,6 +28,9 @@ void main() async {
   GetStorage().write("enable_products_v2", true);
   GetStorage().write("enable_category_v2", true);
   GetStorage().write("enable_all_products_v2", true);
+  GetStorage().write("enable_orders_v2", true);
+  GetStorage().write("enable_profile_v2", true);
+  GetStorage().write("enable_pay_state_v2", true);
 
   if (userSession.token != null) {
     PushNotificationService.initializeApp();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/app/controllers/home_controller.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:prueba_buffet/app/routes/routes.dart';
@@ -180,7 +181,11 @@ class _PayV2PageState extends State<PayV2Page> with ResponsiveMixin {
         await Get.find<HomeController>().getProducts();
       }
 
-      Get.offNamed(Routes.SUCCESS_PAY);
+      final enablePayStateV2 =
+          GetStorage().read<bool>('enable_pay_state_v2') ?? false;
+      Get.offNamed(
+        enablePayStateV2 ? Routes.SUCCESS_PAY_V2 : Routes.SUCCESS_PAY,
+      );
     }
   }
 
