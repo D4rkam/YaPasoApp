@@ -25,6 +25,9 @@ abstract class Routes {
   static const CONFIGURATION = '/configuration';
   static const HELP = '/help';
   static const LOGOUT = '/logout';
+  static const PRODUCT_V2 = '/product_v2';
+  static const CATEGORY_V2 = '/category_v2';
   static const PRODUCTS = '/products';
+  static const PRODUCTS_V2 = '/products_v2';
   static const UPDATE_REQUIRED = '/update_required';
 }

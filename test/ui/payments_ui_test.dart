@@ -18,7 +18,7 @@ class TestShoppingCartController extends ShoppingCartController {
   @override
   void onInit() {
     // Inicializamos la lista observable para que no sea null
-    cartItems = <ProductForCart>[].obs;
+    var cartItems = <ProductForCart>[].obs;
   }
 
   @override

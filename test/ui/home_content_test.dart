@@ -36,7 +36,7 @@ class TestMainShellController extends MainShellController {
 class TestShoppingCartController extends ShoppingCartController {
   @override
   void onInit() {
-    cartItems = <ProductForCart>[].obs;
+    var cartItems = <ProductForCart>[].obs;
   }
 }
 

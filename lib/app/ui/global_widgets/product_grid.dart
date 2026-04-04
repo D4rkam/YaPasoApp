@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/app/controllers/home_controller.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
@@ -76,7 +77,12 @@ class ProductCard extends StatelessWidget with ResponsiveMixin {
     return RepaintBoundary(
       child: GestureDetector(
         onTap: () {
-          Get.toNamed("/product", arguments: product.id);
+          final enableProductsV2 =
+              GetStorage().read<bool>('enable_products_v2') ?? false;
+          Get.toNamed(
+            enableProductsV2 ? "/product_v2" : "/product",
+            arguments: product.id,
+          );
         },
         child: SizedBox(
           height: setHeight(100),

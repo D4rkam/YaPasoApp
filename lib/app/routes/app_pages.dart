@@ -32,6 +32,12 @@ import 'package:prueba_buffet/features/cart/presentation/bindings/cart_binding_v
 import 'package:prueba_buffet/features/cart/presentation/pages/shopping_cart_v2_page.dart';
 import 'package:prueba_buffet/features/payments/presentation/bindings/payments_binding_v2.dart';
 import 'package:prueba_buffet/features/payments/presentation/pages/pay_v2_page.dart';
+import 'package:prueba_buffet/features/products/presentation/bindings/product_binding_v2.dart';
+import 'package:prueba_buffet/features/products/presentation/pages/product_v2_page.dart';
+import 'package:prueba_buffet/features/category/presentation/bindings/category_binding_v2.dart';
+import 'package:prueba_buffet/features/category/presentation/pages/category_v2_page.dart';
+import 'package:prueba_buffet/features/all_products/presentation/bindings/all_products_binding_v2.dart';
+import 'package:prueba_buffet/features/all_products/presentation/pages/all_products_v2_page.dart';
 
 abstract class AppPages {
   static final pages = [
@@ -107,6 +113,21 @@ abstract class AppPages {
     GetPage(name: Routes.PENDING_PAY, page: () => PendingScreen()),
     GetPage(name: Routes.PERFIL, page: () => const PerfilContent()),
     GetPage(name: Routes.PRODUCTS, page: () => AllProductsScreen()),
+    GetPage(
+      name: Routes.PRODUCTS_V2,
+      page: () => AllProductsV2Page(),
+      binding: AllProductsBindingV2(),
+    ),
+    GetPage(
+      name: Routes.PRODUCT_V2,
+      page: () => ProductV2Page(),
+      binding: ProductBindingV2(),
+    ),
+    GetPage(
+      name: Routes.CATEGORY_V2,
+      page: () => const CategoryV2Page(),
+      binding: CategoryBindingV2(),
+    ),
     GetPage(
         name: Routes.UPDATE_REQUIRED, page: () => const UpdateRequiredView()),
   ];

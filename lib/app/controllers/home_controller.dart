@@ -71,14 +71,18 @@ class HomeController extends GetxController {
   }
 
   void goToProduct() {
+    final enableProductsV2 =
+        GetStorage().read<bool>('enable_products_v2') ?? false;
     Get.toNamed(
-      "/product",
+      enableProductsV2 ? Routes.PRODUCT_V2 : "/product",
     );
   }
 
   void goToAllProducts() {
+    final enableAllProductsV2 =
+        GetStorage().read<bool>('enable_all_products_v2') ?? false;
     Get.toNamed(
-      "/products",
+      enableAllProductsV2 ? Routes.PRODUCTS_V2 : "/products",
     );
   }
 
@@ -89,7 +93,13 @@ class HomeController extends GetxController {
 
   void goToCategory(Category category) {
     if (category.tieneStock) {
-      Get.find<MainShellController>().goToCategory(category.nombre);
+      final enableCategoryV2 =
+          GetStorage().read<bool>('enable_category_v2') ?? false;
+      if (enableCategoryV2) {
+        Get.toNamed(Routes.CATEGORY_V2, arguments: category.nombre);
+      } else {
+        Get.find<MainShellController>().goToCategory(category.nombre);
+      }
     }
   }
 
@@ -300,7 +310,12 @@ class HomeController extends GetxController {
     searchController.clear();
     searchResultsFromApi.clear(); // Limpiamos para el próximo uso
     FocusManager.instance.primaryFocus?.unfocus();
-    Get.toNamed("/product", arguments: product.id.toString());
+    final enableProductsV2 =
+        GetStorage().read<bool>('enable_products_v2') ?? false;
+    Get.toNamed(
+      enableProductsV2 ? Routes.PRODUCT_V2 : "/product",
+      arguments: product.id.toString(),
+    );
   }
 
   RxBool isUpdatingProfile = false.obs;

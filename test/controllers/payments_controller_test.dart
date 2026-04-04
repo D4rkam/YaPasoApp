@@ -22,7 +22,7 @@ class MockPayProvider extends Mock implements PayProvider {}
 class TestShoppingCartController extends ShoppingCartController {
   @override
   void onInit() {
-    cartItems = <ProductForCart>[].obs;
+    final cartItems = <ProductForCart>[].obs;
   }
 }
 
