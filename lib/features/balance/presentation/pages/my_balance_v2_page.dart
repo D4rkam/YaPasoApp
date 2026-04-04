@@ -1,0 +1,356 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/features/balance/presentation/controllers/balance_controller_v2.dart';
+
+class MyBalanceV2Page extends StatelessWidget with ResponsiveMixin {
+  final ScrollController scrollController = ScrollController();
+  final controller = Get.find<BalanceController>();
+
+  MyBalanceV2Page({super.key}) {
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 200) {
+        controller.getMoreTransactions();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        titleSpacing: 0,
+        title: Text(
+          'Mi Saldo',
+          style: TextStyle(fontSize: setSp(25), fontWeight: FontWeight.normal),
+        ),
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Column(
+            children: [
+              Flexible(
+                flex: 0,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      TarjetaYaPasoV2(controller: controller),
+                      SizedBox(height: setHeight(40)),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: setWidth(20),
+                              bottom: setHeight(10),
+                            ),
+                            child: Text(
+                              'Mi actividad',
+                              style: TextStyle(
+                                fontSize: setSp(22),
+                                fontWeight: FontWeight.normal,
+                                color: const Color.fromARGB(255, 107, 107, 107),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: setWidth(20)),
+                        child: TransactionsPageV2(
+                          controller: controller,
+                          scrollController: scrollController,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class TarjetaYaPasoV2 extends StatelessWidget with ResponsiveMixin {
+  final BalanceController? controller;
+
+  const TarjetaYaPasoV2({super.key, this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: setWidth(375 * 0.9),
+          height: setHeight(170),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: const Color(0xFFFfE500),
+              width: setWidth(2),
+            ),
+            borderRadius: BorderRadius.circular(setHeight(20)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                spreadRadius: setWidth(3),
+                blurRadius: setWidth(7),
+                offset: Offset(0, setHeight(3)),
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          top: setHeight(10),
+          left: setWidth(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Billetera',
+                    style: TextStyle(
+                      fontSize: setSp(17),
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFFFFE500),
+                    ),
+                  ),
+                  SizedBox(width: setWidth(10)),
+                  Text(
+                    'Ya Paso',
+                    style: TextStyle(
+                      fontSize: setSp(17),
+                      fontFamily: 'Lobster',
+                      color: const Color(0xFFFFE500),
+                    ),
+                  ),
+                  SizedBox(width: setWidth(10)),
+                  Text(
+                    controller?.fileNum.toString() ?? '',
+                    style: TextStyle(
+                      fontSize: setSp(20),
+                      color: const Color(0xFF333333),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: setHeight(20)),
+              Text(
+                'Saldo Disponible',
+                style: TextStyle(
+                  fontSize: setSp(20),
+                  color: const Color(0xFF333333),
+                ),
+              ),
+              SizedBox(height: setHeight(5)),
+              Obx(() {
+                final double targetBalance = controller?.balance.value ?? 0;
+
+                return TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: 0, end: targetBalance),
+                  duration: const Duration(milliseconds: 800),
+                  curve: Curves.easeOutCirc,
+                  builder: (context, animValue, child) {
+                    return Text(
+                      '\$${NumberFormat.decimalPatternDigits(locale: 'es-AR', decimalDigits: 2).format(animValue)}',
+                      style: TextStyle(
+                        fontSize: setSp(30),
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
+                    );
+                  },
+                );
+              }),
+            ],
+          ),
+        ),
+        Positioned(
+          top: setHeight(10),
+          right: setWidth(10),
+          child: Image.asset(
+            'assets/images/y_yapaso.webp',
+            width: setWidth(68),
+          ),
+        ),
+        Positioned(
+          bottom: setHeight(-20),
+          left: setWidth(90),
+          child: SizedBox(
+            width: setWidth(150),
+            height: setHeight(40),
+            child: ElevatedButton(
+              onPressed: controller?.goToLoadBalanceScreen,
+              style: ElevatedButton.styleFrom(
+                elevation: 5,
+                shadowColor: Colors.grey.withOpacity(0.1),
+                backgroundColor: const Color(0xFFFfE500),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(setHeight(20)),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Image.asset(
+                    'assets/images/icono_carga.webp',
+                    width: setWidth(30),
+                  ),
+                  Text(
+                    'Cargar',
+                    style: TextStyle(
+                      fontSize: setSp(18),
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class TransactionsPageV2 extends StatelessWidget with ResponsiveMixin {
+  const TransactionsPageV2({
+    super.key,
+    required this.controller,
+    required this.scrollController,
+  });
+
+  final ScrollController scrollController;
+  final BalanceController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (controller.isLoading.value && controller.transactions.isEmpty) {
+        return const Center(
+          child: CircularProgressIndicator(color: Color(0xFFFFE500)),
+        );
+      }
+
+      if (controller.transactions.isEmpty && !controller.isLoading.value) {
+        return const Center(
+          child: Text(
+            'Aun no tienes movimientos',
+            style: TextStyle(color: Colors.grey),
+          ),
+        );
+      }
+
+      return ListView.builder(
+        controller: scrollController,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: controller.transactions.length + 1,
+        itemBuilder: (context, index) {
+          if (index == controller.transactions.length) {
+            if (controller.isFetchingMore.value) {
+              return const Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+            if (controller.nextCursor == null &&
+                controller.transactions.isNotEmpty) {
+              return const Center(child: Text('No hay mas transacciones'));
+            }
+            return const SizedBox.shrink();
+          }
+
+          final transaction = controller.transactions[index];
+          Widget transactionItem = Padding(
+            padding: EdgeInsets.only(bottom: setHeight(10)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      transaction['type'] == 'CARGA_SALDO'
+                          ? 'Carga de Saldo'
+                          : 'Compra',
+                      style: TextStyle(
+                        fontSize: setSp(20),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      DateFormat('dd/MM/yyyy')
+                          .format(DateTime.parse(transaction['created_at'])),
+                      style: TextStyle(
+                        color: const Color(0xFF6A6A6A),
+                        fontSize: setSp(17),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '\$${transaction['amount']}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: setSp(22),
+                      ),
+                    ),
+                    SizedBox(width: setWidth(10)),
+                    Icon(
+                      transaction['type'] == 'CARGA_SALDO'
+                          ? Icons.north_east
+                          : Icons.south_west,
+                      color: transaction['type'] == 'CARGA_SALDO'
+                          ? Colors.green
+                          : Colors.red,
+                      size: setSp(24),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+
+          if (index == 0) {
+            return transactionItem
+                .animate()
+                .fade(duration: 500.ms)
+                .slideX(
+                  begin: 0.2,
+                  end: 0,
+                  duration: 400.ms,
+                  curve: Curves.easeOutQuad,
+                )
+                .shimmer(
+                  color: const Color(0xFFFFE500).withOpacity(0.5),
+                  duration: 1200.ms,
+                );
+          }
+
+          return transactionItem
+              .animate()
+              .fade(duration: 400.ms)
+              .slideY(begin: 0.1, end: 0, duration: 300.ms);
+        },
+      );
+    });
+  }
+}

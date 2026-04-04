@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/data/services/push_notification_service.dart';
 import 'package:prueba_buffet/app/routes/routes.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/custom_input.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/features/cart/presentation/controllers/shopping_cart_controller_v2.dart';
 import 'package:prueba_buffet/features/auth/presentation/controllers/auth_login_controller_v2.dart';
 
 class LoginV2Page extends GetView<AuthLoginControllerV2> with ResponsiveMixin {

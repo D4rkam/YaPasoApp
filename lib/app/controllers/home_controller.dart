@@ -11,6 +11,7 @@ import 'package:prueba_buffet/app/data/models/response_api.dart';
 import 'package:prueba_buffet/app/data/models/user.dart';
 import 'package:prueba_buffet/app/data/provider/products_provider.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
+import 'package:prueba_buffet/app/routes/routes.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/update_dialog.dart';
 import 'package:prueba_buffet/utils/helpers/version_herlper.dart';
@@ -59,6 +60,13 @@ class HomeController extends GetxController {
   }
 
   void goToMyBalance() {
+    final enableBalanceV2 =
+        GetStorage().read<bool>('enable_balance_v2') ?? false;
+    if (enableBalanceV2) {
+      Get.toNamed(Routes.MY_BALANCE_V2);
+      return;
+    }
+
     Get.find<MainShellController>().goToBalance();
   }
 
@@ -75,9 +83,8 @@ class HomeController extends GetxController {
   }
 
   void goToShoppingCart() {
-    Get.toNamed(
-      "/shopping_cart",
-    );
+    final enableCartV2 = GetStorage().read<bool>('enable_cart_v2') ?? false;
+    Get.toNamed(enableCartV2 ? Routes.SHOPPING_CART_V2 : Routes.SHOPPING_CART);
   }
 
   void goToCategory(Category category) {
@@ -87,9 +94,9 @@ class HomeController extends GetxController {
   }
 
   void goToPay() {
-    Get.toNamed(
-      "/pay",
-    );
+    final enablePaymentsV2 =
+        GetStorage().read<bool>('enable_payments_v2') ?? false;
+    Get.toNamed(enablePaymentsV2 ? Routes.PAY_V2 : Routes.PAY);
   }
 
   Future<void> getProducts() async {

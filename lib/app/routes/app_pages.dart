@@ -26,6 +26,12 @@ import 'package:prueba_buffet/features/auth/presentation/bindings/auth_binding_v
 import 'package:prueba_buffet/features/auth/presentation/pages/login_v2_page.dart';
 import 'package:prueba_buffet/features/auth/presentation/pages/register_v2_page.dart';
 import 'package:prueba_buffet/features/auth/presentation/pages/security_finger_v2_page.dart';
+import 'package:prueba_buffet/features/balance/presentation/bindings/balance_binding_v2.dart';
+import 'package:prueba_buffet/features/balance/presentation/pages/my_balance_v2_page.dart';
+import 'package:prueba_buffet/features/cart/presentation/bindings/cart_binding_v2.dart';
+import 'package:prueba_buffet/features/cart/presentation/pages/shopping_cart_v2_page.dart';
+import 'package:prueba_buffet/features/payments/presentation/bindings/payments_binding_v2.dart';
+import 'package:prueba_buffet/features/payments/presentation/pages/pay_v2_page.dart';
 
 abstract class AppPages {
   static final pages = [
@@ -71,13 +77,28 @@ abstract class AppPages {
       page: () => MyBalance(),
       binding: BalanceBinding(),
     ),
+    GetPage(
+      name: Routes.MY_BALANCE_V2,
+      page: () => MyBalanceV2Page(),
+      binding: BalanceBindingV2(),
+    ),
     // GetPage(
     //     name: Routes.CATEGORY,
     //     page: () => const CategoryScreen(),
     //     binding: CategoryBinding()),
     GetPage(name: Routes.PAY, page: () => const PayScreen()),
+    GetPage(
+      name: Routes.PAY_V2,
+      page: () => const PayV2Page(),
+      binding: PaymentsBindingV2(),
+    ),
     // GetPage(name: Routes.ORDERS, page: () => Order(), binding: OrderBinding()),
     GetPage(name: Routes.SHOPPING_CART, page: () => ShoppingCartScreen()),
+    GetPage(
+      name: Routes.SHOPPING_CART_V2,
+      page: () => ShoppingCartV2Page(),
+      binding: CartBindingV2(),
+    ),
     GetPage(
         name: Routes.SUCCESS_PAY,
         page: () => SuccessScreen(),
