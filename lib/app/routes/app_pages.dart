@@ -8,6 +8,9 @@ import 'package:prueba_buffet/app/bindings/success_binding.dart';
 import 'package:prueba_buffet/app/ui/pages/all_products/all_products.dart';
 import 'package:prueba_buffet/app/ui/pages/category/category.dart';
 import 'package:prueba_buffet/app/ui/pages/main_shell/main_shell.dart';
+import 'package:prueba_buffet/features/shell/presentation/pages/main_shell_v2.dart';
+import 'package:prueba_buffet/features/shell/presentation/bindings/main_shell_binding_v2.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/app/ui/pages/intro/intro.dart';
 import 'package:prueba_buffet/app/ui/pages/login/login.dart';
 import 'package:prueba_buffet/app/ui/pages/my_balance/my_balance.dart';
@@ -51,8 +54,20 @@ abstract class AppPages {
     GetPage(name: Routes.SECURITY, page: () => const SecurityFinger()),
     GetPage(
       name: Routes.HOME,
-      page: () => MainShell(),
-      binding: MainShellBinding(),
+      page: () {
+        final enableShellV2 =
+            GetStorage().read<bool>('enable_shell_v2') ?? false;
+        return enableShellV2 ? MainShellV2() : MainShell();
+      },
+      binding: BindingsBuilder(() {
+        final enableShellV2 =
+            GetStorage().read<bool>('enable_shell_v2') ?? false;
+        if (enableShellV2) {
+          MainShellBindingV2().dependencies();
+        } else {
+          MainShellBinding().dependencies();
+        }
+      }),
     ),
     GetPage(
       name: Routes.LOGIN,
