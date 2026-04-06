@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/app/controllers/balance_controller.dart';
 import 'package:prueba_buffet/app/controllers/category_controller.dart';
+import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
 import 'package:prueba_buffet/app/controllers/security_finger_controller.dart';
 import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
 import 'package:prueba_buffet/app/data/provider/users_provider.dart';
@@ -13,7 +14,11 @@ class MainShellBindingV2 implements Bindings {
   @override
   void dependencies() {
     // 1. Controlador principal del esqueleto
-    Get.lazyPut<MainShellControllerV2>(() => MainShellControllerV2());
+    //    Registramos bajo AMBAS claves para que Get.find<MainShellController>()
+    //    y Get.find<MainShellControllerV2>() devuelvan la misma instancia.
+    final shellV2 = MainShellControllerV2();
+    Get.put<MainShellControllerV2>(shellV2);
+    Get.put<MainShellController>(shellV2);
 
     // 2. Provider compartido
     Get.lazyPut<UsersProvider>(() => UsersProvider(), fenix: true);

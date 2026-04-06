@@ -27,7 +27,7 @@ class HomeV2Content extends StatelessWidget with ResponsiveMixin {
 
   @override
   Widget build(BuildContext context) {
-    final MainShellController shellController = Get.find();
+    final MainShellController shellController = Get.find<MainShellController>();
 
     return GestureDetector(
       onTap: () {

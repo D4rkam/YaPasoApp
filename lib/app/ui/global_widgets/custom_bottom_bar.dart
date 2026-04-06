@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
 import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
 class FloatingBottomBar extends StatelessWidget with ResponsiveMixin {
-  final MainShellController controller;
+  final dynamic controller;
 
   const FloatingBottomBar({super.key, required this.controller});
 
