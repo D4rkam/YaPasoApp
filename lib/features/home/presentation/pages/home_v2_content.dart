@@ -301,47 +301,51 @@ class ProductGridV2 extends StatelessWidget with ResponsiveMixin {
   Widget build(BuildContext context) {
     final HomeControllerV2 homeController = Get.find<HomeControllerV2>();
 
-    return SliverPadding(
-      padding: EdgeInsets.symmetric(horizontal: setWidth(18)),
-      sliver: Obx(
-        () {
-          final targetList = homeController.filteredProducts;
-
-          return SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: setHeight(18),
-              crossAxisSpacing: setWidth(18),
-              childAspectRatio: 0.60,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final product = targetList[index];
-
-                return RepaintBoundary(
-                  child: Hero(
-                    tag: 'product-${product.id}',
-                    child: ProductCard(
-                      product: ProductForCart(
-                          id: product.id.toString(),
-                          name: product.name,
-                          price: product.price,
-                          imagePath: product.imageUrl,
-                          quantity: (product.quantity > 0) ? 1.obs : 0.obs,
-                          maxQuantity: product.quantity),
-                    ),
-                  ),
+    return Obx(
+      () {
+        final products = homeController.filteredProducts;
+        if (products.isEmpty) {
+          return SliverToBoxAdapter(
+            child: Center(
+                child: Column(
+              children: [
+                Image.asset(
+                  "assets/images/not_load.webp",
+                  width: MediaQuery.of(context).size.width * 0.5,
+                ),
+                Text(
+                  "Revise su conexión a Internet",
+                  style: TextStyle(
+                      fontSize: setSp(20),
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF8B8B8B)),
                 )
-                    .animate()
-                    .fade(duration: 400.ms, curve: Curves.easeOut)
-                    .slideY(
-                        begin: 0.1, duration: 400.ms, curve: Curves.easeOut);
-              },
-              childCount: targetList.length,
-            ),
+              ],
+            )),
           );
-        },
-      ),
+        }
+
+        return SliverGrid(
+          delegate: SliverChildBuilderDelegate(
+            (ctx, i) => ProductCard(
+              product: ProductForCart(
+                  id: products[i].id.toString(),
+                  name: products[i].name,
+                  price: products[i].price,
+                  imagePath: products[i].imageUrl,
+                  quantity: (products[i].quantity > 0) ? 1.obs : 0.obs,
+                  maxQuantity: products[i].quantity),
+            ),
+            childCount: (products.length > 4) ? 4 : products.length,
+          ),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1.1,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+        );
+      },
     );
   }
 }

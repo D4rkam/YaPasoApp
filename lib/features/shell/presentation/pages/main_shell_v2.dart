@@ -58,7 +58,7 @@ class MainShellV2 extends StatelessWidget {
             right: 0,
             bottom: 0,
             // Reusamos el botom bar pasando cast dynamic
-            child: FloatingBottomBar(controller: shellController as dynamic),
+            child: FloatingBottomBar(controller: shellController),
           ),
         ],
       ),
