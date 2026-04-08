@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
 
 class PendingV2Screen extends StatelessWidget with ResponsiveMixin {
   PendingV2Screen({super.key});

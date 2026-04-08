@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:prueba_buffet/app/data/provider/users_provider.dart';
+import 'package:prueba_buffet/core/data/providers/users_provider.dart';
 import 'package:prueba_buffet/features/orders/data/datasources/order_remote_data_source.dart';
 import 'package:prueba_buffet/features/orders/data/repositories/order_repository_impl.dart';
 import 'package:prueba_buffet/features/orders/domain/repositories/order_repository.dart';

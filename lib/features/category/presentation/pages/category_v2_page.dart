@@ -4,12 +4,15 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/core/models/product.dart';
 import 'package:prueba_buffet/features/category/presentation/controllers/category_controller_v2.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/shopping_cart_button.dart';
 import 'package:prueba_buffet/utils/helpers/image_helper.dart';
+import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/core/presentation/widgets/shopping_cart_button.dart';
 
-class CategoryV2Page extends GetView<CategoryControllerV2> with ResponsiveMixin {
-  const CategoryV2Page({super.key});
+class CategoryV2Page extends GetView<CategoryControllerV2>
+    with ResponsiveMixin {
+  final VoidCallback? onBack;
+
+  const CategoryV2Page({super.key, this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +37,7 @@ class CategoryV2Page extends GetView<CategoryControllerV2> with ResponsiveMixin 
             size: setSp(30),
             color: Colors.black,
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: onBack ?? () => Navigator.pop(context),
         ),
         title: Text(
           categoryTitle,
@@ -165,8 +166,7 @@ class _ProductCardCategoryV2 extends StatelessWidget with ResponsiveMixin {
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
                         style: TextStyle(
-                            fontSize: setSp(20),
-                            fontWeight: FontWeight.bold),
+                            fontSize: setSp(20), fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: setHeight(4)),
                       Text(

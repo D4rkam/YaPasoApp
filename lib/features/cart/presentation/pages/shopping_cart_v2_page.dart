@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
-import 'package:prueba_buffet/app/routes/routes.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/counter_product.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/core/presentation/widgets/counter_product.dart';
+import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/core/routes/routes.dart';
 import 'package:prueba_buffet/features/cart/presentation/controllers/shopping_cart_controller_v2.dart';
 import 'package:prueba_buffet/utils/helpers/image_helper.dart';
 
 class ShoppingCartV2Page extends StatelessWidget with ResponsiveMixin {
   ShoppingCartV2Page({super.key});
-  final ShoppingCartController controller = Get.find<ShoppingCartController>();
+  final ShoppingCartControllerV2 controller =
+      Get.find<ShoppingCartControllerV2>();
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +141,7 @@ class ScreenWithItemsV2 extends StatelessWidget with ResponsiveMixin {
     required this.controller,
   });
 
-  final ShoppingCartController controller;
+  final ShoppingCartControllerV2 controller;
 
   @override
   Widget build(BuildContext context) {
@@ -196,15 +197,17 @@ class ScreenWithItemsV2 extends StatelessWidget with ResponsiveMixin {
                             fontWeight: FontWeight.normal,
                           ),
                         ),
-                        Obx(
-                          () => Text(
+                        Obx(() {
+                          // Forzar dependencia reactiva en cartItems
+                          controller.cartItems.length;
+                          return Text(
                             '\$${controller.totalPrice}',
                             style: TextStyle(
                               fontSize: setSp(22),
                               fontWeight: FontWeight.bold,
                             ),
-                          ),
-                        ),
+                          );
+                        }),
                       ],
                     ),
                     SizedBox(height: setHeight(20)),
@@ -315,7 +318,7 @@ class ProductCardCartV2 extends StatelessWidget with ResponsiveMixin {
 
 class BuyButtonV2 extends StatelessWidget with ResponsiveMixin {
   const BuyButtonV2({super.key, required this.controller});
-  final ShoppingCartController controller;
+  final ShoppingCartControllerV2 controller;
 
   @override
   Widget build(BuildContext context) {

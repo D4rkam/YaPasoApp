@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
+import 'package:prueba_buffet/core/models/product.dart';
+import 'package:prueba_buffet/core/presentation/widgets/custom_toast.dart';
 import 'package:prueba_buffet/features/all_products/domain/repositories/all_products_repository.dart';
 import 'package:prueba_buffet/features/all_products/domain/usecases/get_all_products_use_case.dart';
 
@@ -12,7 +12,7 @@ class AllProductsControllerV2 extends GetxController {
   late final GetAllProductsUseCase _getAllProducts;
 
   // Estados observables
-  RxList<ProductForCart> products = <ProductForCart>[].obs;
+  RxList<Product> products = <Product>[].obs;
   var isLoading = true.obs;
   var isFetchingMore = false.obs;
 

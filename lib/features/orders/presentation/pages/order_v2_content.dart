@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/features/orders/presentation/controllers/order_controller_v2.dart';
-import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/features/shell/presentation/controllers/main_shell_controller_v2.dart';
+import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-// Reutilizamos los widgets de la UI legacy (ExpandableTicketCard, TicketContent, etc.)
-import 'package:prueba_buffet/app/ui/pages/order/order.dart'
-    show ExpandableTicketCard;
+import 'package:prueba_buffet/features/orders/presentation/widgets/expandable_ticket_card.dart';
 
 /// Versión V2 del contenido de Orders, embebido en el MainShell.
 class OrderV2Content extends StatelessWidget with ResponsiveMixin {
   final ScrollController scrollController = ScrollController();
-  final OrderControllerV2 controller = Get.find<OrderControllerV2>();
+  OrderControllerV2 get controller => Get.find<OrderControllerV2>();
 
   OrderV2Content({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final MainShellController shellController = Get.find();
+    final MainShellControllerV2 shellController = Get.find<MainShellControllerV2>();
     return NotificationListener<UserScrollNotification>(
       onNotification: (notification) {
         shellController.updateScrollDirection(notification.direction);

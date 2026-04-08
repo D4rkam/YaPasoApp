@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/features/pay_state/presentation/controllers/pay_state_controller_v2.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
 
 class SuccessV2Screen extends StatelessWidget with ResponsiveMixin {
   SuccessV2Screen({super.key});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:prueba_buffet/app/routes/routes.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
+
+import 'package:prueba_buffet/core/presentation/widgets/custom_toast.dart';
+import 'package:prueba_buffet/core/routes/routes.dart';
 import 'package:prueba_buffet/features/auth/domain/entities/register_command.dart';
 import 'package:prueba_buffet/features/auth/domain/usecases/check_session_use_case.dart';
 import 'package:prueba_buffet/features/auth/domain/usecases/register_use_case.dart';
@@ -75,11 +75,7 @@ class AuthRegisterControllerV2 extends GetxController {
     Get.toNamed(_resolveLoginRoute());
   }
 
-  String _resolveLoginRoute() {
-    final enableAuthV2Login =
-        GetStorage().read<bool>('enable_auth_v2_login') ?? false;
-    return enableAuthV2Login ? Routes.LOGIN_V2 : Routes.LOGIN;
-  }
+  String _resolveLoginRoute() => Routes.LOGIN;
 
   void onPageChanged(int index) {
     currentStep.value = index;

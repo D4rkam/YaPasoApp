@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:prueba_buffet/app/data/provider/users_provider.dart';
-import 'package:prueba_buffet/app/data/provider/wallet_provider.dart';
+import 'package:prueba_buffet/core/data/providers/users_provider.dart';
+import 'package:prueba_buffet/core/data/providers/wallet_provider.dart';
 import 'package:prueba_buffet/features/balance/data/datasources/balance_local_data_source.dart';
 import 'package:prueba_buffet/features/balance/data/datasources/balance_remote_data_source.dart';
 import 'package:prueba_buffet/features/balance/data/repositories/balance_repository_impl.dart';
@@ -29,13 +29,13 @@ class BalanceBindingV2 implements Bindings {
       fenix: true,
     );
 
-    if (Get.isRegistered<BalanceController>()) {
-      Get.find<BalanceController>().fetchBalance();
+    if (Get.isRegistered<BalanceControllerV2>()) {
+      Get.find<BalanceControllerV2>().fetchBalance();
       return;
     }
 
     Get.put(
-      BalanceController(repository: Get.find<BalanceRepository>()),
+      BalanceControllerV2(repository: Get.find<BalanceRepository>()),
       permanent: true,
     );
   }

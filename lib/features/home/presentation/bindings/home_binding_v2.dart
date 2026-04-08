@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:prueba_buffet/app/data/provider/products_provider.dart';
-import 'package:prueba_buffet/app/data/provider/users_provider.dart';
+import 'package:prueba_buffet/core/data/providers/products_provider.dart';
+import 'package:prueba_buffet/core/data/providers/users_provider.dart';
 import 'package:prueba_buffet/features/home/data/datasources/home_remote_data_source.dart';
 import 'package:prueba_buffet/features/home/data/repositories/home_repository_impl.dart';
 import 'package:prueba_buffet/features/home/domain/repositories/home_repository.dart';

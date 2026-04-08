@@ -1,4 +1,4 @@
-import 'package:prueba_buffet/app/data/provider/users_provider.dart';
+import 'package:prueba_buffet/core/data/providers/users_provider.dart';
 
 class ProfileRemoteDataSource {
   final UsersProvider _usersProvider;

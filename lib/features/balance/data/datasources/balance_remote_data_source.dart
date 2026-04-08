@@ -1,6 +1,6 @@
-import 'package:prueba_buffet/app/data/models/payment_response.dart';
-import 'package:prueba_buffet/app/data/provider/users_provider.dart';
-import 'package:prueba_buffet/app/data/provider/wallet_provider.dart';
+import 'package:prueba_buffet/core/data/providers/users_provider.dart';
+import 'package:prueba_buffet/core/data/providers/wallet_provider.dart';
+import 'package:prueba_buffet/core/models/payment_response.dart';
 import 'package:prueba_buffet/features/balance/data/models/balance_transactions_page_model.dart';
 
 class BalanceRemoteDataSource {

@@ -1,5 +1,5 @@
-import 'package:prueba_buffet/app/data/provider/products_provider.dart';
-import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
+import 'package:prueba_buffet/core/data/providers/products_provider.dart';
+import 'package:prueba_buffet/core/models/product.dart';
 
 class AllProductsRemoteDataSource {
   final ProductsProvider _productsProvider;
@@ -16,9 +16,9 @@ class AllProductsRemoteDataSource {
     if (response.statusCode == 200 && response.data != null) {
       final data = response.data;
       final products = data['products']
-              ?.map<ProductForCart>((p) => ProductForCart.fromJson(p))
+              ?.map<Product>((p) => Product.fromJson(p))
               .toList() ??
-          <ProductForCart>[];
+          <Product>[];
 
       return {
         'products': products,
@@ -28,7 +28,7 @@ class AllProductsRemoteDataSource {
     }
 
     return {
-      'products': <ProductForCart>[],
+      'products': <Product>[],
       'next_cursor': null,
       'has_more': false,
     };

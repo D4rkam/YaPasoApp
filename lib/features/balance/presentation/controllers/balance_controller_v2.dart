@@ -1,20 +1,20 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:prueba_buffet/app/data/models/user.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
-import 'package:prueba_buffet/app/ui/pages/load_balance/load_balance.dart';
+import 'package:prueba_buffet/core/models/user.dart';
+import 'package:prueba_buffet/core/presentation/widgets/custom_toast.dart';
+import 'package:prueba_buffet/features/balance/presentation/pages/load_balance_v2_page.dart';
 import 'package:prueba_buffet/features/balance/data/datasources/balance_local_data_source.dart';
 import 'package:prueba_buffet/features/balance/data/datasources/balance_remote_data_source.dart';
 import 'package:prueba_buffet/features/balance/data/repositories/balance_repository_impl.dart';
 import 'package:prueba_buffet/features/balance/domain/entities/balance_transaction.dart';
 import 'package:prueba_buffet/features/balance/domain/repositories/balance_repository.dart';
 import 'package:prueba_buffet/features/balance/domain/usecases/balance_use_cases.dart';
-import 'package:prueba_buffet/app/data/provider/users_provider.dart';
-import 'package:prueba_buffet/app/data/provider/wallet_provider.dart';
+import 'package:prueba_buffet/core/data/providers/users_provider.dart';
+import 'package:prueba_buffet/core/data/providers/wallet_provider.dart';
 import 'package:prueba_buffet/utils/logger.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class BalanceController extends GetxController {
+class BalanceControllerV2 extends GetxController {
   late final BalanceRepository _repository;
   late final GetStoredBalanceStateUseCase _getStoredBalanceState;
   late final FetchBalanceUseCase _fetchBalance;
@@ -22,7 +22,7 @@ class BalanceController extends GetxController {
   late final StartLoadBalanceUseCase _startLoadBalance;
   late final SavePendingLoadAmountUseCase _savePendingLoadAmount;
 
-  BalanceController({BalanceRepository? repository}) {
+  BalanceControllerV2({BalanceRepository? repository}) {
     _repository = repository ??
         BalanceRepositoryImpl(
           BalanceLocalDataSource(GetStorage()),
@@ -91,7 +91,7 @@ class BalanceController extends GetxController {
   }
 
   void goToLoadBalanceScreen() {
-    Get.to(() => LoadBalanceScreen());
+    Get.to(() => LoadBalanceV2Page());
   }
 
   Future<void> confirmLoadBalance(String amountText) async {

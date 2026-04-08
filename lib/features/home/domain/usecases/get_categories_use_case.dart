@@ -1,4 +1,4 @@
-import 'package:prueba_buffet/app/data/models/category.dart';
+import 'package:prueba_buffet/core/models/category.dart';
 import 'package:prueba_buffet/features/home/domain/repositories/home_repository.dart';
 
 class GetCategoriesUseCase {

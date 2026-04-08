@@ -3,22 +3,23 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import 'package:prueba_buffet/app/controllers/balance_controller.dart';
+import 'package:prueba_buffet/features/balance/presentation/controllers/balance_controller_v2.dart';
 import 'package:prueba_buffet/features/home/presentation/controllers/home_controller_v2.dart';
-import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
-import 'package:prueba_buffet/app/data/models/category.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
+import 'package:prueba_buffet/core/models/category.dart';
+import 'package:prueba_buffet/core/presentation/widgets/custom_toast.dart';
+import 'package:prueba_buffet/features/shell/presentation/controllers/main_shell_controller_v2.dart';
 import 'package:prueba_buffet/utils/constants/image_strings.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/carrusel.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/category_item.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/container_input.dart';
-import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/shopping_cart_button.dart';
+import 'package:prueba_buffet/core/presentation/widgets/carrusel.dart';
+import 'package:prueba_buffet/core/presentation/widgets/category_item.dart';
+import 'package:prueba_buffet/core/presentation/widgets/container_input.dart';
+import 'package:prueba_buffet/features/cart/presentation/controllers/shopping_cart_controller_v2.dart';
+import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/core/presentation/widgets/shopping_cart_button.dart';
 // Mantenemos ProductGrid importado porque es el widget global. Al usar Get.find<HomeController>() fallaba pq espera el viejo.
-// Tendremos que replicarlo o adaptarlo. 
+// Tendremos que replicarlo o adaptarlo.
 // Para el HomeV2 vamos a crear un CustomV2ProductGrid que lea de HomeControllerV2 para no romper lo legacy.
-import 'package:prueba_buffet/app/ui/global_widgets/product_grid.dart' show ProductCard;
+import 'package:prueba_buffet/core/presentation/widgets/product_grid.dart'
+    show ProductCard;
 
 class HomeV2Content extends StatelessWidget with ResponsiveMixin {
   HomeV2Content({super.key});
@@ -27,7 +28,8 @@ class HomeV2Content extends StatelessWidget with ResponsiveMixin {
 
   @override
   Widget build(BuildContext context) {
-    final MainShellController shellController = Get.find<MainShellController>();
+    final MainShellControllerV2 shellController =
+        Get.find<MainShellControllerV2>();
 
     return GestureDetector(
       onTap: () {
@@ -163,7 +165,6 @@ class HomeV2Content extends StatelessWidget with ResponsiveMixin {
                       ),
                     ],
                   ),
-
                   if (controller.isSearchFocused.value &&
                       controller.searchSuggestions.isNotEmpty)
                     Positioned(
@@ -224,7 +225,7 @@ class HomeV2Content extends StatelessWidget with ResponsiveMixin {
 class CustomAppBarV2 extends StatelessWidget with ResponsiveMixin {
   CustomAppBarV2({super.key});
   final HomeControllerV2 homeController = Get.find();
-  final BalanceController balanceController = Get.find();
+  final BalanceControllerV2 balanceController = Get.find<BalanceControllerV2>();
 
   @override
   Widget build(BuildContext context) {
@@ -328,13 +329,7 @@ class ProductGridV2 extends StatelessWidget with ResponsiveMixin {
         return SliverGrid(
           delegate: SliverChildBuilderDelegate(
             (ctx, i) => ProductCard(
-              product: ProductForCart(
-                  id: products[i].id.toString(),
-                  name: products[i].name,
-                  price: products[i].price,
-                  imagePath: products[i].imageUrl,
-                  quantity: (products[i].quantity > 0) ? 1.obs : 0.obs,
-                  maxQuantity: products[i].quantity),
+              product: products[i],
             ),
             childCount: (products.length > 4) ? 4 : products.length,
           ),
@@ -349,7 +344,6 @@ class ProductGridV2 extends StatelessWidget with ResponsiveMixin {
     );
   }
 }
-
 
 class ListCategoryV2 extends StatelessWidget {
   ListCategoryV2({

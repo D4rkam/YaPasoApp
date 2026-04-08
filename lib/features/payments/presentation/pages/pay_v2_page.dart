@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:prueba_buffet/app/controllers/home_controller.dart';
-import 'package:prueba_buffet/app/data/models/user.dart';
-import 'package:prueba_buffet/app/routes/routes.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/input.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+
+import 'package:prueba_buffet/features/home/presentation/controllers/home_controller_v2.dart';
+import 'package:prueba_buffet/core/models/user.dart';
+import 'package:prueba_buffet/core/presentation/widgets/custom_toast.dart';
+import 'package:prueba_buffet/core/presentation/widgets/input.dart';
+import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/core/routes/routes.dart';
 import 'package:prueba_buffet/features/balance/presentation/controllers/balance_controller_v2.dart';
 import 'package:prueba_buffet/features/cart/presentation/controllers/shopping_cart_controller_v2.dart';
 import 'package:prueba_buffet/features/payments/presentation/controllers/payments_controller_v2.dart';
@@ -21,8 +21,8 @@ class PayV2Page extends StatefulWidget {
 class _PayV2PageState extends State<PayV2Page> with ResponsiveMixin {
   final PaymentsControllerV2 _paymentsController =
       Get.find<PaymentsControllerV2>();
-  final ShoppingCartController _shoppingCartController =
-      Get.find<ShoppingCartController>();
+  final ShoppingCartControllerV2 _shoppingCartController =
+      Get.find<ShoppingCartControllerV2>();
 
   String? selectedMethod;
   DateTime? selectedDateTime;
@@ -174,18 +174,14 @@ class _PayV2PageState extends State<PayV2Page> with ResponsiveMixin {
       await _paymentsController.clearState();
       _shoppingCartController.clearCart();
 
-      if (Get.isRegistered<BalanceController>()) {
-        await Get.find<BalanceController>().fetchBalance();
+      if (Get.isRegistered<BalanceControllerV2>()) {
+        await Get.find<BalanceControllerV2>().fetchBalance();
       }
-      if (Get.isRegistered<HomeController>()) {
-        await Get.find<HomeController>().getProducts();
+      if (Get.isRegistered<HomeControllerV2>()) {
+        await Get.find<HomeControllerV2>().getTopSellingProducts();
       }
 
-      final enablePayStateV2 =
-          GetStorage().read<bool>('enable_pay_state_v2') ?? false;
-      Get.offNamed(
-        enablePayStateV2 ? Routes.SUCCESS_PAY_V2 : Routes.SUCCESS_PAY,
-      );
+      Get.offNamed(Routes.SUCCESS_PAY);
     }
   }
 

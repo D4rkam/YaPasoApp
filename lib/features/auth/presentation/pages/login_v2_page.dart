@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:prueba_buffet/app/data/services/push_notification_service.dart';
-import 'package:prueba_buffet/app/routes/routes.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/custom_input.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+
+import 'package:prueba_buffet/core/data/services/push_notification_service.dart';
+import 'package:prueba_buffet/core/presentation/widgets/custom_input.dart';
+import 'package:prueba_buffet/core/presentation/widgets/custom_toast.dart';
+import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/core/routes/routes.dart';
 import 'package:prueba_buffet/features/cart/presentation/controllers/shopping_cart_controller_v2.dart';
 import 'package:prueba_buffet/features/auth/presentation/controllers/auth_login_controller_v2.dart';
 
 class LoginV2Page extends GetView<AuthLoginControllerV2> with ResponsiveMixin {
   const LoginV2Page({super.key});
 
-  String _resolveRegisterRoute() {
-    final enableAuthV2Register =
-        GetStorage().read<bool>('enable_auth_v2_register') ?? false;
-    return enableAuthV2Register ? Routes.REGISTER_V2 : Routes.REGISTER;
-  }
+  String _resolveRegisterRoute() => Routes.REGISTER;
 
   Future<void> _onSubmit(AuthLoginControllerV2 controller) async {
     final success = await controller.submit();
@@ -28,8 +24,8 @@ class LoginV2Page extends GetView<AuthLoginControllerV2> with ResponsiveMixin {
       return;
     }
 
-    if (!Get.isRegistered<ShoppingCartController>()) {
-      Get.put<ShoppingCartController>(ShoppingCartController(),
+    if (!Get.isRegistered<ShoppingCartControllerV2>()) {
+      Get.put<ShoppingCartControllerV2>(ShoppingCartControllerV2(),
           permanent: true);
     }
 

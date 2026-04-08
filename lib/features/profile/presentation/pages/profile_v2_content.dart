@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/features/profile/presentation/controllers/profile_controller_v2.dart';
-import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/features/shell/presentation/controllers/main_shell_controller_v2.dart';
 
 class ProfileV2Content extends StatelessWidget with ResponsiveMixin {
   const ProfileV2Content({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final MainShellController shellController = Get.find<MainShellController>();
+    final MainShellControllerV2 shellController =
+        Get.find<MainShellControllerV2>();
     final ProfileControllerV2 controller = Get.find<ProfileControllerV2>();
 
     String getInitials(String name, String lastName) {
@@ -81,8 +82,7 @@ class ProfileV2Content extends StatelessWidget with ResponsiveMixin {
                                   radius: setHeight(32),
                                   backgroundColor: Colors.black,
                                   child: Text(
-                                    getInitials(
-                                        controller.userSession.name,
+                                    getInitials(controller.userSession.name,
                                         controller.userSession.lastName),
                                     style: TextStyle(
                                       color: Colors.white,
@@ -110,8 +110,8 @@ class ProfileV2Content extends StatelessWidget with ResponsiveMixin {
                         ),
                         SizedBox(height: setHeight(4)),
                         GestureDetector(
-                          onTap: () => _mostrarModalEdicionEmail(
-                              context, controller),
+                          onTap: () =>
+                              _mostrarModalEdicionEmail(context, controller),
                           child: Padding(
                             padding:
                                 EdgeInsets.symmetric(horizontal: setWidth(24)),
@@ -198,9 +198,8 @@ class ProfileV2Content extends StatelessWidget with ResponsiveMixin {
                               _buildCard(
                                 children: [
                                   _buildActionRow("Cambiar Contraseña",
-                                      onTap: () =>
-                                          _mostrarModalCambioPassword(
-                                              context, controller)),
+                                      onTap: () => _mostrarModalCambioPassword(
+                                          context, controller)),
                                 ],
                               ),
                               SizedBox(height: setHeight(120)),

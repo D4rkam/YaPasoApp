@@ -1,5 +1,5 @@
-import 'package:prueba_buffet/app/data/models/category.dart';
-import 'package:prueba_buffet/app/data/models/product.dart';
+import 'package:prueba_buffet/core/models/category.dart';
+import 'package:prueba_buffet/core/models/product.dart';
 
 abstract class HomeRepository {
   Future<List<Product>> getTopSellingProducts({int limit = 4});

@@ -1,5 +1,5 @@
-import 'package:prueba_buffet/app/data/models/category.dart';
-import 'package:prueba_buffet/app/data/models/product.dart';
+import 'package:prueba_buffet/core/models/category.dart';
+import 'package:prueba_buffet/core/models/product.dart';
 import 'package:prueba_buffet/features/home/data/datasources/home_remote_data_source.dart';
 import 'package:prueba_buffet/features/home/domain/repositories/home_repository.dart';
 

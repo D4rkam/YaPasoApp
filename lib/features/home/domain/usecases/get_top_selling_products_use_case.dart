@@ -1,4 +1,4 @@
-import 'package:prueba_buffet/app/data/models/product.dart';
+import 'package:prueba_buffet/core/models/product.dart';
 import 'package:prueba_buffet/features/home/domain/repositories/home_repository.dart';
 
 class GetTopSellingProductsUseCase {

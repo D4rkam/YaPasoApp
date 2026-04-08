@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/custom_input.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
-import 'package:prueba_buffet/app/ui/pages/terminos_condiciones/terminos_condiciones.dart';
+import 'package:prueba_buffet/core/presentation/widgets/custom_input.dart';
+import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/features/auth/presentation/pages/terminos_v2_page.dart';
 import 'package:prueba_buffet/features/auth/presentation/controllers/auth_register_controller_v2.dart';
 
 class RegisterV2Page extends GetView<AuthRegisterControllerV2>
@@ -393,7 +393,7 @@ class Step5CredentialsV2 extends GetView<AuthRegisterControllerV2>
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              Get.to(() => const TerminosYCondicionesScreen());
+                              Get.to(() => const TerminosV2Page());
                             },
                         ),
                       ],

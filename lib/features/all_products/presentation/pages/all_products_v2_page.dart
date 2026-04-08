@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
+import 'package:prueba_buffet/core/presentation/widgets/input.dart';
+import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/core/presentation/widgets/product_grid.dart';
+import 'package:prueba_buffet/core/presentation/widgets/shopping_cart_button.dart';
 import 'package:prueba_buffet/features/all_products/presentation/controllers/all_products_controller_v2.dart';
-import 'package:prueba_buffet/app/controllers/home_controller.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/input.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/product_grid.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/shopping_cart_button.dart';
+import 'package:prueba_buffet/features/home/presentation/controllers/home_controller_v2.dart';
 
 class AllProductsV2Page extends StatelessWidget with ResponsiveMixin {
   AllProductsV2Page({super.key});
 
   final AllProductsControllerV2 controller =
       Get.find<AllProductsControllerV2>();
-  final HomeController homeController = Get.find<HomeController>();
+  final HomeControllerV2 homeController = Get.find<HomeControllerV2>();
 
   @override
   Widget build(BuildContext context) {

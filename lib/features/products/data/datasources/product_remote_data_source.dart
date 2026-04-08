@@ -1,5 +1,5 @@
+import 'package:prueba_buffet/core/data/providers/products_provider.dart';
 import 'package:prueba_buffet/core/models/product.dart';
-import 'package:prueba_buffet/app/data/provider/products_provider.dart';
 
 class ProductRemoteDataSource {
   final ProductsProvider _productsProvider;

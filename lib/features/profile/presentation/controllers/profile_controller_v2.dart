@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:prueba_buffet/app/data/models/user.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
+import 'package:prueba_buffet/core/models/user.dart';
+import 'package:prueba_buffet/core/presentation/widgets/custom_toast.dart';
 import 'package:prueba_buffet/features/profile/domain/repositories/profile_repository.dart';
 import 'package:prueba_buffet/features/profile/domain/usecases/profile_use_cases.dart';
 import 'package:prueba_buffet/utils/logger.dart';

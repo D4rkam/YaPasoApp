@@ -2,10 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prueba_buffet/features/products/presentation/controllers/product_controller_v2.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/counter_product.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/shopping_cart_button.dart';
-import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
+import 'package:prueba_buffet/core/presentation/widgets/counter_product.dart';
+import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/core/presentation/widgets/shopping_cart_button.dart';
+import 'package:prueba_buffet/features/cart/presentation/controllers/shopping_cart_controller_v2.dart';
 import 'package:prueba_buffet/utils/helpers/image_helper.dart';
 
 class ProductV2Page extends GetView<ProductControllerV2> with ResponsiveMixin {
@@ -123,8 +123,7 @@ class ProductV2Page extends GetView<ProductControllerV2> with ResponsiveMixin {
                                                   price: product.price,
                                                   quantity: controller
                                                       .quantitySelected,
-                                                  maxQuantity:
-                                                      product.quantity,
+                                                  maxQuantity: product.quantity,
                                                 ),
                                               )
                                             : Center(
@@ -169,7 +168,8 @@ class ProductV2Page extends GetView<ProductControllerV2> with ResponsiveMixin {
   }
 
   Widget _addToShoppingCart({required BuildContext context}) {
-    final ShoppingCartController shoppingCartController = Get.find();
+    final ShoppingCartControllerV2 shoppingCartController =
+        Get.find<ShoppingCartControllerV2>();
     final product = controller.product.value!;
 
     return SizedBox(

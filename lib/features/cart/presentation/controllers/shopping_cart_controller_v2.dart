@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:prueba_buffet/app/routes/routes.dart';
+import 'package:prueba_buffet/core/routes/routes.dart';
 import 'package:prueba_buffet/features/cart/data/datasources/cart_local_data_source.dart';
 import 'package:prueba_buffet/features/cart/data/repositories/cart_repository_impl.dart';
 import 'package:prueba_buffet/features/cart/domain/entities/cart_item.dart';
@@ -48,7 +48,7 @@ class ProductForCart {
   }
 }
 
-class ShoppingCartController extends GetxController {
+class ShoppingCartControllerV2 extends GetxController {
   late final CartRepository _repository;
   late final GetCartItemsUseCase _getCartItems;
   late final IsCartItemPresentUseCase _isCartItemPresent;
@@ -60,7 +60,7 @@ class ShoppingCartController extends GetxController {
   late final GetCartTotalPriceUseCase _getCartTotalPrice;
   late final SaveCartItemsUseCase _saveCartItems;
 
-  ShoppingCartController({CartRepository? repository}) {
+  ShoppingCartControllerV2({CartRepository? repository}) {
     _repository =
         repository ?? CartRepositoryImpl(CartLocalDataSource(GetStorage()));
 
@@ -122,9 +122,7 @@ class ShoppingCartController extends GetxController {
 
   void goPayScreen() {
     _saveCartItems();
-    final enablePaymentsV2 =
-        GetStorage().read<bool>('enable_payments_v2') ?? false;
-    Get.toNamed(enablePaymentsV2 ? Routes.PAY_V2 : Routes.PAY);
+    Get.toNamed(Routes.PAY);
   }
 
   void removeItemFromCart(String productId) {

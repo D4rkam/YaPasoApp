@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
-import 'package:prueba_buffet/app/routes/routes.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
+import 'package:prueba_buffet/core/routes/routes.dart';
 import 'package:prueba_buffet/features/auth/presentation/controllers/auth_security_gate_controller_v2.dart';
 import 'package:prueba_buffet/utils/logger.dart';
 
@@ -34,11 +34,7 @@ class _SecurityFingerV2PageState extends State<SecurityFingerV2Page>
     }
   }
 
-  String _resolveLoginRoute() {
-    final enableAuthV2Login =
-        GetStorage().read<bool>('enable_auth_v2_login') ?? false;
-    return enableAuthV2Login ? Routes.LOGIN_V2 : Routes.LOGIN;
-  }
+  String _resolveLoginRoute() => Routes.LOGIN;
 
   Future<void> _validateSessionAndNavigate() async {
     final destination = await _controller.validateSession();

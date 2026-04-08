@@ -1,8 +1,8 @@
-import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
+import 'package:prueba_buffet/core/models/product.dart';
 
 /// Resultado de una petición paginada de productos.
 class AllProductsPage {
-  final List<ProductForCart> products;
+  final List<Product> products;
   final String? nextCursor;
   final bool hasMore;
 

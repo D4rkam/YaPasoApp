@@ -18,9 +18,9 @@ class CartBindingV2 implements Bindings {
       fenix: true,
     );
 
-    if (!Get.isRegistered<ShoppingCartController>()) {
-      Get.lazyPut<ShoppingCartController>(
-        () => ShoppingCartController(repository: Get.find<CartRepository>()),
+    if (!Get.isRegistered<ShoppingCartControllerV2>()) {
+      Get.lazyPut<ShoppingCartControllerV2>(
+        () => ShoppingCartControllerV2(repository: Get.find<CartRepository>()),
         fenix: true,
       );
     }

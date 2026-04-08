@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart' show Response;
-import 'package:prueba_buffet/app/data/provider/base_provider.dart';
+import 'package:prueba_buffet/core/data/providers/base_provider.dart';
 import 'package:prueba_buffet/utils/constants/api_constants.dart';
 
 class AuthApiProvider extends BaseProvider {

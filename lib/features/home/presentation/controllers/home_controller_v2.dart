@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:prueba_buffet/app/controllers/balance_controller.dart';
-import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
-import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
-import 'package:prueba_buffet/app/data/models/category.dart';
-import 'package:prueba_buffet/app/data/models/product.dart';
-import 'package:prueba_buffet/app/data/models/user.dart';
-import 'package:prueba_buffet/app/data/provider/users_provider.dart';
-import 'package:prueba_buffet/app/routes/routes.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/update_dialog.dart';
+import 'package:prueba_buffet/features/balance/presentation/controllers/balance_controller_v2.dart';
+
+import 'package:prueba_buffet/features/cart/presentation/controllers/shopping_cart_controller_v2.dart';
+import 'package:prueba_buffet/core/models/category.dart';
+import 'package:prueba_buffet/core/models/product.dart';
+import 'package:prueba_buffet/core/models/user.dart';
+import 'package:prueba_buffet/core/data/providers/users_provider.dart';
+import 'package:prueba_buffet/core/presentation/widgets/update_dialog.dart';
+import 'package:prueba_buffet/core/routes/routes.dart';
 import 'package:prueba_buffet/features/home/domain/usecases/check_version_use_case.dart';
 import 'package:prueba_buffet/features/home/domain/usecases/get_categories_use_case.dart';
 import 'package:prueba_buffet/features/home/domain/usecases/get_top_selling_products_use_case.dart';
@@ -39,7 +39,7 @@ class HomeControllerV2 extends GetxController {
     _checkVersion = checkVersion;
   }
 
-  BalanceController get balanceController => Get.find<BalanceController>();
+  BalanceControllerV2 get balanceController => Get.find<BalanceControllerV2>();
   Rx<double> get balanceUser => balanceController.balance;
 
   RxBool isSearchingApi = false.obs;
@@ -210,23 +210,16 @@ class HomeControllerV2 extends GetxController {
   }
 
   void signOut() {
-    if (Get.isRegistered<ShoppingCartController>()) {
-      Get.delete<ShoppingCartController>();
+    if (Get.isRegistered<ShoppingCartControllerV2>()) {
+      Get.delete<ShoppingCartControllerV2>();
     }
     GetStorage().remove("user"); // Borramos localStorage
     _usersProvider.logout(); // Llamamos logout
     Get.offNamedUntil("/login", (route) => false);
   }
 
-  // ---- NAVEGACIÓN ----
   void goToMyBalance() {
-    final enableBalanceV2 =
-        GetStorage().read<bool>('enable_balance_v2') ?? false;
-    if (enableBalanceV2) {
-      Get.toNamed(Routes.MY_BALANCE_V2);
-      return;
-    }
-    Get.find<MainShellController>().goToBalance();
+    Get.toNamed(Routes.MY_BALANCE);
   }
 
   void goToProductDetail(Product product) {
@@ -234,32 +227,20 @@ class HomeControllerV2 extends GetxController {
     searchController.clear();
     searchResultsFromApi.clear();
     FocusManager.instance.primaryFocus?.unfocus();
-    
-    final enableProductsV2 =
-        GetStorage().read<bool>('enable_products_v2') ?? false;
+
     Get.toNamed(
-      enableProductsV2 ? Routes.PRODUCT_V2 : "/product",
+      Routes.PRODUCT,
       arguments: product.id.toString(),
     );
   }
 
   void goToAllProducts() {
-    final enableAllProductsV2 =
-        GetStorage().read<bool>('enable_all_products_v2') ?? false;
-    Get.toNamed(
-      enableAllProductsV2 ? Routes.PRODUCTS_V2 : "/products",
-    );
+    Get.toNamed(Routes.PRODUCTS);
   }
 
   void goToCategory(Category category) {
     if (category.tieneStock) {
-      final enableCategoryV2 =
-          GetStorage().read<bool>('enable_category_v2') ?? false;
-      if (enableCategoryV2) {
-        Get.toNamed(Routes.CATEGORY_V2, arguments: category.nombre);
-      } else {
-        Get.find<MainShellController>().goToCategory(category.nombre);
-      }
+      Get.toNamed(Routes.CATEGORY, arguments: category.nombre);
     }
   }
 

@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:prueba_buffet/app/controllers/balance_controller.dart';
-import 'package:prueba_buffet/app/controllers/home_controller.dart';
-import 'package:prueba_buffet/app/controllers/main_shell_controller.dart';
-import 'package:prueba_buffet/app/controllers/shopping_cart_controller.dart';
-import 'package:prueba_buffet/app/ui/global_widgets/custom_toast.dart';
+import 'package:prueba_buffet/features/balance/presentation/controllers/balance_controller_v2.dart';
+import 'package:prueba_buffet/features/home/presentation/controllers/home_controller_v2.dart';
+import 'package:prueba_buffet/features/shell/presentation/controllers/main_shell_controller_v2.dart';
+import 'package:prueba_buffet/features/cart/presentation/controllers/shopping_cart_controller_v2.dart';
+import 'package:prueba_buffet/core/presentation/widgets/custom_toast.dart';
 import 'package:prueba_buffet/features/orders/presentation/controllers/order_controller_v2.dart';
 import 'package:prueba_buffet/utils/logger.dart';
 
@@ -18,8 +18,8 @@ class PayStateControllerV2 extends GetxController {
     Get.offAllNamed("/home");
 
     Future.delayed(const Duration(milliseconds: 50), () {
-      if (Get.isRegistered<MainShellController>()) {
-        Get.find<MainShellController>().goToOrdersTab();
+      if (Get.isRegistered<MainShellControllerV2>()) {
+        Get.find<MainShellControllerV2>().goToOrdersTab();
       }
     });
   }
@@ -61,8 +61,8 @@ class PayStateControllerV2 extends GetxController {
   }
 
   void _cleanCartAndRefreshData() async {
-    if (Get.isRegistered<ShoppingCartController>()) {
-      Get.find<ShoppingCartController>().clearCart();
+    if (Get.isRegistered<ShoppingCartControllerV2>()) {
+      Get.find<ShoppingCartControllerV2>().clearCart();
     }
 
     GetStorage().remove("cart_items");
@@ -77,19 +77,19 @@ class PayStateControllerV2 extends GetxController {
 
     await Future.delayed(const Duration(milliseconds: 2600));
 
-    // Soporta tanto el controller V2 como el legacy
+    // Soporta el controller V2
     if (Get.isRegistered<OrderControllerV2>()) {
       await Get.find<OrderControllerV2>().fetchInitialOrders();
     }
 
-    if (Get.isRegistered<BalanceController>()) {
-      final balanceCtrl = Get.find<BalanceController>();
+    if (Get.isRegistered<BalanceControllerV2>()) {
+      final balanceCtrl = Get.find<BalanceControllerV2>();
       await balanceCtrl.fetchBalance();
       await balanceCtrl.getMyInitialTransactions();
     }
 
-    if (Get.isRegistered<HomeController>()) {
-      await Get.find<HomeController>().getProducts();
+    if (Get.isRegistered<HomeControllerV2>()) {
+      await Get.find<HomeControllerV2>().getTopSellingProducts();
     }
 
     if (Get.isSnackbarOpen) {
@@ -105,8 +105,8 @@ class PayStateControllerV2 extends GetxController {
   void _applyLocalBalanceLoad() async {
     try {
       final pendingAmount = GetStorage().read("pending_load_amount");
-      if (pendingAmount != null && Get.isRegistered<BalanceController>()) {
-        final balanceCtrl = Get.find<BalanceController>();
+      if (pendingAmount != null && Get.isRegistered<BalanceControllerV2>()) {
+        final balanceCtrl = Get.find<BalanceControllerV2>();
         final double amount = (pendingAmount as num).toDouble();
 
         balanceCtrl.balance.value += amount;
@@ -139,8 +139,8 @@ class PayStateControllerV2 extends GetxController {
   void _failurePayment() async {
     await Future.delayed(const Duration(milliseconds: 2600));
 
-    if (Get.isRegistered<HomeController>()) {
-      await Get.find<HomeController>().getProducts();
+    if (Get.isRegistered<HomeControllerV2>()) {
+      await Get.find<HomeControllerV2>().getTopSellingProducts();
     }
 
     goToHomeScreen();
