@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#FFE500",
-    "description": "A new Flutter project.",
+    "description": "Pedí comida desde tu celular, saltate la fila del recreo y retirá en el buffet de tu colegio al instante.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
