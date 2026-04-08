@@ -85,6 +85,8 @@ class RegisterV2Page extends GetView<AuthRegisterControllerV2>
 
 class Step1NameV2 extends GetView<AuthRegisterControllerV2>
     with ResponsiveMixin {
+  const Step1NameV2({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -129,30 +131,30 @@ class Step1NameV2 extends GetView<AuthRegisterControllerV2>
             ),
           ),
           SizedBox(height: setHeight(30)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                '¿Ya tienes cuenta? ',
-                style: TextStyle(
-                  fontSize: setSp(14),
-                  color: const Color(0xFFB3B3B3),
-                ),
-              ),
-              GestureDetector(
-                onTap: controller.goToLoginPage,
-                child: Text(
-                  'Inicia Sesión',
-                  style: TextStyle(
-                    fontSize: setSp(14),
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: setHeight(20)),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     Text(
+          //       '¿Ya tienes cuenta? ',
+          //       style: TextStyle(
+          //         fontSize: setSp(14),
+          //         color: const Color(0xFFB3B3B3),
+          //       ),
+          //     ),
+          //     GestureDetector(
+          //       onTap: controller.goToLoginPage,
+          //       child: Text(
+          //         'Inicia Sesión',
+          //         style: TextStyle(
+          //           fontSize: setSp(14),
+          //           fontWeight: FontWeight.bold,
+          //           color: Colors.black,
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // SizedBox(height: setHeight(20)),
         ],
       ),
     );
@@ -161,6 +163,8 @@ class Step1NameV2 extends GetView<AuthRegisterControllerV2>
 
 class Step2AgeV2 extends GetView<AuthRegisterControllerV2>
     with ResponsiveMixin {
+  const Step2AgeV2({super.key});
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -233,6 +237,8 @@ class Step2AgeV2 extends GetView<AuthRegisterControllerV2>
 
 class Step4LocationV2 extends GetView<AuthRegisterControllerV2>
     with ResponsiveMixin {
+  const Step4LocationV2({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
