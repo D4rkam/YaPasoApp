@@ -139,7 +139,13 @@ class LoginV2Page extends GetView<AuthLoginControllerV2> with ResponsiveMixin {
                                           color: Colors.black,
                                         ),
                                       )
-                                    : const Text('Iniciar Sesion'),
+                                    : Text(
+                                        'Iniciar Sesion',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                               ),
                             ),
                           ),
