@@ -6,6 +6,7 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <title>Ya Paso App | Tu buffet sin filas</title>
   <meta name="title" content="Ya Paso App | Tu buffet sin filas">
@@ -33,9 +34,233 @@
   <link rel="icon" type="image/png" href="favicon.png" />
 
   <link rel="manifest" href="manifest.json">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lobster&family=Inter:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
 </head>
 
 <body>
+  <div id="loading-container">
+    <style>
+      #loading-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+        transition: opacity 0.6s ease;
+        overflow: hidden;
+        user-select: none;
+      }
+
+      #loading-container.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .loader-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 2;
+      }
+
+      .brand-title {
+        font-family: 'Lobster', cursive;
+        font-size: clamp(3.5rem, 12vw, 6rem);
+        font-weight: 400;
+        /* Lobster is a script font, usually 400 is standard */
+        color: #000;
+        margin: 0;
+        letter-spacing: normal;
+        position: relative;
+        transform: rotate(-2deg);
+        animation: wobble 3s infinite ease-in-out;
+        z-index: 2;
+      }
+
+      .brand-title .dot {
+        display: inline-block;
+        width: clamp(8px, 2vw, 14px);
+        height: clamp(8px, 2vw, 14px);
+        background-color: #FFE500;
+        border-radius: 50%;
+        margin-left: 2px;
+      }
+
+      .brand-title::after {
+        content: '';
+        position: absolute;
+        bottom: 15%;
+        left: -5%;
+        width: 110%;
+        height: 25%;
+        background-color: #FFE500;
+        z-index: -1;
+        opacity: 0.8;
+        transform: skewX(-15deg);
+        border-radius: 4px;
+      }
+
+      .message-text {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: clamp(1rem, 4vw, 1.25rem);
+        font-weight: 600;
+        color: #000;
+        margin-top: clamp(10px, 3vw, 20px);
+        opacity: 0.9;
+        font-style: italic;
+        text-align: center;
+        padding: 0 20px;
+      }
+
+      /* Doodles style - Responsive positioning */
+      .doodle {
+        position: absolute;
+        z-index: 1;
+        opacity: 0.5;
+        animation: float 6s infinite ease-in-out;
+      }
+
+      .doodle-star {
+        top: 15%;
+        right: 10%;
+        width: clamp(40px, 10vw, 80px);
+        animation-delay: 1s;
+      }
+
+      .doodle-bag {
+        bottom: 10%;
+        left: 8%;
+        width: clamp(60px, 12vw, 100px);
+        transform: rotate(15deg);
+        animation-delay: 0.5s;
+      }
+
+      .doodle-circle {
+        top: 10%;
+        left: 15%;
+        width: clamp(30px, 8vw, 50px);
+        animation-delay: 2s;
+      }
+
+      @media (max-width: 480px) {
+        .doodle-circle {
+          display: none;
+        }
+
+        .doodle-star {
+          top: 10%;
+          right: 5%;
+        }
+
+        .doodle-bag {
+          bottom: 8%;
+          left: 5%;
+        }
+      }
+
+      @keyframes wobble {
+
+        0%,
+        100% {
+          transform: rotate(-2deg) scale(1);
+        }
+
+        50% {
+          transform: rotate(0deg) scale(1.03);
+        }
+      }
+
+      @keyframes float {
+
+        0%,
+        100% {
+          transform: translateY(0) rotate(0);
+        }
+
+        50% {
+          transform: translateY(-20px) rotate(10deg);
+        }
+      }
+
+      .progress-container {
+        width: clamp(100px, 30vw, 150px);
+        height: 6px;
+        background: #f0f0f0;
+        border-radius: 10px;
+        margin-top: clamp(30px, 8vw, 50px);
+        overflow: hidden;
+        border: 2px solid #000;
+      }
+
+      .progress-bar {
+        height: 100%;
+        width: 30%;
+        background: #FFE500;
+        animation: loading-bar 1.5s infinite linear;
+      }
+
+      @keyframes loading-bar {
+        0% {
+          transform: translateX(-100%);
+        }
+
+        100% {
+          transform: translateX(400%);
+        }
+      }
+    </style>
+
+    <!-- Background Doodles -->
+    <svg class="doodle doodle-star" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 0L61.2257 38.7743L100 50L61.2257 61.2257L50 100L38.7743 61.2257L0 50L38.7743 38.7743L50 0Z"
+        fill="#FFE500" />
+    </svg>
+    <svg class="doodle doodle-bag" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="30" width="60" height="60" rx="4" stroke="#000" stroke-width="4" />
+      <path d="M30 30V20C30 14.4772 34.4772 10 40 10H60C65.5228 10 70 14.4772 70 20V30" stroke="#000"
+        stroke-width="4" />
+      <path d="M40 50L50 60L60 50" stroke="#FFE500" stroke-width="6" stroke-linecap="round" />
+    </svg>
+    <svg class="doodle doodle-circle" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="40" stroke="#FFE500" stroke-width="8" stroke-dasharray="20 10" />
+    </svg>
+
+    <div class="loader-wrapper">
+      <h1 class="brand-title">Ya Paso<span class="dot"></span></h1>
+      <p class="message-text">Preparando tu buffet al toque...</p>
+      <div class="progress-container">
+        <div class="progress-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('load', function () {
+      // Listener for the first frame of Flutter
+      window.addEventListener('flutter-first-frame', function () {
+        var loader = document.getElementById('loading-container');
+        if (loader) {
+          loader.classList.add('hidden');
+          setTimeout(function () {
+            loader.remove();
+          }, 800);
+        }
+      });
+    });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 
