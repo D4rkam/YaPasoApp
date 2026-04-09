@@ -36,7 +36,7 @@ class BalanceControllerV2 extends GetxController {
     _savePendingLoadAmount = SavePendingLoadAmountUseCase(_repository);
   }
 
-  final User userSession = User.safeFromStorage();
+  late User userSession;
 
   late Rx<double> balance;
   late int fileNum;
@@ -57,6 +57,7 @@ class BalanceControllerV2 extends GetxController {
 
   @override
   void onInit() async {
+    userSession = User.safeFromStorage();
     final state = _getStoredBalanceState();
     balance = state.balance.obs;
     fileNum = state.fileNum;

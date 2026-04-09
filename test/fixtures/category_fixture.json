@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "nombre": "Snacks",
+    "orden": 1,
+    "activa": true,
+    "tiene_stock": true
+  },
+  {
+    "id": 2,
+    "nombre": "Bebidas",
+    "orden": 2,
+    "activa": true,
+    "tiene_stock": false
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "state": {
+    "balance": 1500.5,
+    "file_num": 12345
+  },
+  "transaction": {
+    "type": "CARGA",
+    "amount": 500,
+    "created_at": "2023-10-27T10:00:00Z"
+  },
+  "transactions_page": {
+    "transactions": [
+      {
+        "type": "CARGA",
+        "amount": 500,
+        "created_at": "2023-10-27T10:00:00Z"
+      },
+      {
+        "type": "COMPRA",
+        "amount": -200,
+        "created_at": "2023-10-27T11:00:00Z"
+      }
+    ],
+    "next_cursor": "some_cursor"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": 1,
+  "email": "test@example.com",
+  "name": "Thomas",
+  "last_name": "Doe",
+  "username": "tdoe",
+  "password": "hashed_password",
+  "age": 20,
+  "file_num": "12345",
+  "school_id": 1,
+  "curse_year": 5,
+  "curse_division": "B",
+  "turn": "MAÑANA",
+  "balance": 2500.5,
+  "token": {
+    "access_token": "valid_token",
+    "refresh_token": "valid_refresh_token"
+  },
+  "orders": []
+}

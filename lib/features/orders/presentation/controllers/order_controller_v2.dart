@@ -100,7 +100,7 @@ class OrderControllerV2 extends GetxController {
         status: status,
       );
 
-      final rawOrders = data['orders'] as List<Map<String, dynamic>>;
+      final rawOrders = List<Map<String, dynamic>>.from(data['orders'] ?? []);
 
       // Traducimos el JSON al formato que espera la UI
       final incomingOrders = rawOrders.map((order) {
