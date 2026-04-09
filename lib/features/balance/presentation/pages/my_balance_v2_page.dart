@@ -191,23 +191,32 @@ class TarjetaYaPasoV2 extends StatelessWidget with ResponsiveMixin {
                 elevation: 5,
                 shadowColor: Colors.grey.withOpacity(0.1),
                 backgroundColor: const Color(0xFFFfE500),
+                padding: EdgeInsets.symmetric(horizontal: setWidth(12)),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(setHeight(20)),
                 ),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Image.asset(
                     'assets/images/icono_carga.webp',
-                    width: setWidth(30),
+                    width: setWidth(24),
                   ),
-                  Text(
-                    'Cargar',
-                    style: TextStyle(
-                      fontSize: setSp(18),
-                      fontWeight: FontWeight.normal,
-                      color: Colors.black,
+                  SizedBox(width: setWidth(8)),
+                  Flexible(
+                    child: Text(
+                      'Cargar',
+                      style: TextStyle(
+                        fontSize: setSp(18),
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

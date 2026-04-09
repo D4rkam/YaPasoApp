@@ -12,8 +12,14 @@ import 'package:prueba_buffet/features/auth/domain/usecases/check_session_use_ca
 import 'package:prueba_buffet/features/auth/domain/usecases/clear_session_use_case.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
+class FakeLoginCredentials extends Fake implements LoginCredentials {}
+class FakeRegisterCommand extends Fake implements RegisterCommand {}
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue(FakeLoginCredentials());
+    registerFallbackValue(FakeRegisterCommand());
+  });
   late MockAuthRepository mockRepository;
   late LoginUseCase loginUseCase;
   late RegisterUseCase registerUseCase;
@@ -36,7 +42,13 @@ void main() {
     test('LoginUseCase should return success from repository', () async {
       // arrange
       const credentials = LoginCredentials(username: 'u', password: 'p');
-      final session = AuthSession(user: null, token: {});
+      const session = AuthSession(
+        userId: 1, 
+        username: 'u', 
+        name: 'n', 
+        email: 'e', 
+        hasToken: true
+      );
       final result = AuthResult.success(session);
       
       when(() => mockRepository.login(credentials))
@@ -53,18 +65,15 @@ void main() {
 
     test('RegisterUseCase should return error from repository', () async {
       // arrange
-      final command = RegisterCommand(
-        nameOrLabel: 't', 
+      const command = RegisterCommand(
+        name: 't', 
         lastName: 'l', 
         email: 'e', 
         username: 'u', 
         password: 'p', 
         age: 20, 
         fileNum: '1', 
-        schoolId: 1, 
-        curseYear: 1, 
-        curseDivision: 'A', 
-        turn: 'M'
+        schoolId: 1
       );
       final result = AuthResult<void>.error(AuthFailure.registerFailed);
       
@@ -82,7 +91,13 @@ void main() {
 
     test('CheckSessionUseCase should call repository', () async {
       // arrange
-      final session = AuthSession(user: null, token: {});
+      const session = AuthSession(
+        userId: 1, 
+        username: 'u', 
+        name: 'n', 
+        email: 'e', 
+        hasToken: true
+      );
       when(() => mockRepository.checkSession())
           .thenAnswer((_) async => AuthResult.success(session));
 
