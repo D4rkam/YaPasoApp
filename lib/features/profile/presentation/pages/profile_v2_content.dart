@@ -172,7 +172,7 @@ class ProfileV2Content extends StatelessWidget with ResponsiveMixin {
                                       isBoldValue: true),
                                   _buildDivider(),
                                   _buildRowItem("Edad",
-                                      "${controller.userSession.age ?? '-'} años",
+                                      "${controller.userSession.age} años",
                                       isBoldValue: true),
                                   _buildDivider(),
                                   _buildRowItem("Turno",
@@ -220,8 +220,8 @@ class ProfileV2Content extends StatelessWidget with ResponsiveMixin {
 
   void _mostrarModalEdicion(
       BuildContext context, ProfileControllerV2 controller) {
-    final ageCtrl = TextEditingController(
-        text: controller.userSession.age?.toString() ?? '');
+    final ageCtrl =
+        TextEditingController(text: controller.userSession.age.toString());
     final yearCtrl = TextEditingController(
         text: controller.userSession.curse_year?.toString() ?? '');
     final divCtrl = TextEditingController(
@@ -336,8 +336,7 @@ class ProfileV2Content extends StatelessWidget with ResponsiveMixin {
 
   void _mostrarModalEdicionEmail(
       BuildContext context, ProfileControllerV2 controller) {
-    final emailCtrl =
-        TextEditingController(text: controller.userSession.email ?? '');
+    final emailCtrl = TextEditingController(text: controller.userSession.email);
 
     Get.bottomSheet(
       Container(
