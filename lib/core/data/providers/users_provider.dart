@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart' show Response, Options, DioException;
-import 'package:get/get.dart' hide Response;
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/core/models/response_api.dart';
 import 'package:prueba_buffet/core/models/user.dart';
@@ -8,7 +7,6 @@ import 'package:prueba_buffet/utils/constants/api_constants.dart';
 
 import 'package:prueba_buffet/utils/logger.dart';
 
-// (Tus clases ProductForOrder y Order se mantienen EXACTAMENTE igual)
 class ProductForOrder {
   ProductForOrder({required this.id, required this.quantity});
   final int id;
