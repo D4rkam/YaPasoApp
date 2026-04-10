@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:prueba_buffet/core/models/response_api.dart';
 
@@ -6,10 +5,7 @@ void main() {
   group('ResponseApi Model Tests', () {
     test('should return a valid model from JSON map', () {
       // arrange
-      final Map<String, dynamic> jsonMap = {
-        "id": 1,
-        "name": "Test"
-      };
+      final Map<String, dynamic> jsonMap = {"id": 1, "name": "Test"};
       final bool success = true;
 
       // act
