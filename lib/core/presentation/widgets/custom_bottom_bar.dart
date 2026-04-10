@@ -52,8 +52,7 @@ class FloatingBottomBar extends StatelessWidget with ResponsiveMixin {
   }
 
   Widget _buildNavItem(BuildContext context, int index, IconData icon,
-      String label, bool isExpanded, int selectedIndex,
-      {int badgeCount = 0}) {
+      String label, bool isExpanded, int selectedIndex) {
     final bool isSelected = selectedIndex == index;
     const Color activeColor = Color(0xFFFFE500);
     const Color inactiveColor = Colors.white70;
