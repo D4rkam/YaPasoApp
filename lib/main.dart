@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:prueba_buffet/app/bindings/initial_binding.dart';
-import 'package:prueba_buffet/app/bindings/login_binding.dart';
-import 'package:prueba_buffet/app/data/services/push_notification_service.dart';
-import 'package:prueba_buffet/app/routes/app_pages.dart';
-import 'package:prueba_buffet/app/routes/routes.dart';
-import 'package:prueba_buffet/app/ui/theme/app_theme.dart';
+
+import 'package:prueba_buffet/core/presentation/bindings/app_binding_v2.dart';
+import 'package:prueba_buffet/core/presentation/theme/app_theme.dart';
+import 'package:prueba_buffet/core/data/services/push_notification_service.dart';
+import 'package:prueba_buffet/core/routes/app_pages.dart';
+import 'package:prueba_buffet/core/routes/routes.dart';
+import 'package:prueba_buffet/features/auth/presentation/bindings/auth_binding_v2.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:prueba_buffet/app/data/models/user.dart';
+import 'package:prueba_buffet/core/models/user.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 
@@ -47,10 +48,10 @@ String _resolveInitialRoute() {
 Bindings? _resolveInitialBinding() {
   if (userSession.id != null) {
     // Si hay sesión, inyectamos todas las dependencias principales (Home, Perfil, etc)
-    return InitialBinding();
+    return AppBindingV2();
   }
 
-  return LoginBinding();
+  return AuthBindingV2();
 }
 
 class MyApp extends StatelessWidget {
