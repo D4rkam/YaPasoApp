@@ -12,12 +12,8 @@ import 'package:prueba_buffet/utils/constants/image_strings.dart';
 import 'package:prueba_buffet/core/presentation/widgets/carrusel.dart';
 import 'package:prueba_buffet/core/presentation/widgets/category_item.dart';
 import 'package:prueba_buffet/core/presentation/widgets/container_input.dart';
-import 'package:prueba_buffet/features/cart/presentation/controllers/shopping_cart_controller_v2.dart';
 import 'package:prueba_buffet/core/presentation/widgets/mixins/responsive_mixin.dart';
 import 'package:prueba_buffet/core/presentation/widgets/shopping_cart_button.dart';
-// Mantenemos ProductGrid importado porque es el widget global. Al usar Get.find<HomeController>() fallaba pq espera el viejo.
-// Tendremos que replicarlo o adaptarlo.
-// Para el HomeV2 vamos a crear un CustomV2ProductGrid que lea de HomeControllerV2 para no romper lo legacy.
 import 'package:prueba_buffet/core/presentation/widgets/product_grid.dart'
     show ProductCard;
 
