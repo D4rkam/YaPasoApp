@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
+import 'package:prueba_buffet/features/analytics/domain/constants/analytics_constants.dart';
+import 'package:prueba_buffet/features/analytics/domain/repositories/analytics_repository.dart';
 import 'package:prueba_buffet/features/payments/domain/errors/payment_failure.dart';
 import 'package:prueba_buffet/features/payments/domain/usecases/payments_use_cases.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -37,6 +39,13 @@ class PaymentsControllerV2 extends GetxController {
     isLoading.value = true;
     errorMessage.value = null;
 
+    Get.find<AnalyticsRepository>().capture(
+      eventName: AnalyticsEvents.enterPaymentInfo,
+      properties: <String, Object>{
+        AnalyticsProperties.paymentMethod: 'mercado_pago',
+      },
+    );
+
     final paymentResult = await _startMercadoPago();
     if (!paymentResult.isSuccess || paymentResult.data == null) {
       errorMessage.value = paymentResult.failure?.message;
@@ -58,6 +67,13 @@ class PaymentsControllerV2 extends GetxController {
   Future<bool> executeBalanceFlow() async {
     isLoading.value = true;
     errorMessage.value = null;
+
+    Get.find<AnalyticsRepository>().capture(
+      eventName: AnalyticsEvents.enterPaymentInfo,
+      properties: <String, Object>{
+        AnalyticsProperties.paymentMethod: 'balance',
+      },
+    );
 
     final isAuthorized = await _authenticateIfRequired();
     if (!isAuthorized) {

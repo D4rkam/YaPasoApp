@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/core/routes/routes.dart';
+import 'package:prueba_buffet/features/analytics/domain/constants/analytics_constants.dart';
+import 'package:prueba_buffet/features/analytics/domain/repositories/analytics_repository.dart';
 import 'package:prueba_buffet/features/cart/data/datasources/cart_local_data_source.dart';
 import 'package:prueba_buffet/features/cart/data/repositories/cart_repository_impl.dart';
 import 'package:prueba_buffet/features/cart/domain/entities/cart_item.dart';
@@ -75,6 +77,22 @@ class ShoppingCartControllerV2 extends GetxController {
     _saveCartItems = SaveCartItemsUseCase(_repository);
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    _trackViewCart();
+  }
+
+  void _trackViewCart() {
+    Get.find<AnalyticsRepository>().capture(
+      eventName: AnalyticsEvents.viewCart,
+      properties: <String, Object>{
+        AnalyticsProperties.totalAmount: totalPrice.toDouble(),
+        AnalyticsProperties.productCount: cartItems.length,
+      },
+    );
+  }
+
   final cartItems = <ProductForCart>[].obs;
 
   CartItem _toEntity(ProductForCart product) {
@@ -112,6 +130,15 @@ class ShoppingCartControllerV2 extends GetxController {
   void addItemToCart(ProductForCart product) {
     _addCartItem(_toEntity(product));
     _syncFromRepository();
+
+    Get.find<AnalyticsRepository>().capture(
+      eventName: AnalyticsEvents.addToCart,
+      properties: <String, Object>{
+        'product_id': product.id,
+        'product_name': product.name,
+        'price': product.price.toDouble(),
+      },
+    );
   }
 
   void saveCartItems(List<ProductForCart> items) {
@@ -122,12 +149,28 @@ class ShoppingCartControllerV2 extends GetxController {
 
   void goPayScreen() {
     _saveCartItems();
+
+    Get.find<AnalyticsRepository>().capture(
+      eventName: AnalyticsEvents.startCheckout,
+      properties: <String, Object>{
+        AnalyticsProperties.totalAmount: totalPrice.toDouble(),
+        AnalyticsProperties.productCount: cartItems.length,
+      },
+    );
+
     Get.toNamed(Routes.PAY);
   }
 
   void removeItemFromCart(String productId) {
     _removeCartItem(productId);
     _syncFromRepository();
+
+    Get.find<AnalyticsRepository>().capture(
+      eventName: AnalyticsEvents.removeFromCart,
+      properties: <String, Object>{
+        'product_id': productId,
+      },
+    );
   }
 
   void clearCart() {

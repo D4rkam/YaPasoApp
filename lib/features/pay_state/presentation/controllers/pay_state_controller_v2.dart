@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:prueba_buffet/features/analytics/domain/constants/analytics_constants.dart';
+import 'package:prueba_buffet/features/analytics/domain/repositories/analytics_repository.dart';
 import 'package:prueba_buffet/features/balance/presentation/controllers/balance_controller_v2.dart';
 import 'package:prueba_buffet/features/home/presentation/controllers/home_controller_v2.dart';
 import 'package:prueba_buffet/features/shell/presentation/controllers/main_shell_controller_v2.dart';
@@ -99,6 +101,14 @@ class PayStateControllerV2 extends GetxController {
     CustomToast.showSuccess(
         title: "¡Pago Exitoso!", message: "Tu pedido ya está en fila");
 
+    Get.find<AnalyticsRepository>().capture(
+      eventName: AnalyticsEvents.purchaseSuccess,
+      properties: <String, Object>{
+        AnalyticsProperties.orderId: externalReference,
+        'payment_id': paymentId,
+      },
+    );
+
     goToOrderScreen();
   }
 
@@ -147,6 +157,15 @@ class PayStateControllerV2 extends GetxController {
     CustomToast.showError(
       title: "Error en el pago",
       message: "No se pudo completar el pago. Por favor, inténtalo de nuevo.",
+    );
+
+    Get.find<AnalyticsRepository>().capture(
+      eventName: AnalyticsEvents.purchaseFailed,
+      properties: <String, Object>{
+        AnalyticsProperties.orderId: externalReference,
+        AnalyticsProperties.errorMessage:
+            "Payment failed with status: $paymentStatus",
+      },
     );
   }
 }
