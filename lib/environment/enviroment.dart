@@ -9,7 +9,17 @@ class Environment {
   // 2. Tu servidor real en producción (Reemplazá esto por la URL de tu FastAPI en la nube)
   static const String _prodUrl = "https://api.yapaso.app";
 
-  // 3. El Getter inteligente que decide qué URL usar
+  // 3. PostHog Configuration
+  static const String posthogApiKey = String.fromEnvironment(
+    'POSTHOG_API_KEY',
+    defaultValue: 'phc_qkLX8caKaFZhGwUTLCF4Lcp6FFdZv4SX9RQRHfHxbqVx',
+  );
+  static const String posthogHost = String.fromEnvironment(
+    'POSTHOG_HOST',
+    defaultValue: 'https://us.i.posthog.com',
+  );
+
+  // 4. El Getter inteligente que decide qué URL usar
   static String get apiUrl {
     logger.i("🌐 URL ACTUAL: ${kReleaseMode ? "PRODUCCIÓN" : "DESARROLLO"}");
     if (kReleaseMode) {

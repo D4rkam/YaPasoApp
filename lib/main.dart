@@ -12,19 +12,75 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:prueba_buffet/core/models/user.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:prueba_buffet/environment/enviroment.dart';
+import 'package:prueba_buffet/features/analytics/data/datasources/posthog_datasource.dart';
+import 'package:prueba_buffet/features/analytics/data/repositories/posthog_analytics_repository_impl.dart';
+import 'package:prueba_buffet/features/analytics/domain/repositories/analytics_repository.dart';
 
 late User userSession;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 1. Inicializar PostHog con configuración de reporte de errores
+  await _initPostHog();
+
+  // Registrar AnalyticsRepository para que esté disponible desde el inicio
+  Get.put<AnalyticsRepository>(
+    PosthogAnalyticsRepositoryImpl(PosthogDatasource()),
+    permanent: true,
+  );
+
   await GetStorage.init();
   userSession = User.safeFromStorage();
 
   if (userSession.token != null) {
     PushNotificationService.initializeApp();
+
+    // Identificar al usuario en PostHog si tiene sesión
+    if (userSession.id != null) {
+      Get.find<AnalyticsRepository>().identify(
+        userId: userSession.id.toString(),
+        userProperties: {
+          'email': userSession.email,
+          'name': userSession.name,
+        },
+      );
+    }
   }
 
   runApp(const MyApp());
+}
+
+Future<void> _initPostHog() async {
+  final config = PostHogConfig(Environment.posthogApiKey)
+    ..host = Environment.posthogHost
+    ..debug = !kReleaseMode
+    ..errorTrackingConfig.inAppByDefault = true;
+
+  // Asegura que los frames del stack trace se identifiquen como código de la app
+  config.errorTrackingConfig.inAppIncludes.add('package:prueba_buffet');
+
+  await Posthog().setup(config);
+
+  // Captura global de errores de Flutter
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    Posthog().captureException(
+      error: details.exception,
+      stackTrace: details.stack,
+    );
+  };
+
+  // Captura global de errores de la plataforma (Isolates, etc)
+  PlatformDispatcher.instance.onError = (error, stack) {
+    Posthog().captureException(
+      error: error,
+      stackTrace: stack,
+    );
+    return true; // Retorna true para que el error no se propague más allá
+  };
 }
 
 String _resolveInitialRoute() {
@@ -73,6 +129,7 @@ class MyApp extends StatelessWidget {
           getPages: AppPages.pages,
           initialBinding: _resolveInitialBinding(),
           navigatorKey: Get.key,
+          navigatorObservers: [PosthogObserver()],
           theme: AppTheme(enableDarkMode: false).theme(),
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,

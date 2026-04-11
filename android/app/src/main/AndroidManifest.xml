@@ -45,6 +45,10 @@
                 <data android:scheme="yapaso" />
             </intent-filter>
         </activity>
+        <meta-data android:name="com.posthog.posthog.API_KEY" android:value="phc_qkLX8caKaFZhGwUTLCF4Lcp6FFdZv4SX9RQRHfHxbqVx" />
+  <meta-data android:name="com.posthog.posthog.POSTHOG_HOST" android:value="https://us.i.posthog.com" />
+  <meta-data android:name="com.posthog.posthog.TRACK_APPLICATION_LIFECYCLE_EVENTS" android:value="true" />
+  <meta-data android:name="com.posthog.posthog.DEBUG" android:value="true" />
         
         <meta-data
             android:name="flutterEmbedding"
