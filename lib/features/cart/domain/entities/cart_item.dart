@@ -5,6 +5,7 @@ class CartItem {
   final int price;
   final int quantity;
   final int maxQuantity;
+  final String? category;
 
   const CartItem({
     required this.id,
@@ -13,6 +14,7 @@ class CartItem {
     required this.price,
     required this.quantity,
     this.maxQuantity = 99,
+    this.category,
   });
 
   CartItem copyWith({
@@ -22,6 +24,7 @@ class CartItem {
     int? price,
     int? quantity,
     int? maxQuantity,
+    String? category,
   }) {
     return CartItem(
       id: id ?? this.id,
@@ -30,6 +33,7 @@ class CartItem {
       price: price ?? this.price,
       quantity: quantity ?? this.quantity,
       maxQuantity: maxQuantity ?? this.maxQuantity,
+      category: category ?? this.category,
     );
   }
 }

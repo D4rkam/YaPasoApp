@@ -42,9 +42,21 @@ void main() async {
     if (userSession.id != null) {
       Get.find<AnalyticsRepository>().identify(
         userId: userSession.id.toString(),
-        userProperties: {
+        userProperties: <String, Object>{
           'email': userSession.email,
           'name': userSession.name,
+          'last_name': userSession.lastName,
+          'username': userSession.username,
+          'age': userSession.age,
+          'file_num': userSession.fileNum,
+          'school_id': userSession.schoolId ?? 0,
+          'curse_year': userSession.curse_year ?? 0,
+          'curse_division': userSession.curse_division ?? 'N/A',
+          'turn': userSession.turn ?? 'N/A',
+          'current_balance': userSession.balance ?? 0.0,
+          'has_balance': (userSession.balance ?? 0.0) > 0,
+          'total_orders_count': userSession.orders?.length ?? 0,
+          'is_identified': true,
         },
       );
     }
@@ -71,6 +83,12 @@ Future<void> _initPostHog() async {
       error: details.exception,
       stackTrace: details.stack,
     );
+
+    // Etiquetar como usuario con dificultades
+    Get.find<AnalyticsRepository>().setPersonProperties({
+      'encountered_app_crash': true,
+      'last_crash_date': DateTime.now().toIso8601String(),
+    });
   };
 
   // Captura global de errores de la plataforma (Isolates, etc)
@@ -79,6 +97,13 @@ Future<void> _initPostHog() async {
       error: error,
       stackTrace: stack,
     );
+
+    // Etiquetar como usuario con dificultades
+    Get.find<AnalyticsRepository>().setPersonProperties({
+      'encountered_app_crash': true,
+      'last_crash_date': DateTime.now().toIso8601String(),
+    });
+
     return true; // Retorna true para que el error no se propague más allá
   };
 }

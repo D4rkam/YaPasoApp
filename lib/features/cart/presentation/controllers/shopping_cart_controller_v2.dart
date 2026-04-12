@@ -17,6 +17,7 @@ class ProductForCart {
   final int price;
   final RxInt quantity;
   final int maxQuantity;
+  final String category;
 
   ProductForCart({
     required this.id,
@@ -25,6 +26,7 @@ class ProductForCart {
     required this.price,
     required this.quantity,
     this.maxQuantity = 99,
+    this.category = "Sin categoría",
   });
 
   Map<String, dynamic> toJson() {
@@ -35,6 +37,7 @@ class ProductForCart {
       'price': price,
       'imagePath': imagePath,
       'maxQuantity': maxQuantity,
+      'category': category,
     };
   }
 
@@ -46,6 +49,7 @@ class ProductForCart {
       imagePath: json['imagePath'] ?? json['image_url'],
       price: double.tryParse(json['price'].toString())?.toInt() ?? 0,
       maxQuantity: json['maxQuantity'] ?? 99,
+      category: json['category'] ?? "Sin categoría",
     );
   }
 }
@@ -103,6 +107,7 @@ class ShoppingCartControllerV2 extends GetxController {
       price: product.price,
       quantity: product.quantity.value,
       maxQuantity: product.maxQuantity,
+      category: product.category,
     );
   }
 
@@ -114,6 +119,7 @@ class ShoppingCartControllerV2 extends GetxController {
       price: item.price,
       quantity: RxInt(item.quantity),
       maxQuantity: item.maxQuantity,
+      category: item.category ?? "Sin categoría",
     );
   }
 
@@ -137,8 +143,15 @@ class ShoppingCartControllerV2 extends GetxController {
         'product_id': product.id,
         'product_name': product.name,
         'price': product.price.toDouble(),
+        'category': product.category,
       },
     );
+
+    // Marker para PMF (Ajuste Producto Mercado)
+    Get.find<AnalyticsRepository>().setPersonProperties({
+      'has_added_to_cart': true,
+      'last_added_product': product.name,
+    });
   }
 
   void saveCartItems(List<ProductForCart> items) {
@@ -157,6 +170,12 @@ class ShoppingCartControllerV2 extends GetxController {
         AnalyticsProperties.productCount: cartItems.length,
       },
     );
+
+    // Marker para PMF (Interés real en pago)
+    Get.find<AnalyticsRepository>().setPersonProperties({
+      'has_started_checkout': true,
+      'last_checkout_amount': totalPrice.toDouble(),
+    });
 
     Get.toNamed(Routes.PAY);
   }

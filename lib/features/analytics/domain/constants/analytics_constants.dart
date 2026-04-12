@@ -16,6 +16,8 @@ class AnalyticsEvents {
   static const String loginSuccess = 'login_success';
   static const String loginFailed = 'login_failed';
   static const String logout = 'logout';
+  static const String itemOutOfStockViewed = 'item_out_of_stock_viewed';
+  static const String viewMenu = 'view_menu';
 }
 
 class AnalyticsProperties {
@@ -27,4 +29,6 @@ class AnalyticsProperties {
   static const String productCount = 'product_count';
   static const String errorMessage = 'error_message';
   static const String paymentMethod = 'payment_method';
+  static const String loadingTimeMs = 'loading_time_ms';
+  static const String category = 'category';
 }

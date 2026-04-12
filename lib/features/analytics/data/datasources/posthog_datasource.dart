@@ -66,6 +66,15 @@ class PosthogDatasource {
     }
   }
 
+  Future<void> setPersonProperties(Map<String, Object> properties) async {
+    try {
+      await _posthog.setPersonProperties(userPropertiesToSetOnce: properties);
+    } catch (e, stack) {
+      logger.e('Error setting Posthog person properties',
+          error: e, stackTrace: stack);
+    }
+  }
+
   Future<void> reset() async {
     try {
       await _posthog.reset();

@@ -18,6 +18,8 @@ import 'package:prueba_buffet/features/home/domain/usecases/search_products_use_
 import 'package:prueba_buffet/utils/helpers/version_herlper.dart';
 import 'package:prueba_buffet/utils/logger.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:prueba_buffet/features/analytics/domain/constants/analytics_constants.dart';
+import 'package:prueba_buffet/features/analytics/domain/repositories/analytics_repository.dart';
 
 class HomeControllerV2 extends GetxController {
   late final GetTopSellingProductsUseCase _getTopSelling;
@@ -98,10 +100,19 @@ class HomeControllerV2 extends GetxController {
   Future<void> getTopSellingProducts() async {
     isInitialLoading.value = true;
     hasConnectionError.value = false;
+    final stopwatch = Stopwatch()..start();
 
     try {
       final products = await _getTopSelling();
       productsFromApi.assignAll(products);
+
+      stopwatch.stop();
+      Get.find<AnalyticsRepository>().capture(
+        eventName: AnalyticsEvents.viewMenu,
+        properties: <String, Object>{
+          AnalyticsProperties.loadingTimeMs: stopwatch.elapsedMilliseconds,
+        },
+      );
     } catch (e) {
       hasConnectionError.value = true;
       logger.e("Error cargando top selling: $e");

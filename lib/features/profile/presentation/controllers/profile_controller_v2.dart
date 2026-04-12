@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:prueba_buffet/core/models/user.dart';
 import 'package:prueba_buffet/core/presentation/widgets/custom_toast.dart';
+import 'package:prueba_buffet/features/analytics/domain/repositories/analytics_repository.dart';
 import 'package:prueba_buffet/features/profile/domain/repositories/profile_repository.dart';
 import 'package:prueba_buffet/features/profile/domain/usecases/profile_use_cases.dart';
 import 'package:prueba_buffet/utils/logger.dart';
@@ -135,6 +136,7 @@ class ProfileControllerV2 extends GetxController {
       final success = await _deleteAccount();
 
       if (success) {
+        Get.find<AnalyticsRepository>().reset();
         GetStorage().erase();
         Get.offAllNamed('/login');
         CustomToast.showSuccess(

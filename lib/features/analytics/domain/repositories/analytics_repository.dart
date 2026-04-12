@@ -24,6 +24,9 @@ abstract class AnalyticsRepository {
     Map<String, Object>? properties,
   });
 
+  /// Establece propiedades persistentes para el perfil de la persona.
+  Future<void> setPersonProperties(Map<String, Object> properties);
+
   /// Resetea la identidad del usuario (útil en logout).
   Future<void> reset();
 }

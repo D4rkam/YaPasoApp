@@ -167,5 +167,12 @@ class PayStateControllerV2 extends GetxController {
             "Payment failed with status: $paymentStatus",
       },
     );
+
+    // Etiquetar usuario para cohortes de dificultades
+    Get.find<AnalyticsRepository>().setPersonProperties({
+      'had_payment_error': true,
+      'last_payment_error_status': paymentStatus,
+      'last_payment_error_date': DateTime.now().toIso8601String(),
+    });
   }
 }

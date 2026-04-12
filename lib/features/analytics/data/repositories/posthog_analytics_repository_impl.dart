@@ -44,6 +44,11 @@ class PosthogAnalyticsRepositoryImpl implements AnalyticsRepository {
   }
 
   @override
+  Future<void> setPersonProperties(Map<String, Object> properties) async {
+    return _dataSource.setPersonProperties(properties);
+  }
+
+  @override
   Future<void> reset() async {
     return _dataSource.reset();
   }
