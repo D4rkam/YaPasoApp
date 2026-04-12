@@ -108,7 +108,10 @@ class PayStateControllerV2 extends GetxController {
         'payment_id': paymentId,
       },
     );
-
+    Get.find<AnalyticsRepository>().setPersonProperties({
+      'last_purchase_date': DateTime.now().toIso8601String(),
+      'current_balance': Get.find<BalanceControllerV2>().balance.value,
+    });
     goToOrderScreen();
   }
 

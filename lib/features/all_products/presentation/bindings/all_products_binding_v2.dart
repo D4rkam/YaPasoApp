@@ -18,8 +18,11 @@ class AllProductsBindingV2 implements Bindings {
       fenix: true,
     );
 
-    Get.put<AllProductsControllerV2>(
-      AllProductsControllerV2(repository: Get.find<AllProductsRepository>()),
-    );
+    if (!Get.isRegistered<AllProductsControllerV2>()) {
+      Get.lazyPut<AllProductsControllerV2>(
+        () => AllProductsControllerV2(repository: Get.find<AllProductsRepository>()),
+        fenix: true,
+      );
+    }
   }
 }

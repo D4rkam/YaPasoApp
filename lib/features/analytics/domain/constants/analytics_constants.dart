@@ -12,6 +12,9 @@ class AnalyticsEvents {
   static const String purchaseSuccess = 'purchase_success';
   static const String purchaseFailed = 'purchase_failed';
 
+  // Flujo de Pedidos
+  static const String viewOrderHistory = 'view_order_history';
+
   // Otros
   static const String loginSuccess = 'login_success';
   static const String loginFailed = 'login_failed';

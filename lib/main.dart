@@ -69,8 +69,9 @@ Future<void> _initPostHog() async {
   final config = PostHogConfig(Environment.posthogApiKey)
     ..host = Environment.posthogHost
     ..debug = !kReleaseMode
-    ..errorTrackingConfig.inAppByDefault = true;
-
+    ..errorTrackingConfig.inAppByDefault = true
+    ..captureApplicationLifecycleEvents = true
+    ..sessionReplay = true;
   // Asegura que los frames del stack trace se identifiquen como código de la app
   config.errorTrackingConfig.inAppIncludes.add('package:prueba_buffet');
 
@@ -82,6 +83,10 @@ Future<void> _initPostHog() async {
     Posthog().captureException(
       error: details.exception,
       stackTrace: details.stack,
+      properties: {
+        "current_screen": Get.currentRoute,
+        'is_fatal': true,
+      },
     );
 
     // Etiquetar como usuario con dificultades
@@ -145,45 +150,47 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return GetMaterialApp(
-          enableLog: true,
-          defaultTransition: Transition.fade,
-          debugShowCheckedModeBanner: false,
-          title: 'Ya paso',
-          initialRoute: _resolveInitialRoute(),
-          getPages: AppPages.pages,
-          initialBinding: _resolveInitialBinding(),
-          navigatorKey: Get.key,
-          navigatorObservers: [PosthogObserver()],
-          theme: AppTheme(enableDarkMode: false).theme(),
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate
-          ],
-          supportedLocales: const [
-            Locale("es", ""),
-            Locale("en", ""),
-          ],
-          locale: const Locale("es", ""),
-          builder: (context, widget) {
-            // 1. Verificamos si estamos en la Web
-            if (kIsWeb) {
-              double screenWidth = MediaQuery.of(context).size.width;
-              // 2. Si es más ancho que un celular (600px), mostramos el mensaje
-              if (screenWidth > 600) {
-                return _pantallaPC();
+        return PostHogWidget(
+          child: GetMaterialApp(
+            enableLog: true,
+            defaultTransition: Transition.fade,
+            debugShowCheckedModeBanner: false,
+            title: 'Ya paso',
+            initialRoute: _resolveInitialRoute(),
+            getPages: AppPages.pages,
+            initialBinding: _resolveInitialBinding(),
+            navigatorKey: Get.key,
+            navigatorObservers: [PosthogObserver()],
+            theme: AppTheme(enableDarkMode: false).theme(),
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate
+            ],
+            supportedLocales: const [
+              Locale("es", ""),
+              Locale("en", ""),
+            ],
+            locale: const Locale("es", ""),
+            builder: (context, widget) {
+              // 1. Verificamos si estamos en la Web
+              if (kIsWeb) {
+                double screenWidth = MediaQuery.of(context).size.width;
+                // 2. Si es más ancho que un celular (600px), mostramos el mensaje
+                if (screenWidth > 600) {
+                  return _pantallaPC();
+                }
               }
-            }
 
-            // 3. Si es celular (o web en ventana chica), dejamos pasar a ScreenUtil
-            // (Envolvemos tu widget con MediaQuery para que ScreenUtil funcione bien)
-            return MediaQuery(
-              data: MediaQuery.of(context)
-                  .copyWith(textScaler: const TextScaler.linear(1.0)),
-              child: widget!,
-            );
-          },
+              // 3. Si es celular (o web en ventana chica), dejamos pasar a ScreenUtil
+              // (Envolvemos tu widget con MediaQuery para que ScreenUtil funcione bien)
+              return MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: const TextScaler.linear(1.0)),
+                child: widget!,
+              );
+            },
+          ),
         );
       },
     );
