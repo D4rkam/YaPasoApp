@@ -23,8 +23,9 @@ class ProfileBindingV2 implements Bindings {
     );
 
     if (!Get.isRegistered<ProfileControllerV2>()) {
-      Get.put<ProfileControllerV2>(
-        ProfileControllerV2(repository: Get.find<ProfileRepository>()),
+      Get.lazyPut<ProfileControllerV2>(
+        () => ProfileControllerV2(repository: Get.find<ProfileRepository>()),
+        fenix: true,
       );
     }
   }

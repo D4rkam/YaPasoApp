@@ -24,8 +24,9 @@ class OrderBindingV2 implements Bindings {
     );
 
     if (!Get.isRegistered<OrderControllerV2>()) {
-      Get.put<OrderControllerV2>(
-        OrderControllerV2(repository: Get.find<OrderRepository>()),
+      Get.lazyPut<OrderControllerV2>(
+        () => OrderControllerV2(repository: Get.find<OrderRepository>()),
+        fenix: true,
       );
     }
   }

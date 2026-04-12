@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:prueba_buffet/features/analytics/domain/constants/analytics_constants.dart';
+import 'package:prueba_buffet/features/analytics/domain/repositories/analytics_repository.dart';
 import 'package:prueba_buffet/features/orders/domain/repositories/order_repository.dart';
 import 'package:prueba_buffet/features/orders/domain/usecases/get_orders_use_case.dart';
 import 'package:prueba_buffet/utils/logger.dart';
@@ -35,9 +37,12 @@ class OrderControllerV2 extends GetxController {
   }
 
   @override
-  void onInit() {
-    super.onInit();
+  void onReady() {
     fetchInitialOrders();
+
+    Get.find<AnalyticsRepository>().capture(
+      eventName: AnalyticsEvents.viewOrderHistory,
+    );
   }
 
   void switchTab(String tab) {
@@ -107,8 +112,7 @@ class OrderControllerV2 extends GetxController {
         final mappedOrder = Map<String, dynamic>.from(order);
 
         if (mappedOrder['items'] != null) {
-          mappedOrder['products'] =
-              (mappedOrder['items'] as List).map((item) {
+          mappedOrder['products'] = (mappedOrder['items'] as List).map((item) {
             final productData = item['product'] ?? {};
             return {
               'id': item['product_id'],
