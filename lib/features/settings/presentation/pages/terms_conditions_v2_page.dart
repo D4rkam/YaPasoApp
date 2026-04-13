@@ -102,7 +102,9 @@ class TerminosYCondicionesV2Screen extends StatelessWidget
                     _buildSection(
                       title: "6. Privacidad y Protección de Datos",
                       content:
-                          "• Recopilación: La App recopila datos básicos con el fin de identificar al titular de los pedidos.\n• Uso: Los datos no serán vendidos ni cedidos a terceros ajenos al buffet.\n• Derechos: El usuario tiene derecho a acceder, rectificar y solicitar la supresión de sus datos personales (Ley 25.326).",
+                          "• Recopilación: La App recopila datos básicos con el fin de identificar al titular de los pedidos y gestionar su cuenta.\n"
+                          "• Transparencia: El usuario consiente el tratamiento de sus datos conforme a estos términos.\n"
+                          "• Derechos: El usuario tiene derecho a acceder, rectificar y solicitar la supresión de sus datos personales conforme a la Ley 25.326.",
                     ),
                     _buildSection(
                       title: "7. Limitación de Responsabilidad",
@@ -138,6 +140,13 @@ class TerminosYCondicionesV2Screen extends StatelessWidget
                       title: "13. Legislación y Jurisdicción",
                       content:
                           "Los presentes Términos y Condiciones se rigen por las leyes de la República Argentina. Ante cualquier controversia derivada del uso de la App, las partes se someten a la jurisdicción de los Tribunales Ordinarios competentes del Departamento Judicial de La Plata, renunciando expresamente a cualquier otro fuero que pudiera corresponder.",
+                    ),
+                    _buildSection(
+                      title: "14. Estadísticas y Mejora del Servicio",
+                      content:
+                          "Con el objetivo de garantizar una experiencia fluida y segura, la App recolecta información estadística sobre el uso de sus funciones y el rendimiento técnico del software. "
+                          "Esta recolección no incluye datos sensibles y tiene como único fin la detección de errores, la optimización de la velocidad de respuesta y la mejora de la confiabilidad del sistema. "
+                          "Al utilizar la App, el usuario acepta el procesamiento de métricas de interacción para el desarrollo de actualizaciones y mejoras en el servicio.",
                     ),
                     SizedBox(height: setHeight(20)),
                     Center(
