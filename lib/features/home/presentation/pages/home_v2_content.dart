@@ -389,7 +389,8 @@ class ListCategoryV2 extends StatelessWidget {
                   imageUrl: _getIconForCategory(category.nombre),
                   onTap: () {
                     if (category.tieneStock) {
-                      controller.goToCategory(category);
+                      Get.find<MainShellControllerV2>()
+                          .goToCategory(category.nombre);
                     } else {
                       CustomToast.showWarning(
                           title: "Categoría vacía",
