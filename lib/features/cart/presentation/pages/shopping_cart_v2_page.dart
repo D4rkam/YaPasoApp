@@ -198,8 +198,6 @@ class ScreenWithItemsV2 extends StatelessWidget with ResponsiveMixin {
                           ),
                         ),
                         Obx(() {
-                          // Forzar dependencia reactiva en cartItems
-                          controller.cartItems.length;
                           return Text(
                             '\$${controller.totalPrice}',
                             style: TextStyle(

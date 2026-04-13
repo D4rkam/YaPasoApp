@@ -130,7 +130,7 @@ class ShoppingCartControllerV2 extends GetxController {
   }
 
   bool isInCart(String productId) {
-    return _isCartItemPresent(productId);
+    return cartItems.any((item) => item.id == productId);
   }
 
   void addItemToCart(ProductForCart product) {
@@ -205,6 +205,6 @@ class ShoppingCartControllerV2 extends GetxController {
   }
 
   int get totalPrice {
-    return _getCartTotalPrice();
+    return cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity.value));
   }
 }
