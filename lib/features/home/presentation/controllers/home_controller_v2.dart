@@ -220,12 +220,13 @@ class HomeControllerV2 extends GetxController {
     }
   }
 
-  void signOut() {
+  void signOut() async {
     if (Get.isRegistered<ShoppingCartControllerV2>()) {
       Get.delete<ShoppingCartControllerV2>();
     }
     GetStorage().remove("user"); // Borramos localStorage
     _usersProvider.logout(); // Llamamos logout
+    await Get.find<AnalyticsRepository>().reset();
     Get.offNamedUntil("/login", (route) => false);
   }
 

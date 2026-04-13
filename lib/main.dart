@@ -40,7 +40,7 @@ void main() async {
 
     // Identificar al usuario en PostHog si tiene sesión
     if (userSession.id != null) {
-      Get.find<AnalyticsRepository>().identify(
+      await Get.find<AnalyticsRepository>().identify(
         userId: userSession.id.toString(),
         userProperties: <String, Object>{
           'email': userSession.email,
