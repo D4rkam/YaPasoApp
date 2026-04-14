@@ -15,6 +15,15 @@ class AnalyticsEvents {
   // Flujo de Pedidos
   static const String viewOrderHistory = 'view_order_history';
 
+  // Flujo de Registro
+  static const String viewLogin = 'view_login';
+  static const String viewRegister = 'view_register';
+
+  // Flujo de cargar saldo
+  static const String viewAddBalance = 'view_add_balance';
+  static const String addBalanceSuccess = 'add_balance_success';
+  static const String addBalanceFailed = 'add_balance_failed';
+
   // Otros
   static const String loginSuccess = 'login_success';
   static const String loginFailed = 'login_failed';
