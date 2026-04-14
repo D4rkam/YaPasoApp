@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 import 'package:prueba_buffet/core/presentation/widgets/custom_toast.dart';
 import 'package:prueba_buffet/core/routes/routes.dart';
+import 'package:prueba_buffet/features/analytics/domain/constants/analytics_constants.dart';
+import 'package:prueba_buffet/features/analytics/domain/repositories/analytics_repository.dart';
 import 'package:prueba_buffet/features/auth/domain/entities/register_command.dart';
 import 'package:prueba_buffet/features/auth/domain/usecases/check_session_use_case.dart';
 import 'package:prueba_buffet/features/auth/domain/usecases/register_use_case.dart';
@@ -335,6 +337,7 @@ class AuthRegisterControllerV2 extends GetxController {
 
   Future<bool> submit() async {
     if (!validateForm()) return false;
+    final stopwatch = Stopwatch()..start();
 
     isLoading.value = true;
     final result = await _registerUseCase(
@@ -352,6 +355,8 @@ class AuthRegisterControllerV2 extends GetxController {
     isLoading.value = false;
 
     if (result.isSuccess) {
+      stopwatch.stop();
+      _trackViewRegister(stopwatch);
       return true;
     }
 
@@ -375,6 +380,15 @@ class AuthRegisterControllerV2 extends GetxController {
     CustomToast.showError(
       title: 'Error',
       message: formError.value ?? 'Error al registrar',
+    );
+  }
+
+  void _trackViewRegister(Stopwatch stopwatch) {
+    Get.find<AnalyticsRepository>().capture(
+      eventName: AnalyticsEvents.viewRegister,
+      properties: <String, Object>{
+        AnalyticsProperties.loadingTimeMs: stopwatch.elapsedMilliseconds,
+      },
     );
   }
 

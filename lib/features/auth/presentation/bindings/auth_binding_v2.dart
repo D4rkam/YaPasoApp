@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:prueba_buffet/features/analytics/domain/repositories/analytics_repository.dart';
+import 'package:prueba_buffet/features/analytics/domain/usecases/identify_use_cases.dart';
 import 'package:prueba_buffet/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:prueba_buffet/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:prueba_buffet/features/auth/data/providers/auth_api_provider.dart';
@@ -37,6 +39,9 @@ class AuthBindingV2 implements Bindings {
     );
 
     Get.lazyPut<LoginUseCase>(() => LoginUseCase(Get.find<AuthRepository>()));
+    Get.lazyPut<IdentifyUseCases>(
+      () => IdentifyUseCases(Get.find<AnalyticsRepository>()),
+    );
     Get.lazyPut<RegisterUseCase>(
       () => RegisterUseCase(Get.find<AuthRepository>()),
     );
@@ -54,7 +59,10 @@ class AuthBindingV2 implements Bindings {
     );
 
     Get.lazyPut<AuthLoginControllerV2>(
-      () => AuthLoginControllerV2(Get.find<LoginUseCase>()),
+      () => AuthLoginControllerV2(
+        Get.find<LoginUseCase>(),
+        Get.find<IdentifyUseCases>(),
+      ),
     );
     Get.lazyPut<AuthRegisterControllerV2>(
       () => AuthRegisterControllerV2(

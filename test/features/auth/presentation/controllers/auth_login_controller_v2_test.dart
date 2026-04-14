@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:prueba_buffet/features/analytics/domain/usecases/identify_use_cases.dart';
 import 'package:prueba_buffet/features/auth/domain/entities/auth_session.dart';
 import 'package:prueba_buffet/features/auth/domain/entities/login_credentials.dart';
 import 'package:prueba_buffet/features/auth/domain/results/auth_result.dart';
@@ -8,11 +9,15 @@ import 'package:prueba_buffet/features/auth/domain/errors/auth_failure.dart';
 import 'package:prueba_buffet/features/auth/presentation/controllers/auth_login_controller_v2.dart';
 
 class MockLoginUseCase extends Mock implements LoginUseCase {}
+
+class MockIdentifyUseCases extends Mock implements IdentifyUseCases {}
+
 class FakeLoginCredentials extends Fake implements LoginCredentials {}
 
 void main() {
   late AuthLoginControllerV2 controller;
   late MockLoginUseCase mockLoginUseCase;
+  late MockIdentifyUseCases mockIdentifyUseCases;
 
   setUpAll(() {
     registerFallbackValue(FakeLoginCredentials());
@@ -20,7 +25,8 @@ void main() {
 
   setUp(() {
     mockLoginUseCase = MockLoginUseCase();
-    controller = AuthLoginControllerV2(mockLoginUseCase);
+    mockIdentifyUseCases = MockIdentifyUseCases();
+    controller = AuthLoginControllerV2(mockLoginUseCase, mockIdentifyUseCases);
   });
 
   group('AuthLoginControllerV2 Tests', () {
@@ -52,12 +58,7 @@ void main() {
       controller.usernameController.text = 'user';
       controller.passwordController.text = 'pass';
       const session = AuthSession(
-        userId: 1, 
-        username: 'u', 
-        name: 'n', 
-        email: 'e', 
-        hasToken: true
-      );
+          userId: 1, username: 'u', name: 'n', email: 'e', hasToken: true);
       when(() => mockLoginUseCase(any()))
           .thenAnswer((_) async => AuthResult.success(session));
 
@@ -74,8 +75,8 @@ void main() {
       // arrange
       controller.usernameController.text = 'user';
       controller.passwordController.text = 'pass';
-      when(() => mockLoginUseCase(any()))
-          .thenAnswer((_) async => AuthResult.error(AuthFailure.invalidCredentials));
+      when(() => mockLoginUseCase(any())).thenAnswer(
+          (_) async => AuthResult.error(AuthFailure.invalidCredentials));
 
       // act
       final result = await controller.submit();
