@@ -396,13 +396,6 @@ class AuthRegisterControllerV2 extends GetxController {
   void onClose() {
     pageController.dispose();
     scrollController.dispose();
-    usernameController.dispose();
-    nameController.dispose();
-    lastNameController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    emailController.dispose();
-    fileNumberController.dispose();
     super.onClose();
   }
 }

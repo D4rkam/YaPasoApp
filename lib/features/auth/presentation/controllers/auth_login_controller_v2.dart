@@ -69,17 +69,11 @@ class AuthLoginControllerV2 extends GetxController {
 
   void _trackViewLogin(Stopwatch stopwatch) {
     Get.find<AnalyticsRepository>().capture(
-      eventName: AnalyticsEvents.viewLogin,
+      eventName: AnalyticsEvents.loginSuccess,
       properties: <String, Object>{
         AnalyticsProperties.loadingTimeMs: stopwatch.elapsedMilliseconds,
       },
     );
   }
 
-  @override
-  void onClose() {
-    usernameController.dispose();
-    passwordController.dispose();
-    super.onClose();
-  }
 }
