@@ -58,7 +58,7 @@ class AuthLoginControllerV2 extends GetxController {
       if (user.id != null) {
         await _identifyUseCases.identify(user);
         stopwatch.stop();
-        _trackViewLogin(stopwatch);
+        await _trackViewLogin(stopwatch);
       }
       return true;
     }
@@ -67,13 +67,12 @@ class AuthLoginControllerV2 extends GetxController {
     return false;
   }
 
-  void _trackViewLogin(Stopwatch stopwatch) {
-    Get.find<AnalyticsRepository>().capture(
+  Future<void> _trackViewLogin(Stopwatch stopwatch) async {
+    await Get.find<AnalyticsRepository>().capture(
       eventName: AnalyticsEvents.loginSuccess,
       properties: <String, Object>{
         AnalyticsProperties.loadingTimeMs: stopwatch.elapsedMilliseconds,
       },
     );
   }
-
 }

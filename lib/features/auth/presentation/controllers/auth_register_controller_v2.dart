@@ -356,7 +356,7 @@ class AuthRegisterControllerV2 extends GetxController {
 
     if (result.isSuccess) {
       stopwatch.stop();
-      _trackViewRegister(stopwatch);
+      await _trackViewRegister(stopwatch);
       return true;
     }
 
@@ -383,8 +383,8 @@ class AuthRegisterControllerV2 extends GetxController {
     );
   }
 
-  void _trackViewRegister(Stopwatch stopwatch) {
-    Get.find<AnalyticsRepository>().capture(
+  Future<void> _trackViewRegister(Stopwatch stopwatch) async {
+    await Get.find<AnalyticsRepository>().capture(
       eventName: AnalyticsEvents.viewRegister,
       properties: <String, Object>{
         AnalyticsProperties.loadingTimeMs: stopwatch.elapsedMilliseconds,
